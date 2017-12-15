@@ -1,6 +1,9 @@
 <?php
 
 include "app/view.php";
+include "app/document.php";
+include "app/element.php";
+include "app/comment.php";
 
 // load document
 
@@ -59,7 +62,7 @@ foreach ($data as $datum) {
   foreach ($template->slugs as $slug) {
     $slug['node']->nodeValue =  getData($slug['scope'], $datum);
   }
-  $layout->import($template);
+  $layout->merge($template);
 }
 
 echo $layout->render();

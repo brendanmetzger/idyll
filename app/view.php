@@ -22,23 +22,18 @@ class View
   // TODO: These will be protected/private
   public $document;
   public $slugs = [];
-  private $xpath;
   
   function __construct(string $path)
   {
-    $this->document = new \DOMDocument;
-    $this->document->formatOutput = true;
-    $this->document->preserveWhitespace = true;
+    $this->document = new \app\document;
     $this->document->load($path, self::xml_options);
-    $this->xpath = new \DomXpath( $this->document );
   }
   
-  public function import(self $mill)
+  public function merge(self $mill)
   {
     $view = $this->document->importNode($mill->document->documentElement, true);
     $this->document->documentElement->appendChild($view);
   }
-  
   
   /*
     TODO
@@ -62,7 +57,7 @@ class View
     if ( $prefix == 'iterate' ) {
       $query = substr($query, 0, -1) . 'and not(./ancestor::*/preceding-sibling::comment()[iterate]) ]';
     }
-    return $this->xpath->query(sprintf($query, $prefix));
+    return $this->document->find(sprintf($query, $prefix));
   }
   
   /*
@@ -75,7 +70,7 @@ class View
       
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
       
-      foreach ( $this->xpath->query("//*[ {$query} ] | //*/@*[ {$query} ]") as $placeholder ) {        
+      foreach ( $this->document->find("//*[ {$query} ] | //*/@*[ {$query} ]") as $placeholder ) {        
         $placeholder->nodeValue = substr($placeholder->nodeValue, 1,-1); // trim opening brackets
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $placeholder->nodeValue, $matches, PREG_OFFSET_CAPTURE);
         
