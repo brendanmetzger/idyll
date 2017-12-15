@@ -1,0 +1,6 @@
+<?php
+
+// configuration
+
+// autoload
+
