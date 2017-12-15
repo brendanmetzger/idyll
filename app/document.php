@@ -7,6 +7,7 @@ namespace app;
 
 class Document extends \DOMDocument
 {
+  const LOAD_OPTS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT;
   
   private $xpath = null,
           $opts  = [

@@ -17,8 +17,6 @@ namespace app;
 
 class View
 {
-  const xml_options = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT;
-  
   // TODO: These will be protected/private
   public $document;
   public $slugs = [];
@@ -26,7 +24,7 @@ class View
   function __construct(string $path)
   {
     $this->document = new \app\document;
-    $this->document->load($path, self::xml_options);
+    $this->document->load($path, \app\document::LOAD_OPTS);
   }
   
   public function merge(self $mill)
@@ -49,6 +47,8 @@ class View
   /*
     TODO 
     [ ] Make an element of the document object
+    [ ] See if finding all comments and filtering is comperable...
+        $comments->filter(hasPrefix('iterate')) seems way nicer (where command returns a partially applied function)
   */
   public function getStubs($prefix)
   {
@@ -63,6 +63,7 @@ class View
   /*
     TODO
     [ ] make a method of the element object (as this is finding elements);
+    [ ] something like getVariables() would be better
   */
   public function getSlugs()
   {
