@@ -7,25 +7,16 @@ define('MODE', getenv('MODE') ?: 'production');
 
 date_default_timezone_set ('America/Chicago');
 
-// AUTOLOAD classes using the namespace 
-spl_autoload_register(function ($class) {
-  @include PATH . str_replace('\\', '/', $class) . '.php';
+# AUTOLOAD classes organized by namespace
+spl_autoload_register(function ($classname) {
+  @include PATH . str_replace('\\', '/', $classname) . '.php';
+});
+
+# EXECUTE the application.
+$request = new Request($_SERVER, $_REQUEST);
+$request->listen('http', function ($params) {
+  return $this->delegate('overview', 'index', $params);
 });
 
 
-
-// Application (these are factories)
-$http = Request::listen('http', function ($params) {
-
-});
-
-$cli = Request::listen('cli', function ($params) {
-
-});
-
-$layout = new view('layout.html');
-
-
-echo $layout->render();
-
-
+echo new Response($request);

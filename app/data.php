@@ -13,6 +13,14 @@ class Data {
   
   // match/pair/tree lookup
   
+  static public function PAIR(array $tree, array $data)
+  {
+    while ($key = array_shift($tree)) {
+       $data = $data[$key];
+    }
+    return $data;
+  }
+  
   // map
   
   // reduce

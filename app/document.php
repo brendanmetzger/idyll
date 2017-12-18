@@ -23,7 +23,7 @@ class Document extends \DOMDocument
     libxml_use_internal_errors(true);
     parent::__construct('1.0', 'UTF-8');
 
-    foreach (array_merge($this->opts, $opts) as $prop => $value) $this->{$prop} = $value;
+    foreach (array_merge($this->opts, $opts) as $p => $v) $this->{$p} = $v;
 
     $this->registerNodeClass('\DOMElement', '\app\Element');
     $this->registerNodeClass('\DOMComment', '\app\Comment');
@@ -33,15 +33,10 @@ class Document extends \DOMDocument
   {
     return file_put_contents($path ?? $this->filepath, $this->saveXML(), LOCK_EX);
   }
-  
 
-  public function find(string $expression, \DOMElement $context = null)
+  public function find(string $path, \DOMElement $context = null): \DOMNodeList
   {
-    if ($this->xpath === null) {
-      $this->xpath = new \DOMXpath($this);
-    }
-    
-    return $this->xpath->query($expression, $context ?: $this->documentElement);
+    return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
   }
 
   public function errors($out = false)

@@ -21,15 +21,19 @@ class View
   public $document;
   public $slugs = [];
   
+  /*
+    TODO
+    [ ] A path that does not load or is broken should throw exception
+  */
   function __construct(string $path)
   {
     $this->document = new \app\document;
     $this->document->load($path, \app\document::LOAD_OPTS);
   }
   
-  public function merge(self $mill)
+  public function merge(self $view)
   {
-    $view = $this->document->importNode($mill->document->documentElement, true);
+    $view = $this->document->importNode($view->document->documentElement, true);
     $this->document->documentElement->appendChild($view);
   }
   
@@ -47,8 +51,9 @@ class View
   /*
     TODO 
     [ ] Make an element of the document object
-    [ ] See if finding all comments and filtering is comperable...
-        $comments->filter(hasPrefix('iterate')) seems way nicer (where command returns a partially applied function)
+    [ ] See if finding all comments and filtering is comparable...
+        $comments->filter(hasPrefix('iterate')) seems way nicer (where hasPrefix returns a partially applied function)
+        - realize this doesn't deal with nested iterations.. :-/
   */
   public function getStubs($prefix)
   {
@@ -70,7 +75,6 @@ class View
     return $this->slugs || (function (&$slugs) {
       
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
-      
       foreach ( $this->document->find("//*[ {$query} ] | //*/@*[ {$query} ]") as $placeholder ) {        
         $placeholder->nodeValue = substr($placeholder->nodeValue, 1,-1); // trim opening brackets
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $placeholder->nodeValue, $matches, PREG_OFFSET_CAPTURE);

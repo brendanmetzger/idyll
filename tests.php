@@ -38,14 +38,7 @@ $data = [
   ]
 ];
 
-function getData(array $tree, array $data)
-{
-  // throw an exception if no key
-  while ($key = array_shift($tree)) {
-     $data = $data[$key];
-  }
-  return $data;
-}
+
 
 
 
