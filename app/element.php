@@ -12,26 +12,25 @@ class Element extends \DOMElement implements \ArrayAccess
     return $parent->appendChild($this);
   }
 
-
-  public function getFirst($nodeName, $offset = 0, $append = true)
+  /*
+    TODO 
+    [ ] create recursive function to deal with paths insead of tags
+       (ex, ->select('a/b[@c]') that doesn't exist should create and append <a><b c=""/></a>, )
+  */
+  public function select(string $tag, int $offset = 0): self
   {
-    $result = $this->getElementsByTagName($nodeName);
-    if ($offset >= 0 && $result->length > $offset) {
-      return $result->item($offset);
-    } else {
-      $elem = new self($nodeName, null);
-      if ($append) {
-        $this->appendChild($elem);
-      }
-      return $elem;
-    }
+    $nodes = $this->selectAll($tag);
+    return $nodes->length > $offset ? $nodes[$offset] : $this->appendChild(new self($tag)); 
+  }
+  
+  public function selectAll(string $path)
+  {
+    return $this->ownerDocument->find($path, $this);
   }
 
-  public function getElement($nodeName, $offset = 0, $append = true)
-  {
-    return $this->getFirst($nodeName, $offset, $append);
-  }
-
+  /*
+    TODO test/make legit
+  */
   public function offsetExists($offset)
   {
     return true;
@@ -42,7 +41,7 @@ class Element extends \DOMElement implements \ArrayAccess
     if (substr($offset, 0,1) === '@') {
       return $this->getAttribute(substr($offset, 1));
     } else {
-      return new Iterator($this->getElementsByTagName($offset));
+      return $this->selectAll($offset);
     }
   }
 
@@ -51,15 +50,8 @@ class Element extends \DOMElement implements \ArrayAccess
     if (substr($offset, 0,1) === '@') {
       return $this->setAttribute(substr($offset, 1), $value);
     } else {
-      return $this->getFirst($offset)->setNodeValue($value);
+      return $this->select($offset)($value);
     }
-  }
-
-  public function setNodeValue($string)
-  {
-    if (empty($string)) return;
-    $this->nodeValue = htmlentities($string, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
-    return $this;
   }
 
   public function offsetUnset($offset)
@@ -83,15 +75,17 @@ class Element extends \DOMElement implements \ArrayAccess
     }
     return $matches;
   }
-
-  public function find($expression)
-  {
-    return $this->ownerDocument->find($expression, $this);
-  }
+  
 
   public function __toString()
   {
     return $this->nodeValue;
+  }
+  
+  public function __invoke(string $string): self
+  {
+    $this->nodeValue = htmlentities($string, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
+    return $this;
   }
 
 

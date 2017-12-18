@@ -19,4 +19,9 @@ $request->listen('http', function ($params) {
 });
 
 
-echo new Response($request);
+try {
+  echo new Response($request);
+} catch (\Exception $e) {
+  print_r($e);
+}
+

@@ -27,6 +27,7 @@ class Document extends \DOMDocument
 
     $this->registerNodeClass('\DOMElement', '\app\Element');
     $this->registerNodeClass('\DOMComment', '\app\Comment');
+    $this->registerNodeClass('\DOMText', '\app\Text');
   }
 
   public function save($path = null)

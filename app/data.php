@@ -11,8 +11,9 @@ class Data {
     // wrap whatever data that comes... must be iterable.
   }
   
-  // match/pair/tree lookup
+  // Connect/load
   
+  // match/pair/tree lookup
   static public function PAIR(array $tree, array $data)
   {
     while ($key = array_shift($tree)) {

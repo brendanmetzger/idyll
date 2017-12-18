@@ -48,8 +48,8 @@ class Overview extends \app\controller {
 
     // simulate cycle of dada
     foreach ($data as $datum) {
-      foreach ($template->slugs as $slug) {
-        $slug['node']->nodeValue =  \app\data::PAIR($slug['scope'], $datum);
+      foreach ($template->slugs as $slug) {        
+        $slug['node'](\app\data::PAIR($slug['scope'], $datum));
       }
       $layout->merge($template);
     }
