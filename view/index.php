@@ -21,6 +21,9 @@ $request->listen('http', function ($params) {
 
 try {
   echo new Response($request);
+} catch (\TypeError $e) {
+  // Type errors will be called when arguments to methods are incorrect.
+  print_r($e);
 } catch (\Exception $e) {
   print_r($e);
 }

@@ -12,8 +12,10 @@ class Overview extends \app\controller {
     return false;
   }
   
-  public function GETindex()
+  public function GETindex(float $number = 0)
   {
+    print_r($number);
+    print_r(gettype($number));
     $data = [
       [
         'id' => '9876AB',
