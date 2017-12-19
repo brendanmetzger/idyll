@@ -4,22 +4,33 @@ namespace app;
 
 class Request {
   
-  private $protocol,
+  public  $route,
+          $params,
+          $protocol,
           $method,
+          $type,
           $redirect,
           $uri,
           $listeners = [];
 
+  /*
+    TODO 
+    [ ] deal with cookies
+    [ ] deal with post/get
+  */
   public function __construct(array $server, array $request)
   {
+    $this->route    = array_filter($request['_r_']);
+    $this->params   = array_filter(explode('/', $request['_p_']));
+    $this->type     = $request['_e_'] ?: 'html';
+    print_r($this->type);
     $this->protocol = 'http';
     $this->method   = $server['REQUEST_METHOD'] ?? 'CLI';
-    $this->redirect = $server['HTTP_REFERER'] ?? '/';
     $this->uri      = $server['REQUEST_URI'];
   }
 
   /*
-    TODO much tinkering to do here
+    TODO much tinkering to do here, not quite working [TYPES ARE AUTOMATICALLY CONVERTED]
   */
   private function filter(\ReflectionMethod $action, array $params)
   {
@@ -47,14 +58,13 @@ class Request {
     [ ] consider if it would be more elegant to have authenticate stay a method of the parent
         that executes the action of a child (which is allowed as a protected method).
   */
-  public function delegate(string $class, string $method, array $params)
+  public function delegate(array $route, array $params)
   {
-    $controller = new \ReflectionClass('\\controller\\' . $class);
-    $action     = $controller->getMethod($this->method . $method);
-    // $params     = $this->filter($action, $params);
+    $controller = new \ReflectionClass('\\controller\\' . $route[0]);
+    $action     = $controller->getMethod($this->method . $route[1]);
     $instance   = $controller->newInstance($this);
     
-    if ( $action->isProtected() && $user = $instance->authenticate($this->request) ) {
+    if ( $action->isProtected() && $user = $instance->authenticate() ) {
       $action->setAccessible(true);
       array_unshift($params, $user);
     }

@@ -15,14 +15,20 @@ spl_autoload_register(function ($classname) {
 # EXECUTE the application.
 $request = new Request($_SERVER, $_REQUEST);
 $request->listen('http', function ($params) {
-  return $this->delegate('overview', 'index', $params);
+  return $this->delegate(array_replace(['overview', 'index'], $this->route), $this->params);
 });
 
 
 try {
   echo new Response($request);
 } catch (\TypeError $e) {
-  // Type errors will be called when arguments to methods are incorrect.
+  /*
+   TODO
+   [ ] Show appropriate message when controller not found/incorrect
+   [ ] "                        for action
+   [ ] "                        for protected methods 
+  
+  */
   print_r($e);
 } catch (\Exception $e) {
   print_r($e);

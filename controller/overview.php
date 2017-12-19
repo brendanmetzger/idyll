@@ -1,5 +1,7 @@
 <?php
 namespace controller;
+
+
 class Overview extends \app\controller {
   
   public function __construct()
@@ -12,10 +14,23 @@ class Overview extends \app\controller {
     return false;
   }
   
-  public function GETindex(float $number = 0)
+  public function GETspecial(int $int, int $string, float $float)
   {
-    print_r($number);
-    print_r(gettype($number));
+    echo "<pre>";
+    
+    echo $int . "\n\n";
+    
+    echo $string . "\n\n";
+    
+    echo $float . "\n\n";
+    
+    echo "</pre>";
+    
+    return '';
+  }
+  
+  public function GETindex(string $number = '0')
+  {
     $data = [
       [
         'id' => '9876AB',
@@ -43,7 +58,7 @@ class Overview extends \app\controller {
       ]
     ];
     
-    $layout = new \app\view('layout.html');
+    $layout   = new \app\view('layout.html');
     $template = new \app\view('about.html');
     $template->getSlugs();
 

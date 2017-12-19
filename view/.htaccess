@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteOptions Inherit
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([A-z]*)\/?([A-z]*)\/?((?:[A-z0-9-:\/_*=]|\.[^A-z])*)(?:\.(html|xml|css|js|svg|json|jpe?g|png))?$ index.php?_r_[]=$1&_r_[]=$2&_p_=$3&_e_=$4 [B,QSA,L]
