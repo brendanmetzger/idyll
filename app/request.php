@@ -6,7 +6,6 @@ class Request {
   
   private $type,
           $redirect,
-          $format,
           $uri,
           $listeners = [];
 
@@ -26,6 +25,12 @@ class Request {
     return $this->listeners['http']->call($this, ['data']);
   }
   
+  /*
+    TODO 
+    [ ] get expected param types and typecast all data!
+    [ ] consider if it would be more elegant to have authenticate stay a method of the parent
+        that executes the action of a child (which is allowed as a protected method).
+  */
   public function delegate(string $class, string $method, array $params)
   {
     $controller = new \ReflectionClass('\\controller\\' . $class);
@@ -36,7 +41,7 @@ class Request {
       $action->setAccessible(true);
       array_unshift($params, $user);
     }
-
+    
     return $action->invokeArgs($instance, $params);
   }
 }

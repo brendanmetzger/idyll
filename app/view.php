@@ -52,7 +52,7 @@ class View
     TODO 
     [ ] Make an element of the document object
     [ ] See if finding all comments and filtering is comparable...
-        $comments->filter(hasPrefix('iterate')) seems way nicer (where hasPrefix returns a partially applied function)
+        $comments->filter(\app\text::hasPrefix('iterate')) seems way nicer (where hasPrefix returns a partially applied function)
         - realize this doesn't deal with nested iterations.. :-/
   */
   public function getStubs($prefix)
