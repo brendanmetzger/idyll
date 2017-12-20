@@ -79,8 +79,8 @@ class View
         $placeholder->nodeValue = substr($placeholder->nodeValue, 1,-1); // trim opening brackets
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $placeholder->nodeValue, $matches, PREG_OFFSET_CAPTURE);
         
-        foreach (array_reverse($matches[0]) as $m) { // start from end b/c of numerical offsets
-          $slug = $placeholder->firstChild->splitText($m[1])->splitText(strlen($m[0]))->previousSibling;
+        foreach (array_reverse($matches[0]) as [$key, $pos]) { // start from end b/c of numerical offsets
+          $slug = $placeholder->firstChild->splitText($pos)->splitText(strlen($key))->previousSibling;
           $slug->nodeValue = substr($slug->nodeValue, 1);
           if ($slug->nodeValue[0] != '$') {
             $slugs[] = [ 'node' => $slug, 'scope' => explode(':', $slug->nodeValue) ];

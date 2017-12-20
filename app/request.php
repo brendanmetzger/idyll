@@ -6,27 +6,34 @@ class Request {
   
   public  $route,
           $params,
-          $protocol,
+          $scheme,
           $method,
-          $type,
+          $format,
           $redirect,
-          $uri,
+          $server,
           $listeners = [];
 
   /*
-    TODO 
+    TODO
+    [ ] set up request based on time
     [ ] deal with cookies
     [ ] deal with post/get
   */
   public function __construct(array $server, array $request)
   {
-    $this->route    = array_filter($request['_r_']);
-    $this->params   = array_filter(explode('/', $request['_p_']));
-    $this->type     = $request['_e_'] ?: 'html';
-    print_r($this->type);
-    $this->protocol = 'http';
-    $this->method   = $server['REQUEST_METHOD'] ?? 'CLI';
-    $this->uri      = $server['REQUEST_URI'];
+    if (! $this->method = @$server['REQUEST_METHOD']) {
+      $this->method = 'CLI';
+      $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
+      $this->params = array_slice($_SERVER['argv'], 2);
+      $this->format = 'txt';
+      $this->scheme = 'repl';
+    } else {
+      $this->route  = array_filter($request['_r_']);
+      $this->params = array_filter(explode('/', $request['_p_']));
+      $this->format = $request['_e_'] ?: 'html';
+      $this->scheme = 'http';
+    }
+    $this->server = $server;
   }
 
   /*
@@ -40,8 +47,8 @@ class Request {
     return $params;
   }
   
-  public function listen (string $protocol, callable $callback) {
-    $this->listeners[$protocol] = $callback;
+  public function listen (string $scheme, callable $callback): void {
+    $this->listeners[$scheme] = $callback;
   }
   
   /*
@@ -49,7 +56,7 @@ class Request {
   */
   public function respond()
   {
-    return $this->listeners[$this->protocol]->call($this, ['0.6']);
+    return $this->listeners[$this->scheme]->call($this, ['0.6']);
   }
   
   /*

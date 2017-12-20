@@ -36,12 +36,7 @@ class Response {
   
   public function package()
   {
-    // set headers (if HTTP);
+    // set headers (if HTTP [content-type, status, etc]);
     return $this->request->respond();
-  }
-  
-  public function __toString()
-  {
-    return $this->package();
   }
 }
