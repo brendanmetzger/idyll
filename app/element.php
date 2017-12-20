@@ -27,6 +27,11 @@ class Element extends \DOMElement implements \ArrayAccess
   {
     return $this->ownerDocument->find($path, $this);
   }
+  
+  public function merge($data)
+  {
+    // TODO figure out merge strategy
+  }
 
   /*
     TODO test/make legit
@@ -38,6 +43,7 @@ class Element extends \DOMElement implements \ArrayAccess
 
   public function offsetGet($offset)
   {
+    print_r($offset);
     if (substr($offset, 0,1) === '@') {
       return $this->getAttribute(substr($offset, 1));
     } else {

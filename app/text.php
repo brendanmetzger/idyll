@@ -5,7 +5,7 @@ namespace app;
 */
 class Text extends \DOMTExt
 {
-  public function __invoke(string $string): self
+  public function __invoke(?string $string): self
   {
     $this->nodeValue = strip_tags($string);
     return $this;

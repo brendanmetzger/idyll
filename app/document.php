@@ -23,11 +23,15 @@ class Document extends \DOMDocument
     libxml_use_internal_errors(true);
     parent::__construct('1.0', 'UTF-8');
 
-    foreach (array_merge($this->opts, $opts) as $p => $v) $this->{$p} = $v;
+    foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
 
     $this->registerNodeClass('\DOMElement', '\app\Element');
     $this->registerNodeClass('\DOMComment', '\app\Comment');
     $this->registerNodeClass('\DOMText', '\app\Text');
+    
+    if ($path) {
+      $this->load($path, self::LOAD_OPTS);
+    }
   }
 
   public function save($path = null)

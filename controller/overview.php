@@ -31,42 +31,18 @@ class Overview extends \app\controller {
   
   public function GETindex(string $number = '0')
   {
-    $data = [
-      [
-        'id' => '9876AB',
-        'text' => 'First Item',
-        'date' => [
-          'formatted' => '10/22/83',
-          'day'       => 'Tuesday',
-          'month'     => 'October',
-        ],
-        'name' => [
-          'first' => 'Dean',
-        ],
-      ],
-      [
-        'id' => '774343',
-        'text' => 'Second Item',
-        'date' => [
-          'formatted' => '01/18/83',
-          'day'       => 'Monday',
-          'month'     => 'January',
-        ],
-        'name' => [
-          'first' => 'Bean',
-        ],
-      ]
-    ];
-    
+    // singular
+    $m = new \model\item('ABC');
+        
     $layout   = new \app\view('layout.html');
     $template = new \app\view('about.html');
     $template->getSlugs();
 
 
-    // simulate cycle of dada
-    foreach ($data as $datum) {
+    // simulate cycle of data
+    foreach (\model\item::list('/items/item') as $item) {
       foreach ($template->slugs as $slug) {        
-        $slug['node'](\app\data::PAIR($slug['scope'], $datum));
+        $slug['node'](\app\data::PAIR($slug['scope'], $item));
       }
       $layout->merge($template);
     }

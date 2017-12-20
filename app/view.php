@@ -12,7 +12,7 @@ namespace app;
 *     [ ] an array of removals containting getNodePath()'s could be used to target removals and looped/reset effciently
 *     [ ] this would have to be done in reverse, as document would change as removals are processed
 * [x] should swap placeholder values with real values
-
+*
 */
 
 class View

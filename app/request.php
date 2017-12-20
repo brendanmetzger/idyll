@@ -51,9 +51,6 @@ class Request {
     $this->listeners[$scheme] = $callback;
   }
   
-  /*
-    TODO Catch typeerrors here
-  */
   public function respond()
   {
     return $this->listeners[$this->scheme]->call($this, ['0.6']);

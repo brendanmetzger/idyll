@@ -25,7 +25,7 @@ $request->listen('repl', function ($params) {
 
 try {
   echo (new Response($request))->package();
-} catch (\TypeError | \ReflectionException $e) {
+} catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
    TODO
    [x] PHP 7.1+ allows piping exceptions - employ

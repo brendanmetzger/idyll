@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--/var/www/Documents/Draft/data/ -->
+<!DOCTYPE items SYSTEM "/var/www/Documents/Draft/data/item.dtd">
+<items>
+  <item id="ABC" title="The First Item">
+    <date begin="2010-10-09" end="2010-10-10"/>
+    <name first="Orson" last="Bean"/>
+    <text>First item text</text>
+  </item>
+  <item id="DEF" title="The Second Item">
+    <date begin="2011-07-09" end="2011-08-10"/>
+    <name first="Albinka" last="Albin"/>
+    <text>Second Item text.</text>
+  </item>
+</items>
