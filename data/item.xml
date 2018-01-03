@@ -5,11 +5,11 @@
   <item id="ABC" title="The First Item">
     <date begin="2010-10-09" end="2010-10-10"/>
     <name first="Orson" last="Bean"/>
-    <text>First item text</text>
+    <text>Franzen squid asymmetrical gastropub, sustainable affogato fashion axe godard pug next level shaman vaporware mixtape woke. Tbh keytar cornhole, YOLO intelligentsia banh mi church-key normcore. Ennui shaman XOXO lyft snackwave. Squid yuccie pickled shabby chic keffiyeh tofu. Kale chips man braid twee marfa lyft four dollar toast put a bird on it before they sold out.</text>
   </item>
   <item id="DEF" title="The Second Item">
     <date begin="2011-07-09" end="2011-08-10"/>
     <name first="Albinka" last="Albin"/>
-    <text>Second Item text.</text>
+    <text>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</text>
   </item>
 </items>

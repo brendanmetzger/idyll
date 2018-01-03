@@ -41,7 +41,7 @@ class Overview extends \app\controller {
 
     // simulate cycle of data
     foreach (\model\item::list('/items/item') as $item) {
-      foreach ($template->slugs as $slug) {        
+      foreach ($template->slugs as $slug) {
         $slug['node'](\app\data::PAIR($slug['scope'], $item));
       }
       $layout->merge($template);

@@ -43,11 +43,10 @@ class Element extends \DOMElement implements \ArrayAccess
 
   public function offsetGet($offset)
   {
-    print_r($offset);
-    if (substr($offset, 0,1) === '@') {
+    if ($offset[0] === '@') {
       return $this->getAttribute(substr($offset, 1));
     } else {
-      return $this->selectAll($offset);
+      return $this->select($offset);
     }
   }
 
@@ -62,24 +61,14 @@ class Element extends \DOMElement implements \ArrayAccess
 
   public function offsetUnset($offset)
   {
-    return null;
+    $node = $this->select($offset);
+    return $node->parentNode->removeChild($node);
   }
 
   public function getIndex()
   {
     $index = (int)preg_replace('/[^0-9]*([0-9]+)/', '$1', substr($this->getNodePath(), strlen($this->parentNode->getNodePath()), -1));
     return $index === 0 ? $index : $index - 1;
-  }
-
-  /*
-    TODO should be handled in data object
-  */
-  public function replaceArrayValues(array $matches)
-  {
-    foreach ($matches as $key => &$match) {
-      $match = htmlentities(\bloc\registry::getNamespace($match, $this), ENT_COMPAT|ENT_XML1, 'UTF-8', false);
-    }
-    return $matches;
   }
   
 

@@ -1,7 +1,7 @@
 <?php
 namespace app;
 
-class model {
+class model implements \ArrayAccess {
   
   protected $context;
 
@@ -27,5 +27,26 @@ class model {
     return data::use(static::SOURCE, $path ?: static::PATH)->map(function($item) {
       return new static($item);
     });
+  }
+  
+  public function offsetExists($offset)
+  {
+    return ! is_null($this->context);
+  }
+
+  public function offsetGet($offset)
+  {
+    return $this->context[$offset];
+  }
+
+  public function offSetSet($offset, $value)
+  {
+    return $this->context[$value];
+  }
+
+  public function offsetUnset($offset)
+  {
+    unset($this->context[$offset]);
+    return true;
   }
 }

@@ -11,10 +11,10 @@ class Data implements \iterator {
   private static $sources = [];
   
   // match/pair/tree lookup
-  static public function PAIR(array $tree, $dataset)
+  static public function PAIR(array $tree, $data)
   {
     while ($key = array_shift($tree)) {
-       $data = $dataset[$key];
+       $data = $data[$key];
     }
     return $data;
   }
@@ -29,8 +29,8 @@ class Data implements \iterator {
 
   private $source,
           $dataset,
-          $position  = 0,
-          $callbacks = [];
+          $cursor = 0,
+          $maps   = [];
   
   public function __construct(iterable $data, $source)
   {
@@ -40,8 +40,8 @@ class Data implements \iterator {
   
   public function current()
   {
-    $current = $this->dataset[$this->position];
-    foreach ($this->callbacks as $callback) {
+    $current = $this->dataset[$this->cursor];
+    foreach ($this->maps as $callback) {
       $current = $callback($current);
     }
     return $current;
@@ -49,28 +49,31 @@ class Data implements \iterator {
   
   public function key()
   {
-    return $this->position;
+    return $this->cursor;
   }
   
   public function next()
   {
-    return ++$this->position;
+    return ++$this->cursor;
   }
   
   public function rewind()
   {
-    $this->position = 0;
+    $this->cursor = 0;
   }
   
   public function valid()
   {
-    return isset($this->dataset[$this->position]);
+    return isset($this->dataset[$this->cursor]);
   }
   
-  // map, define callback
+  /* This is really more a compose typo of operation
+     as you can apply a map callback that won't be executed
+     until iteration is started by another process
+  */
   public function map(callable $callback)
   {
-    $this->callbacks[] = $callback;
+    $this->maps[] = $callback;
     return $this;
   }
   
