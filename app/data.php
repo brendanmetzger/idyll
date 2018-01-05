@@ -1,6 +1,6 @@
 <?php
 namespace app;
-
+require_once 'dom.php';
 /*
   TODO
   [ ] this needs to be an iterator/traversable 

@@ -67,8 +67,7 @@ class View
   
   /*
     TODO
-    [ ] make a method of the element object (as this is finding elements);
-    [ ] something like getVariables() would be better
+    [ ] ? make a method of the element object (as this is finding elements);
   */
   public function getSlugs()
   {

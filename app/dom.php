@@ -6,25 +6,15 @@ class Document extends \DOMDocument
   const LOAD_OPTS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT;
   
   private $xpath = null,
-          $opts  = [
-            'encoding'           => 'UTF-8',
-            'preserveWhiteSpace' => false,
-            'validateOnParse'    => false,
-            'formatOutput'       => true,
-            'resolveExternals'   => true,
-          ];
+          $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
+                     'resolveExternals'   => true , 'validateOnParse' => false ];
   
   function __construct($path = null, $opts = [])
   {
     libxml_use_internal_errors(true);
     parent::__construct('1.0', 'UTF-8');
-
     foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
-
-    $this->registerNodeClass('\DOMElement', '\app\Element');
-    $this->registerNodeClass('\DOMComment', '\app\Comment');
-    $this->registerNodeClass('\DOMText', '\app\Text');
-    $this->registerNodeClass('\DOMAttr', '\app\Attr');
+    foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\app\\{$c}");
     
     if ($path) {
       $this->load($path, self::LOAD_OPTS);
@@ -51,13 +41,6 @@ class Document extends \DOMDocument
 
 
 /**
-* Node
-*/
-class Node extends \DOMNode
-{
-}
-
-/**
 * Text
 */
 class Text extends \DOMText
@@ -78,6 +61,7 @@ class Text extends \DOMText
   }
 }
 
+
 /**
 * Attr
 */
@@ -88,6 +72,7 @@ class Attr extends \DOMAttr
     $this->value = $value;
   }
 }
+
 
 /**
 * Comment
@@ -102,10 +87,6 @@ class Comment extends \DOMComment
 */
 class Element extends \DOMElement implements \ArrayAccess
 {
-  public function insert(\DOMNode $parent)
-  {
-    return $parent->appendChild($this);
-  }
 
   public function select(string $tag, int $offset = 0): self
   {
@@ -151,13 +132,6 @@ class Element extends \DOMElement implements \ArrayAccess
     // will need to removeChild if it is an element, and removeAttribute if...
     return false;
   }
-
-  public function getIndex()
-  {
-    $index = (int)preg_replace('/[^0-9]*([0-9]+)/', '$1', substr($this->getNodePath(), strlen($this->parentNode->getNodePath()), -1));
-    return $index === 0 ? $index : $index - 1;
-  }
-  
 
   public function __toString()
   {
