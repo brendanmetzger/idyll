@@ -32,7 +32,6 @@ try {
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
    TODO
-   [x] PHP 7.1+ allows piping exceptions - employ
    [ ] Show appropriate message when controller not found/incorrect
    [ ] "                        for action
    [ ] "                        for protected methods 

@@ -5,13 +5,14 @@ An austere way to develop websites with source code authored and designed to be 
 
 
 ## Principles
+- Minimal Comments and explanations. No hopscotch of opening files and documentation to see what things mean.
 - No dependancies
 - This framework is designed to operate un-cached (caching is easy and often leads to slop)
 - Complete and non-negotiable separation of data/models and viems (templates are *exclusively* html/xml)
 - Minimalist
 - Perfect execution of DOM and output of valid markup
 - markup itself can be utilized as data
-- no component of the application will exceed 100 lines, and no more than 10 components (max 1000 SLOC)
+- no component of the application will exceed ~150 lines, and no more than 5 files (max 1000 SLOC is a goal)
 - Avoid conditions whenever possible
 
 

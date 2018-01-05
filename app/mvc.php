@@ -97,7 +97,7 @@ class View {
     $this->document->documentElement->appendChild($view);
   }
   
-  public function render() {
+  public function render(): string {
     return $this->document->saveXML();
   }
   
@@ -110,8 +110,8 @@ class View {
     return $this->document->find(sprintf($query, $prefix));
   }
   
-  public function getSlugs() {
-    return $this->slugs || ( function (&$out) {
+  public function getSlugs(): array {
+    return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
       foreach ( $this->document->find("//*[ {$query} ] | //*/@*[ {$query} ]") as $slug ) {        
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug(substr($slug, 1,-1)), $match, PREG_OFFSET_CAPTURE);
@@ -123,7 +123,7 @@ class View {
       }
       return $out;
       
-    })( $this->slugs );
+    })($this->slugs);
   }
 }
 
