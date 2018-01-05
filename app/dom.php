@@ -1,38 +1,33 @@
-<?php
-namespace app;
+<?php namespace App;
 
+libxml_use_internal_errors(true);
+
+/****          *************************************************************************************/
 class Document extends \DOMDocument
 {
-  const LOAD_OPTS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT;
-  
   private $xpath = null,
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
-  function __construct($path = null, $opts = [])
-  {
-    libxml_use_internal_errors(true);
+  function __construct($path = null, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
     foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
-    foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\app\\{$c}");
+    foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
     
     if ($path) {
-      $this->load($path, self::LOAD_OPTS);
+      $this->load($path, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT);
     }
   }
 
-  public function save($path = null)
-  {
+  public function save($path = null) {
     return file_put_contents($path ?? $this->filepath, $this->saveXML(), LOCK_EX);
   }
 
-  public function find(string $path, \DOMElement $context = null): \DOMNodeList
-  {
+  public function find(string $path, \DOMElement $context = null): \DOMNodeList {
     return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
   }
 
-  public function errors($out = false)
-  {
+  public function errors($out = false) {
     $errors = libxml_get_errors();
     libxml_clear_errors();
     return $out ? print_r($errors, true) : $errors;
@@ -40,77 +35,64 @@ class Document extends \DOMDocument
 }
 
 
-/**
-* Text
-*/
-class Text extends \DOMText
-{
+/****      *************************************************************************************/
+class Text extends \DOMText {
   
-  public function __invoke(?string $string): self
-  {
+  public function __invoke(?string $string): self {
     $this->nodeValue = strip_tags($string);
     return $this;
   }
   
-  static public function hasPrefix(string $prefix)
-  {
+  static public function hasPrefix(string $prefix) {
     $prefix = trim($prefix);
     return function($text) {
       return substr((string) $text, strlen($prefix)) == $prefix;
     };
   }
+  
+  public function __toString(): string {
+    return $this->nodeValue;
+  }
+  
 }
 
-
-/**
-* Attr
-*/
-class Attr extends \DOMAttr
-{
-  public function __invoke(string $value)
-  {
+/****      *************************************************************************************/
+class Attr extends \DOMAttr {
+  
+  public function __invoke(string $value) {
     $this->value = $value;
+  }
+  
+  public function __toString() {
+    return $this->value;
   }
 }
 
+/****         *************************************************************************************/
+class Comment extends \DOMComment {}
 
-/**
-* Comment
-*/
-class Comment extends \DOMComment
-{
 
-}
+/****         *************************************************************************************/
+class Element extends \DOMElement implements \ArrayAccess {
 
-/**
-* DOM Element Extension
-*/
-class Element extends \DOMElement implements \ArrayAccess
-{
-
-  public function select(string $tag, int $offset = 0): self
-  {
+  public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);
     return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
   }
   
-  public function selectAll(string $path)
-  {
+  public function selectAll(string $path) {
     return $this->ownerDocument->find($path, $this);
   }
   
-  public function merge($data)
-  {
+  public function merge($data) {
     // TODO figure out merge strategy
   }
 
-  public function offsetExists($offset)
-  {
+  public function offsetExists($offset) {
     return $this->selectAll($offset)->length > 0;
   }
 
-  public function offsetGet($offset)
-  {
+  public function offsetGet($offset) {
     if ($offset[0] === '@') {
       return $this->getAttribute(substr($offset, 1)) ?: $this->setAttribute($offset, '');
     } else {
@@ -121,26 +103,22 @@ class Element extends \DOMElement implements \ArrayAccess
     }
   }
 
-  public function offSetSet($offset, $value)
-  {
+  public function offSetSet($offset, $value) {
     return $this[$offset]($value);
   }
 
-  public function offsetUnset($offset)
-  {
-    throw new \Exception("TODO: implement deleting node values", 1);
-    // will need to removeChild if it is an element, and removeAttribute if...
+  public function offsetUnset($offset) {
+    throw new \Exception("TODO: implement deleting node values, (deal with attributes and elements)", 1);
     return false;
   }
 
-  public function __toString()
-  {
+  public function __toString() {
     return $this->nodeValue;
   }
   
-  public function __invoke(string $string): self
-  {
+  public function __invoke(string $string): self {
     $this->nodeValue = htmlentities($string, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
     return $this;
   }
+  
 }

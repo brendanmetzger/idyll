@@ -1,48 +1,29 @@
-<?php
-namespace controller;
+<?php namespace Controller;
 
-
-class Overview extends \app\controller {
+class Overview extends \App\Controller {
   
-  public function __construct()
-  {
+  public function __construct() {
     # code...
   }
   
-  public function authenticate(\app\request $request)
-  {
+  public function authenticate(\app\request $request) {
     return false;
   }
   
-  public function GETspecial(int $int, int $string, float $float)
-  {
-    echo "<pre>";
-    
-    echo $int . "\n\n";
-    
-    echo $string . "\n\n";
-    
-    echo $float . "\n\n";
-    
-    echo "</pre>";
-    
-    return '';
-  }
   
-  public function GETindex(string $number = '0')
-  {
+  public function GETindex() {
     // singular
-    $m = new \model\item('ABC');
+    $m = new \Model\Item('ABC');
         
-    $layout   = new \app\view('layout.html');
-    $template = new \app\view('about.html');
+    $layout   = new \App\View('layout.html');
+    $template = new \App\View('about.html');
     $template->getSlugs();
 
 
     // simulate cycle of data
-    foreach (\model\item::list('/items/item') as $item) {
+    foreach (\Model\Item::list('/items/item') as $item) {
       foreach ($template->slugs as $slug) {
-        $slug['node'](\app\data::PAIR($slug['scope'], $item));
+        $slug['node'](\App\Data::PAIR($slug['scope'], $item));
       }
       $layout->merge($template);
     }

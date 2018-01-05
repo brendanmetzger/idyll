@@ -1,11 +1,9 @@
-<?php
-
-namespace models;
+<?php namespace Models;
 
 /**
  * Person
  */
-class Person extends \app\model
+class Person extends \App\Model
 {
   
   public function authenticate($token)

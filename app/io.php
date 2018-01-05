@@ -1,16 +1,9 @@
-<?php
+<?php namespace App;
 
-namespace app;
-
+/****         *************************************************************************************/
 class Request {
   
-  public  $route,
-          $params,
-          $scheme,
-          $method,
-          $format,
-          $redirect,
-          $server,
+  public  $route, $params, $scheme, $method, $format, $redirect, $server,
           $listeners = [];
 
   /*
@@ -19,8 +12,7 @@ class Request {
     [ ] deal with cookies
     [ ] deal with post/get
   */
-  public function __construct(array $server, array $request)
-  {
+  public function __construct(array $server, array $request) {
     if (! $this->method = @$server['REQUEST_METHOD']) {
       $this->method = 'CLI';
       $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
@@ -39,8 +31,7 @@ class Request {
   /*
     TODO much tinkering to do here, not quite working [TYPES ARE AUTOMATICALLY CONVERTED]
   */
-  private function filter(\ReflectionMethod $action, array $params)
-  {
+  private function filter(\ReflectionMethod $action, array $params) {
     foreach ($action->getParameters() as $index => $arg) {
       settype($params[$index] ?? $arg->getDefaultValue(), $arg->getType());
     }
@@ -51,8 +42,7 @@ class Request {
     $this->listeners[$scheme] = $callback;
   }
   
-  public function respond()
-  {
+  public function respond() {
     return $this->listeners[$this->scheme]->call($this, ['0.6']);
   }
   
@@ -62,8 +52,7 @@ class Request {
     [ ] consider if it would be more elegant to have authenticate stay a method of the parent
         that executes the action of a child (which is allowed as a protected method).
   */
-  public function delegate(array $route, array $params)
-  {
+  public function delegate(array $route, array $params) {
     $controller = new \ReflectionClass('\\controller\\' . $route[0]);
     $action     = $controller->getMethod($this->method . $route[1]);
     $instance   = $controller->newInstance($this);
@@ -74,5 +63,46 @@ class Request {
     }
     
     return $action->invokeArgs($instance, $params);
+  }
+}
+
+
+
+/****          *************************************************************************************/
+class Response {
+  
+  static public function redirect($location_url, $code = 302) {
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+    header("Location: {$location_url}", false, $code);
+    exit();
+  }
+  
+  private $request;
+  
+  public $content = [
+    'html' => 'Content-Type: application/xhtml+xml; charset=utf-8',
+    'json' => 'Content-Type: application/javascript; charset=utf-8',
+    'xml'  => 'Content-Type: text/xml; charset=utf-8',
+    'svg'  => 'Content-Type: image/svg+xml; charset=utf-8',
+    'jpg'  => 'Content-Type: image/jpeg',
+    'js'   => 'Content-Type: application/javascript; charset=utf-8',
+    'css'  => 'Content-Type: text/css; charset=utf-8'
+  ];
+  
+  public $status = [
+    'unauthorized' => 'HTTP/1.0 401 Unauthorized',
+    'incorrect'    => '404',
+  ];
+  
+  
+  public function __construct(Request $request) {
+    $this->request = $request;
+  }
+  
+  public function package() {
+    // set headers (if HTTP [content-type, status, etc]);
+    return $this->request->respond();
   }
 }
