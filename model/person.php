@@ -6,8 +6,7 @@
 class Person extends \App\Model
 {
   
-  public function authenticate($token)
-  {
+  public function authenticate($token) {
     if ($token === $this->context['@access']) {
       return $this;
     }

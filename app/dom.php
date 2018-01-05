@@ -9,14 +9,13 @@ class Document extends \DOMDocument
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
-  function __construct($path = null, $opts = []) {
+  function __construct($path, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
+    
     foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
     foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
     
-    if ($path) {
-      $this->load($path, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT);
-    }
+    $this->load($path, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT);
   }
 
   public function save($path = null) {
@@ -27,27 +26,17 @@ class Document extends \DOMDocument
     return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
   }
 
-  public function errors($out = false) {
-    $errors = libxml_get_errors();
-    libxml_clear_errors();
-    return $out ? print_r($errors, true) : $errors;
+  public function errors() {
+    return libxml_get_errors();
   }
 }
 
-
 /****      *************************************************************************************/
 class Text extends \DOMText {
-  
+
   public function __invoke(?string $string): self {
     $this->nodeValue = strip_tags($string);
     return $this;
-  }
-  
-  static public function hasPrefix(string $prefix) {
-    $prefix = trim($prefix);
-    return function($text) {
-      return substr((string) $text, strlen($prefix)) == $prefix;
-    };
   }
   
   public function __toString(): string {
@@ -69,7 +58,14 @@ class Attr extends \DOMAttr {
 }
 
 /****         *************************************************************************************/
-class Comment extends \DOMComment {}
+class Comment extends \DOMComment {
+  static public function hasPrefix(string $prefix) {
+    $prefix = trim($prefix);
+    return function($text) {
+      return substr((string) $text, strlen($prefix)) == $prefix;
+    };
+  }
+}
 
 
 /****         *************************************************************************************/
@@ -84,7 +80,7 @@ class Element extends \DOMElement implements \ArrayAccess {
     return $this->ownerDocument->find($path, $this);
   }
   
-  public function merge($data) {
+  public function merge(array $data) {
     // TODO figure out merge strategy
   }
 

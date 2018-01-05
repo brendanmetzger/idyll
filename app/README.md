@@ -1,20 +1,22 @@
 # Application Philosophy
 
-## The View Component
+## The MVC File Components
 
+### The View Class
 The view component mingles documents and elements into larger documents (and perhaps elements). It is responsible for coordinating modeled data into placeholder values into the template. It handles rendering, and before/after filtering of output
 
-## The Controller Component
+### The Controller Class
 
 Provides some default methods and enforces some abstract methods when setting up a new controller
 
-## The Model Component
+### The Model Class
 
-## The Request Component
+## The IO File Components
+### The Request Class
 
 The request component parses and determines the criteria necessary to take further action. It also accepts responsibility for delegating to the appropriate controller.
 
-## The Response Component
+### The Response Class
 
 ## The Data Component
 
@@ -22,7 +24,7 @@ The data component has two functions, the first is to provide a quick interface 
 
 The data component requires the DOM components, which I've included in one file because they work as a system and it cuts the cross referencing down quite a bit.
 
-## The DOM Components
+## The DOM File Components
 
 This framework is authored from an appreciation of the *Document Object Model*. As much as possible, those patterns are utilized, but in order to compose more complicated documents, the DOMDocument object is extended to provide more parsing and rendering capabilities.
 

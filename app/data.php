@@ -1,12 +1,6 @@
 <?php namespace App;
 
 
-/* TODO
-[ ] this needs to be an iterator/traversable 
-[ ] add adapters so that all data is treated the same (nodelist, array, etc.) in terms of the map/reduce type things
-*/
-
-
 /****      *************************************************************************************/
 class Data implements \iterator {
   
@@ -28,14 +22,12 @@ class Data implements \iterator {
           $maps   = [];
   
   
-  public function __construct(iterable $data, $source)
-  {
+  public function __construct(iterable $data, $source) {
     $this->dataset = $data;
     $this->source  = self::$sources[$source];
   }
   
-  public function current()
-  {
+  public function current() {
     $current = $this->dataset[$this->cursor];
     foreach ($this->maps as $callback) $current = $callback($current);
     return $current;
@@ -46,40 +38,33 @@ class Data implements \iterator {
     return $this->cursor;
   }
   
-  public function next()
-  {
+  public function next() {
     return ++$this->cursor;
   }
   
-  public function rewind()
-  {
+  public function rewind() {
     $this->cursor = 0;
   }
   
-  public function valid()
-  {
+  public function valid() {
     return isset($this->dataset[$this->cursor]);
   }
   
-  public function map(callable $callback)
-  {
+  public function map(callable $callback) {
     $this->maps[] = $callback;
     return $this;
   }
   
-  public function sort(callable $callback)
-  {
+  public function sort(callable $callback) {
     $this->uasort($callback);
     return $this;
   }
   
-  public function filter(callable $callback)
-  {
+  public function filter(callable $callback) {
     return new \CallbackFilterIterator($this, $callback);
   }
 
-  public function limit($start, $length)
-  {
+  public function limit($start, $length) {
     return new \LimitIterator($this, $start, $length);
   }
 }
