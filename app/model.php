@@ -9,7 +9,7 @@ class model implements \ArrayAccess {
   {
     if ($context instanceof Element) {
       $this->context = $context;
-    } else if ($data === null && ! $this->context = data::use(static::SOURCE)->getElementById($context)){
+    } else if ($data === null && ! $this->context = $this->authenticate($context)){
       throw new \InvalidArgumentException("The item specified does not exist.", 1);
     } else {
       // TODO determine how to create a new item
@@ -29,6 +29,14 @@ class model implements \ArrayAccess {
     });
   }
   
+  public function authenticate($criteria)
+  {
+    if (! $item = data::use(static::SOURCE)->getElementById($criteria)) {
+      throw new \Exception("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type)", 1);
+    }
+    return $item;
+  }
+  
   public function offsetExists($offset)
   {
     return ! is_null($this->context);
@@ -36,7 +44,9 @@ class model implements \ArrayAccess {
 
   public function offsetGet($offset)
   {
-    return $this->context[$offset];
+    $method = "get{$offset}";
+    $context = $this->context[$offset];
+    return method_exists($this, $method) ? $this->{$method}($context) : $context;
   }
 
   public function offSetSet($offset, $value)
@@ -49,4 +59,5 @@ class model implements \ArrayAccess {
     unset($this->context[$offset]);
     return true;
   }
+  
 }
