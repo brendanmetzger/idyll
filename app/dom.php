@@ -33,7 +33,13 @@ class Document extends \DOMDocument
 
 /****      *************************************************************************************/
 class Text extends \DOMText {
-
+  static public function hasPrefix(string $prefix) {
+    $prefix = trim($prefix);
+    $length = strlen($prefix);
+    return function($text) {
+      return substr($text, 0, $length) == $prefix;
+    };
+  }
   public function __invoke(?string $string): self {
     $this->nodeValue = strip_tags($string);
     return $this;
@@ -48,8 +54,9 @@ class Text extends \DOMText {
 /****      *************************************************************************************/
 class Attr extends \DOMAttr {
   
-  public function __invoke(string $value) {
+  public function __invoke(?string $value) {
     $this->value = $value;
+    return $this;
   }
   
   public function __toString() {
@@ -59,12 +66,7 @@ class Attr extends \DOMAttr {
 
 /****         *************************************************************************************/
 class Comment extends \DOMComment {
-  static public function hasPrefix(string $prefix) {
-    $prefix = trim($prefix);
-    return function($text) {
-      return substr((string) $text, strlen($prefix)) == $prefix;
-    };
-  }
+  
 }
 
 

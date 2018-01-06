@@ -5,11 +5,11 @@ class Model implements \ArrayAccess {
   
   protected $context;
 
-  public function __construct($context, $data = null)
+  public function __construct($context, array $data = [])
   {
     if ($context instanceof Element) {
       $this->context = $context;
-    } else if ($data === null && ! $this->context = $this->authenticate($context)){
+    } else if (empty($data) && ! $this->context = $this->authenticate($context)){
       throw new \InvalidArgumentException("The item specified does not exist.", 1);
     } else {
       // TODO determine how to create a new item
@@ -23,6 +23,7 @@ class Model implements \ArrayAccess {
   
   static public function LIST(?string $path = null): \App\Data {
     return Data::use(static::SOURCE, $path ?: static::PATH)->map(function($item) {
+      // this should be a factory: if path is not standard, may be a different model
       return new static($item);
     });
   }
@@ -92,22 +93,35 @@ class View {
     $this->document = new \app\document($path);
   }
   
-  public function merge(self $view) {
+  public function merge(self $view, \DOMNode $reference = null) {
     $view = $this->document->importNode($view->document->documentElement, true);
-    $this->document->documentElement->appendChild($view);
+    if ($reference) {
+      $reference->parentNode->insertBefore($view, $reference->nextSibling);
+    } else {
+      $this->document->documentElement->appendChild($view);
+    }
+    
   }
   
   public function render(): string {
+    
+    $this->getStubs('insert');
+    
     return $this->document->saveXML();
   }
   
   public function getStubs($prefix) {
     $query = "./descendant::comment()[ starts-with(normalize-space(.), '%s') ]";
-    
+
     if ( $prefix == 'iterate' ) {
       $query = substr($query, 0, -1) . 'and not(./ancestor::*/preceding-sibling::comment()[iterate]) ]';
     }
-    return $this->document->find(sprintf($query, $prefix));
+    
+    foreach ($this->document->find(sprintf($query, $prefix)) as $stub) {
+      [$method, $path] = preg_split('/\s+/', trim($stub->nodeValue));
+      $this->{$method}($path, $stub);
+    }
+    return true;
   }
   
   public function getSlugs(): array {
@@ -125,6 +139,12 @@ class View {
       
     })($this->slugs);
   }
+  
+  private function insert(string $path, \DOMComment $reference) {
+    // make new self, insert!
+    $this->merge(new self($path), $reference);
+  }
+  
 }
 
 /*************            *************************************************************************************/

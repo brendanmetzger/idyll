@@ -1,20 +1,18 @@
 # Application Philosophy
 
-From years of reading code and debugging projects, I've come to realize that Occam's Razor is a fun idea, but all too many authors of program code let these principles slide when trying to make more safe, more powerful, more widely useful projects. I've opted for an approach that aim's closer to the Razor, and let's be clear,  Razor's are not inherently safe (principle A), nor are they inherently powerful (Principle B) and they have limited uses (Principle C). Here goes...
+After years of authoring code and debugging projects—often projects which I did not write—I've come closer and close to trying to make my own version of a really good framework, and the philosophy can be centered around the ideal of "do the absolute (absolute) minimum". As a general design philosophy this is [Occam's Razor](https://en.wikipedia.org/wiki/Occam's_razor)-esque, and the thinking goes, given two solutions to a problem or hypothesis, the simpler one is the better one . Many authors and designers of things omit such principles when trying to make more safe, more powerful, more widely useful products.
 
-### Principle A: safety
+So, philosophically, I've opted for an approach that aim's closer to the law of parsimony; so let's be clear, razor's are not wholly safe (principle A), nor are they inherently powerful (Principle B) and they have limited uses (Principle C). Here goes...
 
-I've recently developed a fascination for small engines, particularly 2-stroke chainsaws (people get rid of them for next to nothing when they stop running well). A two-stroke engine can be temperamental, it may refuse to run or it may just run poorly. The thing is though, they are simple enough to be understood, and if you tinker long enough, they are usually fix-able. And the best part, *you don't even have to be that knowledgeable about engines*. Patience is the key here, and that is the dangerous part. To fix a problem with a simple machine, you have to understand the machine, its quirks, *its essence* and then one marvels at the edification thes mechanics can offer (yes, zen).  Mind, this is really only possible because such machines are small.
+### Principle A: Safety (or the necessity of being in control and assuming risk)
 
-This application is small, it works, it has tight constraints, and I think it is  worth taking apart!
+I have a fascination for small engines (particularly chainsaws). A two-stroke engine may become temperamental over time with heavy use and poor maintenance—it may start poorly, it may refuse to run entirely. However, given some inspection, they are able to be understood piece by piece, even without a manual. If you tinker long enough, often a fix is imminent if one takes care to understand the function of each individual piece. Patience is the key here—and lack of it is the dangerous part—skipping or misunderstanding components doesn't produce the results that you intend. To fix a problem with a simple machine, you understand the machine, that is, the necessity of every component. I feel edified through this process, and I'm able to make better decisions than I might out of the blue, because the pattern challenges me to exist within its bounds.  Mind, this is really only possible because such machines are small and you don't need a sprawling shop and tools galore, just a workbench.
 
-### Principle B: Powerful
-Let me riff on the chainsaw for a few more seconds. Chainsaws cannot tow a boat down the expressway at 75mph, but, they are quite impressive in their intended context. Developers get carried away with scale, caching, performance, growth—all important things I suppose, but from my context, here is what my projects look like, and I'll exaggerate: maybe 100 users producing perhaps 20k pieces of 'content' (ever) and perhaps 150k pageviews per month. In the grand scheme of web development, this is a **very small** project. If one is always underwater trying to get things to run smoothly on a small project, then, analogy time, it has the appearance of spending unproductive energy on how to increase the speed from 6mph to 18mph while towing a toy boat with a monster truck down a gravel road.
-
-Things can be powerful if they are used as intended, and making small websites on fast computers is, in my opinion, sawing logs—you just have to be willing to stack them.
+### Principle B: Power
+Let me riff on the chainsaw for a few more lines. Chainsaws cannot tow a yacht down the expressway, yet I argue they are still impressive in their intended context. Humans—especially 'technologists'—get carried away with growth, saturation and scale on line 1. Perhaps those are important things (though also descriptive of cancers), but from my context, here is what a project might look like like: maybe 100 users producing perhaps 20k pieces of 'content' total, and perhaps 150k pageviews per month. In the grand scheme of web development, this is a **pretty small** project, and yet it is still way bigger than an average website. I'll spare another lengthy analogy, but line one should be dedicated to thinking about what will be towed. Hell, maybe that should always be a concern.
 
 ### Principle C: Useful
-Tools that are malleable, like code, should have their philosophy and should solve some problems, and then pipe down about things. They should be enhanced and manipulated by another author to become more useful to some other specific scenario, and the parts that are no longer useful in the original should be thrown away confidently, in order to maintain a piece of work that one mind can understand in an afternoon and some focus.
+Tools, especially tools that are malleable (like those made from code) in my opinion, should deal with a typical quandary through disciplined, well-defined methods, and then pipe down about everything else. If you want the proverbial chainsaw to *insert task not involving cutting timber here*, then it would be foolish to think it can do that task without either fucking up the chainsaw or seriously rethinking some components.
  
 ---
 
@@ -27,7 +25,7 @@ The view component mingles documents and elements into larger documents (and per
 
 ### The Controller Class
 
-Provides some default methods and enforces some abstract methods when setting up a new controller
+Provides some default methods and enforces some abstract methods when setting up a new controller. The controller defines authentication procedures.
 
 ### The Model Class
 
