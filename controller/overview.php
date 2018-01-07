@@ -16,8 +16,8 @@ class Overview extends \App\Controller {
     $m = new \Model\Item('ABC');
         
     $layout   = new \App\View('layout.html');
+    $layout->footer = 'footer.html';
     
-    $data = \Model\Item::list('/items/item');
-    return $layout->render(['items' => $data, 'title' => 'Working Draft']);
+    return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
   }
 }

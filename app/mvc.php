@@ -83,6 +83,7 @@ getTemplates Method
 
 getSlugs Method
 [ ] ? make a method of the element object (as this is finding elements);
+[ ] would like the first foreach to be a map, spare the declarations
 */
 
 /****      *************************************************************************************/
@@ -112,14 +113,15 @@ class View {
     
     foreach ($this->getTemplates('iterate') as [$key, $ref]) {
       $view = new View($ref->parentNode->removeChild($ref->nextSibling));
-      foreach ($data[$key] as $datum)
+      foreach ($data[$key] as $datum) {
         $this->merge($view->render($datum), $ref->parentNode->insertBefore($ref->cloneNode(), $ref->nextSibling));
       }
     }
       
     if ($parse) {
-      foreach ($this->getSlugs() as [$node, $scope])
+      foreach ($this->getSlugs() as [$node, $scope]) {
         $node(Data::PAIR($scope, $data));
+      }
     }
     
     return $this->document;
@@ -155,7 +157,7 @@ class View {
         }
       }
       return $out;
-      
+
     })($this->slugs);
   }
   
