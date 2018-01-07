@@ -1,20 +1,20 @@
 # Application Philosophy
 
-After years of authoring code and debugging projects—often projects which I did not write—I've come closer to my own version of an ideal framework, and the philosophy can be centered around my ideal is "do the absolute (absolute) minimum". As a general design philosophy this is [Occam's Razor](https://en.wikipedia.org/wiki/Occam's_razor)-esque, and the thinking goes, given two solutions to a problem or hypothesis, the simpler one is the better one . Many authors and designers of things omit such principles when trying to make more safe, more powerful, more widely useful products.
+After years of authoring code and debugging projects—often projects which I did not write—I've come closer to my own version of an ideal framework, and the philosophy is "do the absolute (absolute) minimum". This is essentially an  [Occam's Razor](https://en.wikipedia.org/wiki/Occam's_razor)-esque endeavor, and the thinking goes, given two solutions to a problem or hypothesis, the simpler one is superior . Many designs—knowingly or otherwise—omit such principles when trying to make more safe, powerful, and universally applicable products.
 
-So, philosophically, I've opted for an approach that aim's closer to the law of parsimony; so let's be clear, razor's are not wholly safe (principle A), nor are they inherently powerful (Principle B) and they have limited uses (Principle C). Here goes an attempt to explain that those scary things are really kind of great...
+So, philosophically, I've opted for an approach that aim's closer to the law of parsimony; so let's be clear, razor's are not wholly safe (principle A), nor are they inherently powerful (Principle B) and they have limited uses (Principle C). Here goes an attempt to explain that those scary things can be quite elegant.
 
 ### Principle A: Safety (or the necessity of being in control and assuming risk)
 
-I have a fascination for small engines (particularly chainsaws). A two-stroke engine may become temperamental over time with heavy use and poor maintenance—it may start poorly, it may refuse to run entirely. However, given some inspection, they are able to be understood piece by piece, even without a manual. If you tinker long enough, often the fix is imminent if care is taken understand the function and necessity of each individual piece—which also means there are no extra, non-fundamental pieces to blear the edification process.
+I'll use an analogy, and I'll apply my fascination for small engines (particularly chainsaws). A two-stroke engine may become temperamental over time with heavy use and poor maintenance—it may start poorly, it may refuse to run entirely. However, given some inspection, they are able to be understood piece by piece, even without a manual. If you tinker long enough, often the fix is imminent if care is taken understand the function and necessity of each individual piece—which also means there are no extra, non-fundamental pieces to blear the edification process.
 
-Patience is the key here—and lack of it is the dangerous part—skipping or misunderstanding components will not produce acceptable results. To fix a problem with a simple machine, first, understand the machine, then, adjust and revisit the worn pieces. I find that with this process, I'm able to make better decisions than I might out of the blue, because the pattern challenges me to exist within its bounds.  Again, this is only possible because such machines are small, you don't need a sprawling shop with tools galore, just a workbench and some patience.
+Patience is the key here—and lack of it is the dangerous part—skipping or misunderstanding components will not produce acceptable results. Adding extra components to solve a problem rather than retooling what is available—that's a terrible idea. To fix a problem with a simple machine, first, understand the machine, then, adjust and revisit the worn pieces. I find that in this process, I'm able to make better decisions than I might out of the blue, because the pattern challenges me to exist within a boundary.  Again, this is only possible because such machines are small, you don't need a sprawling shop with tools galore, just a workbench and some patience.
 
 ### Principle B: Power
 Let me riff on the chainsaw for a few more lines. Chainsaws cannot tow a yacht down the expressway, yet they are still impressive in their intended context. Humans (especially 'technologists') get carried away with growth, saturation and scale from the get-go. Perhaps those are important things (though also descriptive of cancers), but in my contexts, here is what a project may look like like: maybe 100 users producing perhaps 20k pieces of 'content' total, say, 150k visitors per month. In the grand scheme of web development, this is a very small project, yet it is still way bigger than an average website running wordpress or some other contraption. I'll spare another lengthy analogy, but line one should be dedicated to thinking about what will be towed. Hell, maybe that should always be a concern.
 
 ### Principle C: Useful
-Tools, especially tools that are malleable (like those made from code) in my opinion, should deal with a typical quandary through disciplined, well-defined methods, and then pipe down about everything else. If you want the proverbial chainsaw to *insert task not involving cutting timber here*, then it would be foolish to think it can do that task without either fucking up the chainsaw or seriously rethinking some components.
+Tools, especially tools that are malleable (like those made from code) in my opinion, should deal with a typical quandary through disciplined, well-defined methods, and then pipe down about everything else. If you want the proverbial chainsaw to *insert task not involving cutting timber here*, then it would be foolish to think it can do that task without either fucking up the chainsaw or seriously rethinking the componentry.
  
 ---
 
@@ -65,6 +65,3 @@ Like the document, this extends a DOM component, that gives traversal and queryi
 
 ### The Text Class
 
-### The Comment Class
-
-This small component encapsulates two ideas. The first, is that hidden data should and will be meaningful. In that regard, comments in XML can be used to provide instruction—notable how and where to include additional templates. Likewise, comments serve as a container for logging messages.

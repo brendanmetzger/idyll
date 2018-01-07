@@ -20,8 +20,6 @@ class Overview extends \App\Controller {
       $m = new \Model\Item($id);
     }
     
-        
-    
     return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
   }
 }

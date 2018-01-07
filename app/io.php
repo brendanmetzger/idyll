@@ -3,7 +3,7 @@
 /****         *************************************************************************************/
 class Request {
   
-  public  $route, $params, $scheme, $method, $format, $redirect, $server,
+  public  $start, $route, $params, $scheme, $method, $format, $redirect, $server,
           $listeners = [];
 
   /*
@@ -13,6 +13,7 @@ class Request {
     [ ] deal with post/get
   */
   public function __construct(array $server, array $request) {
+    $this->start = microtime(true);
     if (! $this->method = @$server['REQUEST_METHOD']) {
       $this->method = 'CLI';
       $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
@@ -95,7 +96,6 @@ class Response {
     'unauthorized' => 'HTTP/1.0 401 Unauthorized',
     'incorrect'    => '404',
   ];
-  
   
   public function __construct(Request $request) {
     $this->request = $request;

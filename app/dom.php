@@ -67,6 +67,7 @@ class Attr extends \DOMAttr {
 /****         *************************************************************************************/
 class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
+  // TODO this will be obsolete if I can figure out how to automatically return the first element if no index is specified
   public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);
     return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
@@ -86,11 +87,12 @@ class Element extends \DOMElement implements \ArrayAccess {
 
   public function offsetGet($offset) {
     if ($offset[0] === '@') {
-      return $this->getAttribute(substr($offset, 1)) ?: $this->setAttribute($offset, '');
+      $offset = substr($offset, 1);
+      // TODO deal with creating an attribute as necessary  `$this->setAttribute($offset, '')`
+      return $this->getAttribute($offset);
     } else {
-      // TODO 
-      //  [ ] create recursive function to deal with paths insead of tags, ie. ->select('a/b[@c]') if !exist must create/append <a><b c=""/></a>
-      //  [ ] this should be responsible for making an empty node if necessary, possibly with a created="(now)" updated="0" attributes
+      // TODO create recursive function to deal with paths insead of tags, ie. ->select('a/b[@c]') if !exist must create/append <a><b c=""/></a>
+      // TODO (?) this should be responsible for making an empty node if necessary , possibly with a created="(now)" updated="0" attributes
       return $this->select($offset);
     }
   }

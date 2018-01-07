@@ -3,14 +3,16 @@
 /* TODO 
 [ ] data object should implement ArrayAccess
 [ ] devise way so that when invoked without an index number, it returns the first item.
+[ ] PAIR function should deal with missing key and throw an exception
 */
 /****      *************************************************************************************/
 class Data extends \ArrayIterator {
   
   static private $sources = [];
-
+  
   static public function PAIR(array $namespace, $data) {
-    while ($key = array_shift($namespace)) $data = $data[$key];
+    while ($key = array_shift($namespace)) 
+     if (! $data = $data[$key]) throw new \UnexpectedValueException;
     return $data;
   }
   
