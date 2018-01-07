@@ -14,13 +14,12 @@ class Document extends \DOMDocument {
     parent::__construct('1.0', 'UTF-8');
     
     foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
-    foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
+    foreach (['Element','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
     
     if ($xml instanceof Element) 
       $this->loadXML($xml->ownerDocument->saveXML($xml), self::DECLARATIONS);
     else
       $this->load($xml, self::DECLARATIONS);
-
   }
 
   public function save($path = null) {
@@ -41,53 +40,33 @@ class Document extends \DOMDocument {
   }
 }
 
-/****      *************************************************************************************/
-class Text extends \DOMText {
-  static public function hasPrefix(string $prefix) {
-    $prefix = trim($prefix);
-    $length = strlen($prefix);
-    return function($text) {
-      return substr($text, 0, $length) == $prefix;
-    };
-  }
-  public function __invoke(?string $string): self {
-    $this->nodeValue = strip_tags($string);
+trait invocable {
+  public function __invoke(?string $input): self {
+    $this->nodeValue = htmlentities($input, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
     return $this;
   }
   
   public function __toString(): string {
     return $this->nodeValue;
   }
-  
+}
+
+/****      *************************************************************************************/
+class Text extends \DOMText {
+  use invocable;
+  public function split($length): self {
+    return $this->splitText(is_string($length) ? strlen($length) : $length);
+  }
 }
 
 /****      *************************************************************************************/
 class Attr extends \DOMAttr {
-  
-  public function __invoke(?string $value) {
-    $this->value = $value;
-    return $this;
-  }
-  
-  public function __toString() {
-    return $this->value;
-  }
+  use invocable;
 }
-
-/****         *************************************************************************************/
-class Comment extends \DOMComment {
-  
-}
-
-/****          *************************************************************************************/
-class Nodelist extends \DOMNodeList {
-  // implement a method that automatically gets the first element if not specified, so you can use a list as an element!
-}
-
 
 /****         *************************************************************************************/
 class Element extends \DOMElement implements \ArrayAccess {
-
+  use invocable;
   public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);
     return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
@@ -125,13 +104,4 @@ class Element extends \DOMElement implements \ArrayAccess {
     return false;
   }
 
-  public function __toString() {
-    return $this->nodeValue;
-  }
-  
-  public function __invoke(string $string): self {
-    $this->nodeValue = htmlentities($string, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
-    return $this;
-  }
-  
 }

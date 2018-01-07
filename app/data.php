@@ -1,9 +1,11 @@
 <?php namespace App;
 
-// TODO data object should implement ArrayAccess
-
+/* TODO 
+[ ] data object should implement ArrayAccess
+[ ] devise way so that when invoked without an index number, it returns the first item.
+*/
 /****      *************************************************************************************/
-class Data implements \iterator {
+class Data extends \ArrayIterator {
   
   static private $sources = [];
 
@@ -14,40 +16,19 @@ class Data implements \iterator {
   
   static public function USE(string $source, ?string $path = null) {
     $document = self::$sources[$source] ?: self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
-    return $path ? new self($document->find($path), $source) : $document;
+    return $path ? new self($document->find($path)) : $document;
   }
-  
 
-  private $source, $dataset,
-          $cursor = 0,
-          $maps   = [];
-  
+  private $maps = [];
   
   public function __construct(iterable $data) {
-    $this->dataset = $data;
+    parent::__construct(! is_array($data) ? iterator_to_array($data) : $data);
   }
-  
+    
   public function current() {
-    $current = $this->dataset[$this->cursor];
+    $current = parent::current();
     foreach ($this->maps as $callback) $current = $callback($current);
     return $current;
-  }
-  
-  public function key()
-  {
-    return $this->cursor;
-  }
-  
-  public function next() {
-    return ++$this->cursor;
-  }
-  
-  public function rewind() {
-    $this->cursor = 0;
-  }
-  
-  public function valid() {
-    return isset($this->dataset[$this->cursor]);
   }
   
   public function map(callable $callback) {

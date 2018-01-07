@@ -11,12 +11,16 @@ class Overview extends \App\Controller {
   }
   
   
-  public function GETindex() {
-    // singular
-    $m = new \Model\Item('ABC');
-        
+  public function GETindex($id = null) {
+
     $layout   = new \App\View('layout.html');
     $layout->footer = 'footer.html';
+    
+    if ($id) {
+      $m = new \Model\Item($id);
+    }
+    
+        
     
     return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
   }

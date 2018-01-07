@@ -1,6 +1,5 @@
-<?php
-namespace app;
-
+<?php namespace App;
+$start = microtime(true);
 # CONFIGURE 
 date_default_timezone_set ('America/Chicago');
 
@@ -43,3 +42,5 @@ try {
 } catch (\Exception $e) {
   print_r($e);
 }
+
+echo microtime(true) - $start;
