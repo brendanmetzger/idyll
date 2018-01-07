@@ -1,5 +1,6 @@
 <?php namespace App;
 
+// TODO data object should implement ArrayAccess
 
 /****      *************************************************************************************/
 class Data implements \iterator {
@@ -22,9 +23,8 @@ class Data implements \iterator {
           $maps   = [];
   
   
-  public function __construct(iterable $data, $source) {
+  public function __construct(iterable $data) {
     $this->dataset = $data;
-    $this->source  = self::$sources[$source];
   }
   
   public function current() {

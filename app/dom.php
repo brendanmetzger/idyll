@@ -27,6 +27,7 @@ class Document extends \DOMDocument {
     return file_put_contents($path ?? $this->filepath, $this->saveXML(), LOCK_EX);
   }
 
+  // TODO find should return a data object, so it can be filtered/mapped, etc.
   public function find(string $path, \DOMElement $context = null): \DOMNodeList {
     return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
   }

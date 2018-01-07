@@ -57,7 +57,6 @@ class Model implements \ArrayAccess {
 
 /* TODO
 
-[ ] should accept a valid template
 [ ] should deal with fragments
 [x] placeholders can be scoped/nested 
 [ ] falsy data should just put in an empty value
@@ -69,8 +68,10 @@ class Model implements \ArrayAccess {
 [ ] A path (constructor) that does not load or is broken should throw exception
 [ ] Make properties private/protected
 
+merge method
+[ ] should not be responsible for inserting - do it in render. Or get rid of the method.
+
 render Method
-[ ] controlled by response object
 [ ] remove nodes that have been slated for demo
 [ ] run before/after filters
 
@@ -92,43 +93,34 @@ class View {
     $this->document = new Document($input);
   }
   
-  // todo, don't do the inserting here, do it in render. Or get rid of this method.
   public function merge(Document $import, \DOMNode $ref) {
     return $ref->parentNode->replaceChild($this->document->importNode($import->documentElement, true), $ref);    
   }
   
-  public function render($data = [], $flag = false): Document {
+  public function render($data = [], $parse = true): Document {
     
     foreach ($this->getTemplates('insert') as [$path, $ref]) {
-      $this->merge((new View($path))->render($data), $ref);
+      $this->merge((new View($path))->render($data, false), $ref);
     }
     
     foreach ($this->getTemplates('replace') as [$prop, $ref]) {
       if (isset($this->templates[$prop])) {
-        $this->merge((new View($this->templates[$prop]))->render($data), $ref->nextSibling);
+        $this->merge((new View($this->templates[$prop]))->render($data, false), $ref->nextSibling);
         $ref->parentNode->removeChild($ref);
       }
     } 
     
     foreach ($this->getTemplates('iterate') as [$key, $ref]) {
-      // key it datapoint, $ref is comment, nextSibling is what we're after
-      // create new view for the iterated node. it should be sucked out of document
-      
       $view = new View($ref->parentNode->removeChild($ref->nextSibling));
-      
-
-      foreach ($data[$key] as $datum) {
-        $this->merge($view->render($datum, true), $ref->parentNode->insertBefore($ref->cloneNode(), $ref->nextSibling));
+      foreach ($data[$key] as $datum)
+        $this->merge($view->render($datum), $ref->parentNode->insertBefore($ref->cloneNode(), $ref->nextSibling));
       }
     }
       
-    // this argument to the method will make the iterator work, but the template rendering miss, and vice versa. FIX
-    if ($flag) {
-      foreach ($this->getSlugs() as [$node, $scope]) {
+    if ($parse) {
+      foreach ($this->getSlugs() as [$node, $scope])
         $node(Data::PAIR($scope, $data));
-      }
     }
-    
     
     return $this->document;
   }
@@ -141,8 +133,8 @@ class View {
     $query = "./descendant::comment()[ starts-with(normalize-space(.), '{$key}')"
            . (($key == 'iterate') ? ']' : 'and not(./ancestor::*/preceding-sibling::comment()[iterate])]');
     
+    // TODO would like to make this a map to spare the templates variable
     $templates = [];
-    
     foreach ($this->document->find($query) as $stub) {
       $templates[] = [preg_split('/\s+/', trim($stub->nodeValue))[1], $stub];
     }
