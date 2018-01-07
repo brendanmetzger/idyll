@@ -43,7 +43,7 @@ class Request {
   }
   
   public function respond() {
-    return $this->listeners[$this->scheme]->call($this, ['0.6']);
+    return $this->listeners[$this->scheme]->call($this);
   }
   
   /*

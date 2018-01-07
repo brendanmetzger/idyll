@@ -3,19 +3,24 @@
 libxml_use_internal_errors(true);
 
 /****          *************************************************************************************/
-class Document extends \DOMDocument
-{
+class Document extends \DOMDocument {
+  const DECLARATIONS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
+
   private $xpath = null,
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
-  function __construct($path, $opts = []) {
+  function __construct($xml, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
     
     foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
     foreach (['Element','Comment','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
     
-    $this->load($path, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOXMLDECL|LIBXML_NOENT);
+    if ($xml instanceof Element) 
+      $this->loadXML($xml->ownerDocument->saveXML($xml), self::DECLARATIONS);
+    else
+      $this->load($xml, self::DECLARATIONS);
+
   }
 
   public function save($path = null) {
@@ -28,6 +33,10 @@ class Document extends \DOMDocument
 
   public function errors() {
     return libxml_get_errors();
+  }
+  
+  public function __toString() {
+    return $this->saveXML();
   }
 }
 
@@ -67,6 +76,11 @@ class Attr extends \DOMAttr {
 /****         *************************************************************************************/
 class Comment extends \DOMComment {
   
+}
+
+/****          *************************************************************************************/
+class Nodelist extends \DOMNodeList {
+  // implement a method that automatically gets the first element if not specified, so you can use a list as an element!
 }
 
 

@@ -15,12 +15,12 @@ spl_autoload_register(function ($classname) {
 # INSTANTIATE the request.
 $request = new Request($_SERVER, $_REQUEST);
 
-$request->listen('http', function ($params) {
+$request->listen('http', function () {
   return $this->delegate(array_replace(['overview', 'index'], $this->route), $this->params);
 });
 
 
-$request->listen('repl', function ($params) {
+$request->listen('repl', function () {
   print_r($this);
   print_r($params);
   return "DONE";

@@ -74,7 +74,7 @@ render Method
 [ ] remove nodes that have been slated for demo
 [ ] run before/after filters
 
-getStubs Method
+getTemplates Method
 [ ] Make an element of the document object
 [ ] See if finding all comments and filtering is comparable...
     $comments->filter(\app\text::hasPrefix('iterate')) seems way nicer (where hasPrefix returns a partially applied function)
@@ -86,63 +86,85 @@ getSlugs Method
 
 /****      *************************************************************************************/
 class View {
-   
-  public $document, $slugs = [];
+  public $document, $slugs = [], $templates = [];
 
-  function __construct(string $path) {
-    $this->document = new \app\document($path);
+  function __construct($input) {
+    $this->document = new Document($input);
   }
   
-  public function merge(self $view, \DOMNode $reference = null) {
-    $view = $this->document->importNode($view->document->documentElement, true);
-    if ($reference) {
-      $reference->parentNode->insertBefore($view, $reference->nextSibling);
-    } else {
-      $this->document->documentElement->appendChild($view);
+  // todo, don't do the inserting here, do it in render. Or get rid of this method.
+  public function merge(Document $import, \DOMNode $ref) {
+    return $ref->parentNode->replaceChild($this->document->importNode($import->documentElement, true), $ref);    
+  }
+  
+  public function render($data = [], $flag = false): Document {
+    
+    foreach ($this->getTemplates('insert') as [$path, $ref]) {
+      $this->merge((new View($path))->render($data), $ref);
     }
     
-  }
-  
-  public function render(): string {
+    foreach ($this->getTemplates('replace') as [$prop, $ref]) {
+      if (isset($this->templates[$prop])) {
+        $this->merge((new View($this->templates[$prop]))->render($data), $ref->nextSibling);
+        $ref->parentNode->removeChild($ref);
+      }
+    } 
     
-    $this->getStubs('insert');
-    
-    return $this->document->saveXML();
-  }
-  
-  public function getStubs($prefix) {
-    $query = "./descendant::comment()[ starts-with(normalize-space(.), '%s') ]";
+    foreach ($this->getTemplates('iterate') as [$key, $ref]) {
+      // key it datapoint, $ref is comment, nextSibling is what we're after
+      // create new view for the iterated node. it should be sucked out of document
+      
+      $view = new View($ref->parentNode->removeChild($ref->nextSibling));
+      
 
-    if ( $prefix == 'iterate' ) {
-      $query = substr($query, 0, -1) . 'and not(./ancestor::*/preceding-sibling::comment()[iterate]) ]';
+      foreach ($data[$key] as $datum) {
+        $this->merge($view->render($datum, true), $ref->parentNode->insertBefore($ref->cloneNode(), $ref->nextSibling));
+      }
+    }
+      
+    // this argument to the method will make the iterator work, but the template rendering miss, and vice versa. FIX
+    if ($flag) {
+      foreach ($this->getSlugs() as [$node, $scope]) {
+        $node(Data::PAIR($scope, $data));
+      }
     }
     
-    foreach ($this->document->find(sprintf($query, $prefix)) as $stub) {
-      [$method, $path] = preg_split('/\s+/', trim($stub->nodeValue));
-      $this->{$method}($path, $stub);
+    
+    return $this->document;
+  }
+  
+  public function __set(string $key, string $path) {
+    $this->templates[$key] = $path;
+  }
+  
+  public function getTemplates($key) {
+    $query = "./descendant::comment()[ starts-with(normalize-space(.), '{$key}')"
+           . (($key == 'iterate') ? ']' : 'and not(./ancestor::*/preceding-sibling::comment()[iterate])]');
+    
+    $templates = [];
+    
+    foreach ($this->document->find($query) as $stub) {
+      $templates[] = [preg_split('/\s+/', trim($stub->nodeValue))[1], $stub];
     }
-    return true;
+    
+    return $templates;
   }
   
   public function getSlugs(): array {
     return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
+      
       foreach ( $this->document->find("//*[ {$query} ] | //*/@*[ {$query} ]") as $slug ) {        
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug(substr($slug, 1,-1)), $match, PREG_OFFSET_CAPTURE);
-        foreach (array_reverse($match[0]) as [$key, $pos]) { // start from end b/c of numerical offsets
-          $var = $slug->firstChild->splitText($pos)->splitText(strlen($key))->previousSibling;
-          if (substr($var(substr($var, 1)), 0, 1) != '$')
-            $out[] = ['node' => $var, 'scope' => explode(':', $var)];
+      
+        foreach (array_reverse($match[0]) as [$key, $idx]) {
+          $__ = $slug -> firstChild -> splitText($idx) -> splitText(strlen($key)) -> previousSibling;
+          if (substr( $__( substr($__,1) ),0,1 ) != '$') $out[] = [$__, explode(':', $__)];
         }
       }
       return $out;
       
     })($this->slugs);
-  }
-  
-  private function insert(string $path, \DOMComment $reference) {
-    // make new self, insert!
-    $this->merge(new self($path), $reference);
   }
   
 }
@@ -162,5 +184,10 @@ abstract class Controller {
   
   public function GETlogout() {
     # code...
+  }
+  
+  // pondering still..
+  public function compose(self $controller, $action) {
+    // before/after stuff, runs like $instance->compose($instance, $action)
   }
 }

@@ -16,19 +16,8 @@ class Overview extends \App\Controller {
     $m = new \Model\Item('ABC');
         
     $layout   = new \App\View('layout.html');
-    $template = new \App\View('about.html');
-    $template->getSlugs();
-
-
-    // simulate cycle of data
-    foreach (\Model\Item::list('/items/item') as $item) {
-      foreach ($template->slugs as $slug) {
-        $slug['node'](\App\Data::PAIR($slug['scope'], $item));
-      }
-      $layout->merge($template);
-    }
     
-    
-    return $layout->render();
+    $data = \Model\Item::list('/items/item');
+    return $layout->render(['items' => $data, 'title' => 'Working Draft']);
   }
 }
