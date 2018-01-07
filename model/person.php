@@ -1,4 +1,4 @@
-<?php namespace Models;
+<?php namespace Model;
 
 /**
  * Person
@@ -6,7 +6,8 @@
 class Person extends \App\Model
 {
   
-  public function authenticate($token) {
+  public function authenticate($id) {
+
     if ($token === $this->context['@access']) {
       return $this;
     }

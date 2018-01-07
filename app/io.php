@@ -54,20 +54,17 @@ class Request {
         that executes the action of a child (which is allowed as a protected method).
   */
   public function delegate(array $route, array $params) {
-    $controller = new \ReflectionClass('\\controller\\' . $route[0]);
-    $action     = $controller->getMethod($this->method . $route[1]);
-    $instance   = $controller->newInstance($this);
-    
-    if ( $action->isProtected() && $user = $instance->authenticate() ) {
-      $action->setAccessible(true);
-      array_unshift($params, $user);
-    }
-    
-    return $action->invokeArgs($instance, $params);
+    [$instance, $method] = Controller::FACTORY($this, ...$route);
+    return $method->invokeArgs($instance, $params);
   }
 }
 
 
+/*
+[ ] response should be in control of filtering/reordering DOM
+[ ] response should be in charge of caching
+[ ] response should be able to return a partial if request is ajax.
+*/
 
 /****          *************************************************************************************/
 class Response {
@@ -103,6 +100,8 @@ class Response {
   
   public function package() {
     // set headers (if HTTP [content-type, status, etc]);
-    return $this->request->respond();
+    $out = $this->request->respond();
+    echo microtime(true) - $this->request->start;
+    return $out;
   }
 }

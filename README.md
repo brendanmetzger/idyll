@@ -15,6 +15,7 @@ An austere way to develop websites with source code authored and designed to be 
 - no component of the application will exceed ~150 lines, and no more than 5 files (max 1000 SLOC is a goal)
 - Avoid conditions whenever possible
 - Modeling and storing data is hard: the framework does not not model and store data—rather, it will elegantly deal with well designed, well structured data
+- things should break often, and edification should be delivered with each fracture.
 
 
 ## Requirements

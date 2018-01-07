@@ -2,24 +2,28 @@
 
 class Overview extends \App\Controller {
   
-  public function __construct() {
-    # code...
-  }
-  
-  public function authenticate(\app\request $request) {
+
+  public function authenticate(\App\Request $request) {
+    // find a new person, (cookie based);
+    print_r($_COOKIE);
     return false;
   }
+  
+  
   
   
   public function GETindex($id = null) {
 
     $layout   = new \App\View('layout.html');
-    $layout->footer = 'footer.html';
     
     if ($id) {
       $m = new \Model\Item($id);
     }
     
     return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
+  }
+  
+  protected function GEThelp(\Model\Person $person) {
+    return "YES";
   }
 }

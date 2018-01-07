@@ -28,7 +28,7 @@ class Model implements \ArrayAccess {
     });
   }
   
-  public function authenticate($criteria) {
+  public function authenticate(string $criteria) {
     if (! $item = Data::USE(static::SOURCE)->getElementById($criteria)) {
       throw new \Exception("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type)", 1);
     }
@@ -56,13 +56,7 @@ class Model implements \ArrayAccess {
 }
 
 /* TODO
-[x] falsy data should just put in an empty value
-[x] absent data should delete components in view
-   [x] regression: absent data cannot be removed immediately from template, as it will effect renderability of going forward
-   [x] an array of removals containting getNodePath()'s could be used to target removals and looped/reset effciently
-       [x] this would have to be done in reverse, as document would change as removals are processed
-   [ ] Removal needs adjusting, as it is only applied to iterated methonds at the moment
-render Method
+[ ] Removal of unspecified nodes needs adjusting: as is, only applied to iterated methonds 
 [/] remove nodes that have been slated for demo
 [ ] run before/after filters
 
@@ -98,23 +92,21 @@ class View {
     }
       
     if ($parse) {
-      foreach ($this->getSlugs() as [$node, $scope]) {
-        try {
-          $node(Data::PAIR($scope, $data));
-        } catch (\UnexpectedValueException $e) {
-          $this->cleanup($node);
-        }
-      }
+      foreach ($this->getSlugs() as [$node, $scope]) { try {
+        $node(Data::PAIR($scope, $data));
+      } catch (\UnexpectedValueException $e) {
+        $this->cleanup($node);
+      }}
     }
 
     return $this->document;
   }
   
-  public function __set(string $key, string $path) {
+  public function __set(string $key, string $path): void {
     $this->templates[$key] = $path;
   }
   
-  private function cleanup(?\DOMNode $node): void {
+  private function cleanup(\DOMNode $node): void {
     static $remove = [];
     if ($node instanceof \DOMElement) {
       while($path = array_pop($remove)) {
@@ -122,11 +114,11 @@ class View {
         $item->parentNode->removeChild($item);
       }
     } else {
-      $remove[] = '/'.$node->getNodePath().'/parent::*';
+      $remove[] = sprintf('/%s/parent::*', $node->getNodePath());
     }
   }
   
-  private function getTemplates($key) {
+  private function getTemplates($key): iterable {
     $query = "./descendant::comment()[ starts-with(normalize-space(.), '{$key}')"
            . (($key == 'iterate') ? ']' : 'and not(./ancestor::*/preceding-sibling::comment()[iterate])]');
 
@@ -135,7 +127,7 @@ class View {
     });    
   }
   
-  private function getSlugs(): array {
+  private function getSlugs(): iterable {
     return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
       foreach ( $this -> document -> find("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
@@ -151,40 +143,36 @@ class View {
     })($this->slugs);
   }
   
-  private function import(Document $import, \DOMNode $ref, $swap = 'replaceChild') {
+  private function import(Document $import, \DOMNode $ref, $swap = 'replaceChild'): \DOMNode {
     return $ref -> parentNode -> {$swap}( $this -> document -> importNode($import->documentElement, true), $ref );    
   }
-  
   
 }
 
 /*************            ***************************************************************************************/
-abstract class Controller {
-  abstract public function authenticate(Request $request);
-  abstract public function GETindex();
+class Controller {
+  private $method;
+  protected $request;
   
-  public function GETlogin() {
-    
-    # code...
-    
+  static final public function FACTORY(Request $request, string $class, string $method) {
+    $method  = new \ReflectionMethod("\\controller\\{$class}", $request->method . $method);
+    $class   = $method->getDeclaringClass()->name;
+    if ($method->isProtected()) {
+     // need to authenticate here. WHO does the authenticating? model perhaps...
+     $method = new \ReflectionMethod($class, 'GETLogin');
+    }
+    return [(new \ReflectionClass($class))->newInstance($request), $method];
   }
   
-  public function POSTlogin() {
-    
-    # code...
-    
+  final public function __construct($request) {
+    $this->request = $request;
   }
   
-  public function GETlogout() {
-    
-    # code...
-    
+  public function GETLogin()
+  {
+    $view = new View('layout.html');
+    $view->content = 'login.html';
+    return $view->render();
   }
-  
-  // pondering still..
-  public function compose(self $controller, $action) {
-    
-    // before/after stuff, runs like $instance->compose($instance, $action)
-    
-  }
+
 }
