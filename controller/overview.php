@@ -1,16 +1,7 @@
 <?php namespace Controller;
 
 class Overview extends \App\Controller {
-  
-
-  public function authenticate(\App\Request $request) {
-    // find a new person, (cookie based);
-    print_r($_COOKIE);
-    return false;
-  }
-  
-  
-  
+    
   
   public function GETindex($id = null) {
 

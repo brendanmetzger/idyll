@@ -7,6 +7,7 @@ class Model implements \ArrayAccess {
 
   public function __construct($context, array $data = [])
   {
+   
     if ($context instanceof Element) {
       $this->context = $context;
     } else if (empty($data) && ! $this->context = $this->authenticate($context)){
@@ -150,16 +151,16 @@ class View {
 }
 
 /*************            ***************************************************************************************/
-class Controller {
+abstract class Controller {
   private $method;
   protected $request;
   
   static final public function FACTORY(Request $request, string $class, string $method) {
-    $method  = new \ReflectionMethod("\\controller\\{$class}", $request->method . $method);
-    $class   = $method->getDeclaringClass()->name;
-    if ($method->isProtected()) {
-     // need to authenticate here. WHO does the authenticating? model perhaps...
-     $method = new \ReflectionMethod($class, 'GETLogin');
+    $method = new \ReflectionMethod("\\controller\\{$class}", $request->method . $method);
+    $class  = $method->getDeclaringClass()->name;
+
+    if ($method->isProtected() && ! $request->authenticate($method)) {
+      $method = new \ReflectionMethod($class, $request->method . 'login');
     }
     return [(new \ReflectionClass($class))->newInstance($request), $method];
   }

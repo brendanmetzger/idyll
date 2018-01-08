@@ -1,9 +1,51 @@
 <?php namespace App;
 
+abstract class Method {
+  public $env, $start, $route, $scheme = 'http', $format = 'txt', $params, $data;
+  
+  static public function FACTORY() {
+    $class = '\\App\\'.$_SERVER['REQUEST_METHOD'] ?? 'CLI';
+    $instance = new $class();
+    $instance->start = $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true);
+    return $instance;
+  }
+  
+  public function __toString(): string {
+    $name = static::class;
+    return substr($name, strrpos($name, '\\')+1);;
+  }
+  
+}
+
+class CLI extends Method {
+  public $scheme = 'repl';
+  public function __construct() {
+    $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
+    $this->params = array_slice($_SERVER['argv'], 2);
+  }
+}
+
+class GET extends Method {
+  public function __construct() {
+    $this->route  = array_filter($_GET['_r_']);
+    $this->params  = array_filter(explode('/', $_GET['_p_']));
+    $this->format = $_GET['_e_'] ?: 'html';
+    $this->scheme = 'http';
+  }
+}
+
+class POST extends GET {
+  public function __construct() {
+    parent::__construct();
+    $this->data = $_POST;
+  }
+}
+
+
+
 /****         *************************************************************************************/
 class Request {
-  
-  public  $start, $route, $params, $scheme, $method, $format, $redirect, $server,
+  public  $start, $route, $params, $scheme, $method, $format, $server,
           $listeners = [];
 
   /*
@@ -11,40 +53,33 @@ class Request {
     [ ] set up request based on time
     [ ] deal with cookies
     [ ] deal with post/get
+    [ ] fix this crappy constructor
   */
   public function __construct(array $server, array $request) {
-    $this->start = microtime(true);
-    if (! $this->method = @$server['REQUEST_METHOD']) {
-      $this->method = 'CLI';
-      $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
-      $this->params = array_slice($_SERVER['argv'], 2);
-      $this->format = 'txt';
-      $this->scheme = 'repl';
-    } else {
-      $this->route  = array_filter($request['_r_']);
-      $this->params = array_filter(explode('/', $request['_p_']));
-      $this->format = $request['_e_'] ?: 'html';
-      $this->scheme = 'http';
-    }
-    $this->server = $server;
+    $this->method = Method::FACTORY();
   }
 
-  /*
-    TODO much tinkering to do here, not quite working [TYPES ARE AUTOMATICALLY CONVERTED]
-  */
-  private function filter(\ReflectionMethod $action, array $params) {
-    foreach ($action->getParameters() as $index => $arg) {
-      settype($params[$index] ?? $arg->getDefaultValue(), $arg->getType());
-    }
-    return $params;
-  }
   
   public function listen (string $scheme, callable $callback): void {
     $this->listeners[$scheme] = $callback;
   }
   
+  public function authenticate(\ReflectionMethod $method): bool {
+    $model = $method->getParameters()[0]->getType();
+    // use $_COOKIE
+    // need to return an instance of the model sent in
+    // need to add the model to the beginning of the params
+    // array_unshift($this->params, $instance);
+    
+    if (true) {
+      $method->setAccessible(true);
+    }
+    
+    return false;
+  }
+  
   public function respond() {
-    return $this->listeners[$this->scheme]->call($this);
+    return $this->listeners[$this->method->scheme]->call($this);
   }
   
   /*
@@ -53,9 +88,10 @@ class Request {
     [ ] consider if it would be more elegant to have authenticate stay a method of the parent
         that executes the action of a child (which is allowed as a protected method).
   */
-  public function delegate(array $route, array $params) {
+  public function delegate(array $route) {
+    $route = array_replace($route, $this->method->route);
     [$instance, $method] = Controller::FACTORY($this, ...$route);
-    return $method->invokeArgs($instance, $params);
+    return $method->invokeArgs($instance, $this->method->params);
   }
 }
 
@@ -101,7 +137,7 @@ class Response {
   public function package() {
     // set headers (if HTTP [content-type, status, etc]);
     $out = $this->request->respond();
-    echo microtime(true) - $this->request->start;
+    echo microtime(true) - $this->request->method->start;
     return $out;
   }
 }

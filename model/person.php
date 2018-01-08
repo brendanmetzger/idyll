@@ -5,13 +5,17 @@
  */
 class Person extends \App\Model
 {
+  const SOURCE = '../data/model.xml';
+  const PATH   = '/model/person/item';  
   
-  public function authenticate($id) {
+  public function authenticate($criteria) {
 
-    if ($token === $this->context['@access']) {
-      return $this;
+    if (! $context = \App\Data::USE(static::SOURCE)->getElementById($criteria)) {
+      throw new \Exception("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type)", 1);
     }
-    throw new \InvalidArgumentException("This token is no longer active", 3);
+    
+    return $context;
+    
   }
 
 }

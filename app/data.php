@@ -51,3 +51,23 @@ class Data extends \ArrayIterator {
     return new \LimitIterator($this, $start, $length);
   }
 }
+
+interface authenticate {
+  
+}
+
+
+trait Registry {
+  protected $store = [];
+  public function __get($key) {
+    return $this->store[$key] ?? null;
+  }
+  
+  public function __set($key, $value) {
+    $this->store[$key] = $value;
+  }
+  
+  public function merge(array $data) {
+    array_merge($this->store, $data);
+  }
+}

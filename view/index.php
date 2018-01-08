@@ -15,7 +15,7 @@ spl_autoload_register(function ($classname) {
 $request = new Request($_SERVER, $_REQUEST);
 
 $request->listen('http', function () {
-  return $this->delegate(array_replace(['overview', 'index'], $this->route), $this->params);
+  return $this->delegate(['overview', 'index']);
 });
 
 
