@@ -65,6 +65,7 @@ class Attr extends \DOMAttr {
 /****         *************************************************************************************/
 class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
+  
   // TODO this will be obsolete if I can figure out how to automatically return the first element if no index is specified
   public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);

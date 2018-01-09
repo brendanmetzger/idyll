@@ -16,7 +16,8 @@ class Overview extends \App\Controller {
   }
   
   protected function GEThelp(\Model\Person $person) {
-    print_r($person['@title']);
+
+    return (new \App\View('layout.html'))->render(['title' => $person['@title']]);
   }
   
   

@@ -3,6 +3,12 @@
 /****       *************************************************************************************/
 class Model implements \ArrayAccess {
   
+  public function current (  ) {return $this->context;}
+  public function key (  ) {}
+  public function next (  ) {}
+  public function rewind (  ) {}
+  public function valid (  ) {}
+  
   protected $context;
 
   public function __construct($context, array $data = [])
@@ -88,7 +94,7 @@ class View {
     
     foreach ($this->getTemplates('iterate') as [$key, $ref]) {
       $view = new Self( $ref -> parentNode -> removeChild( $ref -> nextSibling ));
-      foreach ($data[$key] as $datum) {
+      foreach ($data[$key] ?? [] as $datum) {
         $view->cleanup($this->import($view->render($datum), $ref, 'insertBefore'));
       }
       $ref->parentNode->removeChild($ref);
@@ -105,7 +111,7 @@ class View {
     return $this->document;
   }
   
-  public function set(string $key, string $path): self {
+  public function set(string $key, $path): self {
     $this->templates[$key] = $path;
     return $this;
   }
