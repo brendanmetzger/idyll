@@ -1,7 +1,8 @@
 <?php namespace Controller;
 
 class Overview extends \App\Controller {
-    
+  use configuration;
+  
   
   public function GETindex($id = null) {
 
@@ -15,6 +16,8 @@ class Overview extends \App\Controller {
   }
   
   protected function GEThelp(\Model\Person $person) {
-    return "YES";
+    print_r($person['@title']);
   }
+  
+  
 }

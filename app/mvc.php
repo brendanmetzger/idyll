@@ -10,8 +10,8 @@ class Model implements \ArrayAccess {
    
     if ($context instanceof Element) {
       $this->context = $context;
-    } else if (empty($data) && ! $this->context = $this->authenticate($context)){
-      throw new \InvalidArgumentException("The item specified does not exist.", 1);
+    } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
+      throw new \InvalidArgumentException("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type, log this, inform it was logged)", 1);
     } else {
       // TODO determine how to create a new item
     }
@@ -29,11 +29,9 @@ class Model implements \ArrayAccess {
     });
   }
   
-  public function authenticate(string $criteria) {
-    if (! $item = Data::USE(static::SOURCE)->getElementById($criteria)) {
-      throw new \Exception("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type)", 1);
-    }
-    return $item;
+  static public function FACTORY($classname, $params) {
+    $classname = "\\Model\\{$classname}";
+    return new $classname($params);
   }
   
   public function offsetExists($offset) {
@@ -53,6 +51,10 @@ class Model implements \ArrayAccess {
   public function offsetUnset($offset) {
     unset($this->context[$offset]);
     return true;
+  }
+  
+  public function __toString() {
+    return $this->context['@id'];
   }
 }
 
@@ -103,8 +105,9 @@ class View {
     return $this->document;
   }
   
-  public function __set(string $key, string $path): void {
+  public function set(string $key, string $path): self {
     $this->templates[$key] = $path;
+    return $this;
   }
   
   private function cleanup(\DOMNode $node): void {
@@ -135,7 +138,7 @@ class View {
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {
-          $___ = $slug -> firstChild -> split($i) -> split($k) -> previousSibling;
+          $___ = $slug -> firstChild -> splitText($i) -> splitText(strlen($k)) -> previousSibling;
           if (substr( $___( substr($___,1) ),0,1 ) != '$') $out[] = [$___, explode(':', $___)];
         }
       }
@@ -154,11 +157,13 @@ class View {
 abstract class Controller {
   private $method;
   protected $request;
+  abstract  public function GETLogin(?string $model = null, ?string $webhook = null);
+  abstract public function POSTLogin(\App\Data $post);
   
   static final public function FACTORY(Request $request, string $class, string $method) {
-    $method = new \ReflectionMethod("\\controller\\{$class}", $request->method . $method);
-    $class  = $method->getDeclaringClass()->name;
 
+    $method = new \ReflectionMethod("\controller\\{$class}", $request->method . $method);
+    $class  = $method->getDeclaringClass()->name;
     if ($method->isProtected() && ! $request->authenticate($method)) {
       $method = new \ReflectionMethod($class, $request->method . 'login');
     }
@@ -169,11 +174,6 @@ abstract class Controller {
     $this->request = $request;
   }
   
-  public function GETLogin()
-  {
-    $view = new View('layout.html');
-    $view->content = 'login.html';
-    return $view->render();
-  }
+  
 
 }

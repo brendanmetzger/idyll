@@ -2,7 +2,6 @@
 
 # CONFIGURE 
 date_default_timezone_set ('America/Chicago');
-
 # REQUIREMENTS
 foreach (['mvc', 'dom', 'data', 'io'] as $file) require_once "../app/{$file}.php";
 
@@ -11,8 +10,10 @@ spl_autoload_register(function ($classname) {
   @include '../' . str_replace('\\', '/', $classname) . '.php';
 });
 
+
 # INSTANTIATE the request.
-$request = new Request($_SERVER, $_REQUEST);
+$request = new Request( Method::FACTORY($_SERVER['REQUEST_METHOD'] ?? 'CLI') );
+
 
 $request->listen('http', function () {
   return $this->delegate(['overview', 'index']);

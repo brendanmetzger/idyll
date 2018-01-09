@@ -4,6 +4,7 @@ libxml_use_internal_errors(true);
 
 /****          *************************************************************************************/
 class Document extends \DOMDocument {
+  
   const DECLARATIONS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
 
   private $xpath = null,
@@ -54,9 +55,6 @@ trait invocable {
 /****      *************************************************************************************/
 class Text extends \DOMText {
   use invocable;
-  public function split($length): self {
-    return $this->splitText(is_string($length) ? strlen($length) : $length);
-  }
 }
 
 /****      *************************************************************************************/
