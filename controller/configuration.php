@@ -4,13 +4,17 @@ trait Configuration {
 
   public function GETLogin(?string $model = null, ?string $message = null)
   {
+    // TODO consider putting all of this in the authorize method
     if ($model && $message) {
-      [$id, $token] = explode('.', urldecode($message));
-      
-      if ($this->request->method->token(date('z'), $token)) {
-        $this->response->authorize(\App\Model::FACTORY($model, $id));
+      $token = new \App\Token(ID);
+      $hash  = urldecode($message);
+      $id    = $token->decode($hash);
+
+      if ($token->validate($hash, date('z'), $id)) {
+        $this->response->authorize($token, \App\Model::Neu($model, $id));
       }
     }
+
     $route = array_combine(['controller', 'action'], $this->request->method->route);
     return ( new \App\View('layout.html') )->set('content', 'login.html')->render($route);
   }
@@ -26,11 +30,12 @@ trait Configuration {
   public function POSTLogin(\App\Data $post, string $model) {
     
     $method   = $this->request->method;
-    $instance = \App\Model::Factory($model, $post['@id']);
+    $instance = \App\Model::Neu($model, $post['@id']);
 
     [$controller, $action] = $method->route;
-    
-    $token = urlencode("{$post['@id']}.{$method->token(date('z'))}");
+
+
+    $token = urlencode((new \App\Token(ID))->encode(date('z'), $post['@id']));
     $link  = sprintf('<a href="%s/%s/%s/%s/%s">login</a>', $method->host, $controller, $action, $model, $token);
     
     $result = \App\email((string)$instance, 'login link', $link);

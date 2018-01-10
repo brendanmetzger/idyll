@@ -30,9 +30,9 @@ abstract class Model implements \ArrayAccess {
     });
   }
   
-  static public function FACTORY($classname, $params) {
-    $classname = "\\Model\\{$classname}";
-    return new $classname($params);
+  static public function Neu($classname, $params) {
+    $Classname = "\\Model\\{$classname}";
+    return new $Classname($params);
   }
   
   public function offsetExists($offset) {
@@ -52,6 +52,11 @@ abstract class Model implements \ArrayAccess {
   public function offsetUnset($offset) {
     unset($this->context[$offset]);
     return true;
+  }
+  
+  public function __invoke(?array $keys = null): array
+  {
+    return [(string)$this, $this['@id']];
   }
   
   public function __toString() {
@@ -160,10 +165,11 @@ abstract class Controller {
   
   protected $request;
   protected $response;
+  
   abstract public function GETLogin(?string $model = null, ?string $webhook = null);
   abstract public function POSTLogin(\App\Data $post, string $model);
   
-  static final public function FACTORY(Request $request, string $class, string $method) {
+  static final public function Make(Request $request, string $class, string $method): array {
     $method = new \ReflectionMethod("\controller\\{$class}", $request->method . $method);
     $class  = $method->getDeclaringClass()->name;
     if ($method->isProtected() && ! $request->authenticate($method)) {
@@ -178,12 +184,13 @@ abstract class Controller {
     $this->response = new \App\Response($request);
   }
   
-  final public function output($message) {
+  final public function output($message): Response {
     // $this->response->setBlah
     // would be beneficial to render the data here if message instance of view;
     // should be sending the response after setting the body, filters, etc.
     // the response can be dealt with further or converted to a string.
-    return $message instanceof View ? $message->render($this->store) : $message;
+    $this->response->setContent($message instanceof View ? $message->render($this->store) : $message);
+    return $this->response;
   }
 
 }

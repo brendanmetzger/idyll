@@ -2,6 +2,8 @@
 
 # CONFIGURE 
 date_default_timezone_set ('America/Chicago');
+define('ID', getenv('ID'));
+
 
 # REQUIREMENTS
 foreach (['data', 'dom', 'io', 'mvc'] as $file) require_once "../app/{$file}.php";
@@ -13,7 +15,7 @@ spl_autoload_register(function ($classname) {
 
 
 # INSTANTIATE the request.
-$request = new Request( Method::FACTORY($_SERVER['REQUEST_METHOD'] ?? 'CLI') );
+$request = new Request( Method::Neu($_SERVER['REQUEST_METHOD'] ?? 'CLI') );
 
 
 $request->listen('http', function () {
@@ -29,9 +31,9 @@ $request->listen('repl', function () {
 
 
 try {
-  echo microtime(true) - $request->method->start;
-  echo $request->response();
   
+  echo $request->response();
+  echo microtime(true) - $request->method->start;
 
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
