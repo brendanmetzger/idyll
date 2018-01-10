@@ -17,7 +17,8 @@ class Overview extends \App\Controller {
   
   protected function GEThelp(\Model\Person $person) {
 
-    return (new \App\View('layout.html'))->render(['title' => $person['@title']]);
+    $this->title = 'working still';
+    return new \App\View('layout.html');
   }
   
   

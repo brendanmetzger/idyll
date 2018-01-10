@@ -52,10 +52,6 @@ class Data extends \ArrayIterator {
   }
 }
 
-interface authenticate {
-  
-}
-
 
 trait Registry {
   protected $store = [];

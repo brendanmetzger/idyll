@@ -2,8 +2,9 @@
 
 # CONFIGURE 
 date_default_timezone_set ('America/Chicago');
+
 # REQUIREMENTS
-foreach (['mvc', 'dom', 'data', 'io'] as $file) require_once "../app/{$file}.php";
+foreach (['data', 'dom', 'io', 'mvc'] as $file) require_once "../app/{$file}.php";
 
 # AUTOLOAD non-essential classes organized by namespace
 spl_autoload_register(function ($classname) {
@@ -16,7 +17,7 @@ $request = new Request( Method::FACTORY($_SERVER['REQUEST_METHOD'] ?? 'CLI') );
 
 
 $request->listen('http', function () {
-  return $this->delegate(['overview', 'index']);
+  return $this->delegate('overview', 'index');
 });
 
 
@@ -28,7 +29,10 @@ $request->listen('repl', function () {
 
 
 try {
-  echo (new Response($request))->package();
+  echo microtime(true) - $request->method->start;
+  echo $request->response();
+  
+
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
    TODO

@@ -8,7 +8,7 @@ trait Configuration {
       [$id, $token] = explode('.', urldecode($message));
       
       if ($this->request->method->token(date('z'), $token)) {
-        \App\Response::authorize($this->request, \App\Model::FACTORY($model, $id));
+        $this->response->authorize(\App\Model::FACTORY($model, $id));
       }
     }
     $route = array_combine(['controller', 'action'], $this->request->method->route);
@@ -23,17 +23,17 @@ trait Configuration {
     [ ] add a method to the person model, something like 'implements email' so that you can just go '$model->send('email') ??
     [ ] redirect properly to the page requested
   */
-  public function POSTLogin(\App\Data $post) {
+  public function POSTLogin(\App\Data $post, string $model) {
     
-    $method = $this->request->method;
-    $model  = \App\Model::Factory($post['type'], $post['@id']);
+    $method   = $this->request->method;
+    $instance = \App\Model::Factory($model, $post['@id']);
 
     [$controller, $action] = $method->route;
     
     $token = urlencode("{$post['@id']}.{$method->token(date('z'))}");
-    $link  = sprintf('<a href="%s/%s/%s/%s/%s">login</a>', $method->host, $controller, $action, $post['type'], $token);
+    $link  = sprintf('<a href="%s/%s/%s/%s/%s">login</a>', $method->host, $controller, $action, $model, $token);
     
-    $result = \App\email((string)$model, 'login link', $link);
+    $result = \App\email((string)$instance, 'login link', $link);
     
     echo "<pre>".print_r($result)."</pre>";
     

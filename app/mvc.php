@@ -1,14 +1,8 @@
 <?php namespace App;
 
-/****       *************************************************************************************/
-class Model implements \ArrayAccess {
-  
-  public function current (  ) {return $this->context;}
-  public function key (  ) {}
-  public function next (  ) {}
-  public function rewind (  ) {}
-  public function valid (  ) {}
-  
+/*************       *************************************************************************************/
+abstract class Model implements \ArrayAccess {
+  abstract protected function fixture(array $data): array;
   protected $context;
 
   public function __construct($context, array $data = [])
@@ -19,6 +13,7 @@ class Model implements \ArrayAccess {
     } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
       throw new \InvalidArgumentException("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type, log this, inform it was logged)", 1);
     } else {
+      // create from a fixture
       // TODO determine how to create a new item
     }
     
@@ -107,7 +102,7 @@ class View {
         $this->cleanup($node);
       }}
     }
-
+    
     return $this->document;
   }
   
@@ -161,13 +156,14 @@ class View {
 
 /*************            ***************************************************************************************/
 abstract class Controller {
-  private $method;
+  use Registry;
+  
   protected $request;
-  abstract  public function GETLogin(?string $model = null, ?string $webhook = null);
-  abstract public function POSTLogin(\App\Data $post);
+  protected $response;
+  abstract public function GETLogin(?string $model = null, ?string $webhook = null);
+  abstract public function POSTLogin(\App\Data $post, string $model);
   
   static final public function FACTORY(Request $request, string $class, string $method) {
-
     $method = new \ReflectionMethod("\controller\\{$class}", $request->method . $method);
     $class  = $method->getDeclaringClass()->name;
     if ($method->isProtected() && ! $request->authenticate($method)) {
@@ -177,9 +173,17 @@ abstract class Controller {
   }
   
   final public function __construct($request) {
-    $this->request = $request;
+    $this->title = 'Hobo Taco';
+    $this->request  = $request;
+    $this->response = new \App\Response($request);
   }
   
-  
+  final public function output($message) {
+    // $this->response->setBlah
+    // would be beneficial to render the data here if message instance of view;
+    // should be sending the response after setting the body, filters, etc.
+    // the response can be dealt with further or converted to a string.
+    return $message instanceof View ? $message->render($this->store) : $message;
+  }
 
 }
