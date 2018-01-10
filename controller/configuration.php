@@ -11,7 +11,7 @@ trait Configuration {
       $id    = $token->decode($hash);
 
       if ($token->validate($hash, date('z'), $id)) {
-        $this->response->authorize($token, \App\Model::Neu($model, $id));
+        $this->response->authorize($token, \App\Model::New($model, $id));
       }
     }
 
@@ -30,7 +30,7 @@ trait Configuration {
   public function POSTLogin(\App\Data $post, string $model) {
     
     $method   = $this->request->method;
-    $instance = \App\Model::Neu($model, $post['@id']);
+    $instance = \App\Model::New($model, $post['@id']);
 
     [$controller, $action] = $method->route;
 

@@ -5,9 +5,8 @@ abstract class Model implements \ArrayAccess {
   abstract protected function fixture(array $data): array;
   protected $context;
 
-  public function __construct($context, array $data = [])
-  {
-   
+  public function __construct($context, array $data = []) { 
+    
     if ($context instanceof Element) {
       $this->context = $context;
     } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
@@ -30,7 +29,7 @@ abstract class Model implements \ArrayAccess {
     });
   }
   
-  static public function Neu($classname, $params) {
+  static public function New(string $classname, $params) {
     $Classname = "\\Model\\{$classname}";
     return new $Classname($params);
   }
@@ -179,13 +178,11 @@ abstract class Controller {
   }
   
   final public function __construct($request) {
-    $this->title = 'Hobo Taco';
     $this->request  = $request;
     $this->response = new \App\Response($request);
   }
   
   final public function output($message): Response {
-    // $this->response->setBlah
     // would be beneficial to render the data here if message instance of view;
     // should be sending the response after setting the body, filters, etc.
     // the response can be dealt with further or converted to a string.

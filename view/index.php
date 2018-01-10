@@ -2,7 +2,7 @@
 
 # CONFIGURE 
 date_default_timezone_set ('America/Chicago');
-define('ID', getenv('ID'));
+define('ID', explode(':', getenv('ID')));
 
 
 # REQUIREMENTS
@@ -14,8 +14,9 @@ spl_autoload_register(function ($classname) {
 });
 
 
+
 # INSTANTIATE the request.
-$request = new Request( Method::Neu($_SERVER['REQUEST_METHOD'] ?? 'CLI') );
+$request = new Request( Method::New(getenv('REQUEST_METHOD')?:'CLI') );
 
 
 $request->listen('http', function () {
@@ -28,7 +29,6 @@ $request->listen('repl', function () {
   print_r($params);
   return "DONE";
 });
-
 
 try {
   

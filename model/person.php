@@ -19,6 +19,10 @@ class Person extends \App\Model
     ], $data);
   }
   
+  public function getName(\DOMElement $context) {
+    return 'FPO YO';
+  }
+  
   public function __toString() {
     return $this->context['@access'];
   }

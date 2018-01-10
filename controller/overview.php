@@ -18,7 +18,8 @@ class Overview extends \App\Controller {
   protected function GEThelp(\Model\Person $person) {
 
     $this->title = 'working still';
-    return new \App\View('layout.html');
+    $this->person = $person;
+    return (new \App\View('layout.html'))->set('content', 'bio.html');
   }
   
   
