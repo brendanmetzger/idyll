@@ -3,8 +3,7 @@
 /**
  * Person
  */
-class Person extends \App\Model
-{
+class Person extends \App\Model implements \App\Agent {
   const SOURCE = '../data/model.xml';
   const PATH   = '/model/person/item';
   
@@ -24,6 +23,29 @@ class Person extends \App\Model
   }
   
   public function __toString() {
+    return $this->context['@access'];
+  }
+  
+  public function contact(string $subject, string $message) {
+    $token = getenv('EMAIL');
+    $ch = curl_init("https://api.postmarkapp.com/email");
+    
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER	=> true,
+      CURLOPT_HTTPHEADER => [
+        'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$token}"
+      ],
+      CURLOPT_POSTFIELDS => json_encode([
+        'From' => getenv('SERVER_ADMIN'), 'To' => $this->context['@email'], 'Subject' => $subject, 'HTMLBody' => $message,
+      ]),
+    ]);
+
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($result);
+  }
+  
+  public function signature() {
     return $this->context['@access'];
   }
 }

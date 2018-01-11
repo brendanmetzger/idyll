@@ -63,13 +63,15 @@ class CLI extends Method {
 
 /****     ****************************************************************************************/
 class GET extends Method {
-  
-  public function __construct(float $timestamp) {
+  public $direct = false;
+  public function __construct(float $timestamp) {    
     $this->start  = $timestamp;
     $this->route  = array_filter($_GET['_r_']);
     $this->params = array_filter(explode('/', $_GET['_p_']));
     $this->format = $_GET['_e_'] ?: 'html';
-    $this->host   = sprintf('%s://%s', $_SERVER['REQUEST_SCHEME'], $_SERVER['SERVER_NAME']);
+    $this->host   = sprintf('%s://%s', getenv('REQUEST_SCHEME'), getenv('SERVER_NAME'));
+    $this->direct = stripos(getenv('HTTP_REFERER'), $this->host) === 0;
+    $this->path   = getenv('REQUEST_URI]');
   }
   
   public function session(Token $Tok, array $set = null) {
@@ -82,6 +84,7 @@ class GET extends Method {
 
 /****      ***************************************************************************************/
 class POST extends GET {
+  
   public function __construct(float $timestamp) {
     parent::__construct($timestamp);
     array_unshift($this->params, new Data($_POST));
@@ -186,23 +189,4 @@ class Response {
     $this->content->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
     return (string) $this->content;
   }
-}
-
-function email(string $to, string $subject, string $body) {
-  $token = getenv('EMAIL');
-  $ch = curl_init("https://api.postmarkapp.com/email");
-    
-  curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER	=> true,
-    CURLOPT_HTTPHEADER => [
-      'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$token}"
-    ],
-    CURLOPT_POSTFIELDS => json_encode([
-      'From' => getenv('SERVER_ADMIN'), 'To' => $to, 'Subject' => $subject, 'HTMLBody' => $body,
-    ]),
-  ]);
-
-  $result = curl_exec($ch);
-  curl_close($ch);
-  return json_decode($result);
 }

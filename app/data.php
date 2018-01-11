@@ -12,8 +12,6 @@ class Data extends \ArrayIterator {
   
   static public function PAIR(array $namespace, $data) {
     while ($key = array_shift($namespace)) {
-      // $data = $data[$key] ?? array_key_exists($key, $data);
-      
       if (! isset($data[$key]) && ! array_key_exists($key, $data) ) {
         throw new \UnexpectedValueException($key);
       }

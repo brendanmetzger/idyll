@@ -62,6 +62,11 @@ abstract class Model implements \ArrayAccess {
   }
 }
 
+interface Agent {
+  public function contact(string $subject, string $message);
+  public function signature();
+}
+
 /****      *************************************************************************************/
 class View {
   private $parent, $document, $slugs = [], $templates = [];
@@ -159,12 +164,12 @@ abstract class Controller {
   protected $response;
   
   abstract public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null);
-  abstract public function POSTLogin(\App\Data $post, string $model);
+  abstract public function POSTLogin(\App\Data $post, string $model, string $path);
   
   static final public function Make(Request $request, string $class, string $method): array {
 
-    $method = new \ReflectionMethod("\controller\\{$class}", $request->method . $method);
-    $class  = $method->getDeclaringClass()->name;
+    $class  = "\controller\\{$class}";
+    $method = new \ReflectionMethod($class, $request->method . $method);
     
     if ($method->isProtected() && ! $request->authenticate($method)) {
       $method = new \ReflectionMethod($class, $request->method . 'login');
@@ -176,6 +181,15 @@ abstract class Controller {
     $this->request  = $request;
     $this->response = new \App\Response($request);
     [$this->controller, $this->action] = $request->method->route;
+  }
+  
+  protected function proxy(\ReflectionMethod $method, ...$params)
+  {
+    /*
+    thinking it out. logins are special, and you only login if you need to, so it needs to function
+    like a switch. no/invalid data should land you at this proxy method, which will
+    A) render a login page unless the number of params does not match.
+    */
   }
   
   final public function output($message): Response {
