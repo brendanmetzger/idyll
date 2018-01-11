@@ -158,12 +158,14 @@ abstract class Controller {
   protected $request;
   protected $response;
   
-  abstract public function GETLogin(?string $model = null, ?string $webhook = null);
+  abstract public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null);
   abstract public function POSTLogin(\App\Data $post, string $model);
   
   static final public function Make(Request $request, string $class, string $method): array {
+
     $method = new \ReflectionMethod("\controller\\{$class}", $request->method . $method);
     $class  = $method->getDeclaringClass()->name;
+    
     if ($method->isProtected() && ! $request->authenticate($method)) {
       $method = new \ReflectionMethod($class, $request->method . 'login');
     }
@@ -173,6 +175,7 @@ abstract class Controller {
   final public function __construct($request) {
     $this->request  = $request;
     $this->response = new \App\Response($request);
+    [$this->controller, $this->action] = $request->method->route;
   }
   
   final public function output($message): Response {

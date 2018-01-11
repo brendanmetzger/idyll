@@ -26,7 +26,6 @@ $request->listen('repl', function () {
 });
 
 try {
-  
   echo $request->response();
   
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {

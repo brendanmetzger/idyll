@@ -1,18 +1,18 @@
 <?php namespace Controller;
 
 trait Configuration {
-
-  public function GETLogin(?string $model = null, ?string $message = null)
+  
+  /* TODO
+    [ ] add a method to the person model, something like 'implements email' so that you can just go '$model->send('email') ??
+    [ ] redirect properly to the page requested
+    [ ] consider putting most of the login stuff in the authorize method
+    [ ] make a proper response to form submission
+    [ ] login page should be invalid for logged-in users
+  */
+  public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null)
   {
-    // TODO consider putting all of this in the authorize method
     if ($model && $message) {
-      $token = new \App\Token(ID);
-      $hash  = urldecode($message);
-      $id    = $token->decode($hash);
-
-      if ($token->validate($hash, date('z'), $id)) {
-        $this->response->authorize($token, \App\Model::New($model, $id));
-      }
+      $this->response->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
     }
 
     $route = array_combine(['controller', 'action'], $this->request->method->route);
@@ -20,25 +20,17 @@ trait Configuration {
   }
   
   
-  /*
-    TODO
-    [ ] add a method to the person model, something like 'implements email' so that you can just go '$model->send('email') ??
-    [ ] redirect properly to the page requested
-  */
   public function POSTLogin(\App\Data $post, string $model) {
-    
-    $method   = $this->request->method;
-    $instance = \App\Model::New($model, $post['@id']);
 
-    [$controller, $action] = $method->route;
-
-
-    $token = urlencode((new \App\Token(ID))->encode(date('z'), $post['@id']));
-    $link  = sprintf('<a href="%s/%s/%s/%s/%s">login</a>', $method->host, $controller, $action, $model, $token);
+    $body   = (new \App\View('layout/basic.html'))->set('content', 'transaction.html')->render($this->merge([
+      'token' => urlencode($this->request->token->encode(date_sunset(time(), SUNFUNCS_RET_TIMESTAMP), $post['@id'])),
+      'host'  => $this->request->method->host,
+      'model' => $model,
+      'redir' => '',
+    ]));
     
-    $result = \App\email((string)$instance, 'login link', $link);
-    
-    echo "<pre>".print_r($result)."</pre>";
+    $result = \App\email(\App\Model::New($model, $post['@id']), 'Your Login Awaits..', $body);
+    return "<pre>".print_r($result, true)."</pre>";
     
   }
 }

@@ -95,18 +95,20 @@ class Request {
 
   public function __construct(Method $method) {
     $this->method = $method;
+    $this->token  = new Token(ID);
   }
     
   public function listen (string $scheme, callable $callback): void {
+
     $this->listeners[$scheme] = $callback;
   }
 
   public function authenticate(\ReflectionMethod $method): bool {
-    $token = new Token(ID);
-    if ($hash = $this->method->session($token)) {
+    if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
-      $user  = new $Model( $token->decode($hash) );
-      $valid = $token->validate($hash, ...$user());
+      $user  = new $Model( $this->token->decode($hash) );
+      $valid = $this->token->validate($hash, ...$user());
+      // valid should be - instanceof 'something...'
       $method->setAccessible($valid);
       array_unshift($this->method->params, $user); 
       return $valid;
@@ -125,11 +127,10 @@ class Request {
 }
 
 /* TODO
+[ ] Consider implementing a way users and guests can see same page, with users having rendered session vars
 [ ] response should be in control of filtering/reordering DOM presentation
 [ ] response should be in charge of caching
 [ ] response should be able to return a partial if request is ajax.
-[x] I would like to lose the static methods and make the response more fluid
-    - look in design patters for way to have request/response talk to one another
 */
 /****          ***********************************************************************************/
 class Response {
@@ -163,9 +164,12 @@ class Response {
     exit();
   }
   
-  public function authorize(Token $token, Model $model) {
-    $this->request->method->session($token, $model());
-    $this->redirect('/');
+  public function authorize(string $model, string $message, string $key) {
+    $id   = $this->request->token->decode($message);
+    if ($this->request->token->validate($message, $key, $id)) {
+      $this->request->method->session($token, \App\Model::New($model, $id)());
+      $this->redirect('/');
+    }
   }
   
   public function setHeader() {
@@ -184,19 +188,18 @@ class Response {
   }
 }
 
-function email($to, $subject, $body) {
+function email(string $to, string $subject, string $body) {
   $token = getenv('EMAIL');
   $ch = curl_init("https://api.postmarkapp.com/email");
+    
   curl_setopt_array($ch, [
     CURLOPT_RETURNTRANSFER	=> true,
     CURLOPT_HTTPHEADER => [
-      'Accept: application/json',
-      'Content-Type: application/json',
-      "X-Postmark-Server-Token: {$token}"
+      'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$token}"
     ],
     CURLOPT_POSTFIELDS => json_encode([
       'From' => getenv('SERVER_ADMIN'), 'To' => $to, 'Subject' => $subject, 'HTMLBody' => $body,
-    ])
+    ]),
   ]);
 
   $result = curl_exec($ch);

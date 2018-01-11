@@ -14,9 +14,10 @@ class Data extends \ArrayIterator {
     while ($key = array_shift($namespace)) {
       // $data = $data[$key] ?? array_key_exists($key, $data);
       
-      if (! $data = $data[$key] ) {
+      if (! isset($data[$key]) && ! array_key_exists($key, $data) ) {
         throw new \UnexpectedValueException($key);
       }
+      $data = $data[$key];
     }
     return $data;
   }
@@ -69,6 +70,6 @@ trait Registry {
   }
   
   public function merge(array $data) {
-    array_merge($this->store, $data);
+    return array_merge($this->store, $data);
   }
 }
