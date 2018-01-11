@@ -62,38 +62,32 @@ abstract class Model implements \ArrayAccess {
   }
 }
 
-/* TODO
-[ ] Removal of unspecified nodes needs adjusting: as is, only applied to iterated methonds 
-[/] remove nodes that have been slated for demo
-[ ] run before/after filters
-
-*/
-
 /****      *************************************************************************************/
 class View {
-  private $document, $slugs = [], $templates = [];
+  private $parent, $document, $slugs = [], $templates = [];
   
-  public function __construct($input) {
+  public function __construct($input, ?self $parent = null) {
     $this->document = new Document($input);
+    $this->parent   = $parent;
   }
   
   public function render($data = [], bool $parse = true): Document {
     
     foreach ($this->getTemplates('insert') as [$path, $ref]) {
-      $this->import((new Self($path))->render($data, false), $ref);
+      $this->import((new Self($path, $this))->render($data, false), $ref);
     }
     
     foreach ($this->getTemplates('replace') as [$prop, $ref]) {
       if (isset($this->templates[$prop])) {
-        $this->import((new Self($this->templates[$prop]))->render($data, false), $ref->nextSibling);
+        $this->import((new Self($this->templates[$prop], $this))->render($data, false), $ref->nextSibling);
         $ref -> parentNode -> removeChild($ref);
       }
     } 
     
     foreach ($this->getTemplates('iterate') as [$key, $ref]) {
-      $view = new Self( $ref -> parentNode -> removeChild( $ref -> nextSibling ));
+      $view = new Self( $ref -> parentNode -> removeChild( $ref -> nextSibling ), $this);
       foreach ($data[$key] ?? [] as $datum) {
-        $view->cleanup($this->import($view->render($datum), $ref, 'insertBefore'));
+        $view->cleanup($this->import($view->render($datum), $ref, 'insertBefore'), false);
       }
       $ref->parentNode->removeChild($ref);
     }
@@ -102,10 +96,13 @@ class View {
       foreach ($this->getSlugs() as [$node, $scope]) { try {
         $node(Data::PAIR($scope, $data));
       } catch (\UnexpectedValueException $e) {
-        $this->cleanup($node->parentNode);
+        $list = $this->cleanup($node->parentNode);
       }}
+      
+      if (! $this->parent instanceof self) {
+        $this->cleanup($this->document->documentElement, false);
+      }
     }
-    
     return $this->document;
   }
   
@@ -114,14 +111,12 @@ class View {
     return $this;
   }
   
-  private function cleanup(\DOMNode $node): void {
+  private function cleanup(\DOMNode $node, $collect = true): void {
     static $remove = [];
-    if ($node instanceof \DOMElement) {
-      while($path = array_pop($remove)) {
-        $node->ownerDocument->find("..{$path}", $node)[0]->remove();
-      }
-    } else {
-      $remove[] = $node->getNodePath();
+    if ($collect) $remove[] = $node->getNodePath();
+    else {
+      while ($path = array_pop($remove)) $node->ownerDocument->find("..{$path}", $node)[0]->remove();;
+      $node->cleaned = 'yes';
     }
   }
   

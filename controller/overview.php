@@ -32,8 +32,6 @@ class Overview extends \App\Controller {
       $view->set('content', 'list.html');
     }
     
-    
-    
     $this->title = 'working still';
     $this->person = $person;
     

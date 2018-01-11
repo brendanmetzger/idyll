@@ -22,8 +22,6 @@ trait Configuration {
   
   /*
     TODO
-    [ ] Instead of sending the access variable, send the model to instantiate. make factory method in base model
-    [x] Perhaps employ a __toString on the model so any model can have some kind of semi-unique identifier
     [ ] add a method to the person model, something like 'implements email' so that you can just go '$model->send('email') ??
     [ ] redirect properly to the page requested
   */

@@ -4,7 +4,6 @@
 date_default_timezone_set ('America/Chicago');
 define('ID', explode(':', getenv('ID')));
 
-
 # REQUIREMENTS
 foreach (['data', 'dom', 'io', 'mvc'] as $file) require_once "../app/{$file}.php";
 
@@ -13,16 +12,12 @@ spl_autoload_register(function ($classname) {
   @include '../' . str_replace('\\', '/', $classname) . '.php';
 });
 
-
-
 # INSTANTIATE the request.
 $request = new Request( Method::New(getenv('REQUEST_METHOD')?:'CLI') );
-
 
 $request->listen('http', function () {
   return $this->delegate('overview', 'index');
 });
-
 
 $request->listen('repl', function () {
   print_r($this);
@@ -33,8 +28,7 @@ $request->listen('repl', function () {
 try {
   
   echo $request->response();
-
-
+  
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
    TODO

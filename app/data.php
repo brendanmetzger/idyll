@@ -11,8 +11,13 @@ class Data extends \ArrayIterator {
   static private $sources = [];
   
   static public function PAIR(array $namespace, $data) {
-    while ($key = array_shift($namespace)) 
-     if (! $data = $data[$key]) throw new \UnexpectedValueException;
+    while ($key = array_shift($namespace)) {
+      // $data = $data[$key] ?? array_key_exists($key, $data);
+      
+      if (! $data = $data[$key] ) {
+        throw new \UnexpectedValueException($key);
+      }
+    }
     return $data;
   }
   

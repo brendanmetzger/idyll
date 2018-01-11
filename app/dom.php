@@ -62,7 +62,7 @@ class Attr extends \DOMAttr {
   use invocable;
   public function remove() {
     if ($this->ownerElement) {
-      $this->ownerElement->removeAttribute($this->nodeName);
+      return $this->ownerElement->removeAttribute($this->nodeName);
     }
   }
 }
@@ -106,13 +106,12 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
 
   public function offsetUnset($offset) {
-    throw new \Exception("TODO: implement deleting node values, (deal with attributes and elements)", 1);
-    return false;
+    return $this[$offset]->remove();
   }
   
   public function remove() {
     if ($this->parentNode) {
-      $this->parentNode->removeChild($this);
+      return $this->parentNode->removeChild($this);
     }
   }
 
