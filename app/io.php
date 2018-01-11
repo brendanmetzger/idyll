@@ -2,11 +2,11 @@
 
 /****       **************************************************************************************/
 class Token {
-  private $algo, $length, $secret;
+  private $algo, $size, $secret;
   public  $expire, $version, $secure = true;
           
   public function __construct(array $config, ?int $expire = null) {
-    [$this->algo, $this->length, $this->secret, $this->version] = $config;
+    [$this->algo, $this->size, $this->secret, $this->version] = $config;
     $this->secure = $this->version !== 'local';
     $this->expire = ($expire !== null ? $expire : 3600 * 24 * 90) + time();
   }
@@ -18,14 +18,14 @@ class Token {
   public function encode(string $key, string $msg): string {
     return array_reduce(str_split(str_rot13($msg)), \Closure::bind(function($H, $L)  {
       return substr_replace($H, $L, $this->i -= $this->s, 0);
-    }, (object)['s' => floor($this->length / strlen($msg)), 'i' => 0 ]), hash_hmac($this->algo, $key, $this->secret));
+    }, (object)['s'=>floor($this->size/strlen($msg)),'i'=>0]), hash_hmac($this->algo, $key, $this->secret));
   }
   
-  public function decode(string $input): string {
-    $size = strlen($input) - 32;
-    $skip = floor($this->length / $size) * -1;
-    return str_rot13(array_reduce(range(1, $size), function($o, $i) use($input, $skip) {
-      return $o . substr($input, ($i * $skip - 1), 1);
+  public function decode(string $msg): string {
+    $size = strlen($msg) - 32;
+    $skip = floor($this->size / $size) * -1;
+    return str_rot13(array_reduce(range(1, $size), function($o, $i) use($msg, $skip) {
+      return $o . $msg[($i * $skip - 1)];
     }, ''));
   }
 }
@@ -178,6 +178,8 @@ class Response {
   }
   
   public function __toString(): string {
+    $timestamp = microtime(true) - $this->request->method->start;
+    $this->content->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
     return (string) $this->content;
   }
 }

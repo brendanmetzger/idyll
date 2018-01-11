@@ -20,7 +20,7 @@ class Person extends \App\Model
   }
   
   public function getName(\DOMElement $context) {
-    return 'FPO YO';
+    return array_combine(['first','last'], explode(' ', $context['@title']));
   }
   
   public function __toString() {

@@ -33,7 +33,7 @@ $request->listen('repl', function () {
 try {
   
   echo $request->response();
-  echo microtime(true) - $request->method->start;
+
 
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*

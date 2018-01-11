@@ -40,8 +40,7 @@ abstract class Model implements \ArrayAccess {
 
   public function offsetGet($offset) {
     $method  = "get{$offset}";
-    $context = $this->context[$offset];
-    return method_exists($this, $method) ? $this->{$method}($context) : $context;
+    return method_exists($this, $method) ? $this->{$method}($this->context) : $this->context[$offset];
   }
 
   public function offSetSet($offset, $value) {
@@ -103,7 +102,7 @@ class View {
       foreach ($this->getSlugs() as [$node, $scope]) { try {
         $node(Data::PAIR($scope, $data));
       } catch (\UnexpectedValueException $e) {
-        $this->cleanup($node);
+        $this->cleanup($node->parentNode);
       }}
     }
     
@@ -119,11 +118,10 @@ class View {
     static $remove = [];
     if ($node instanceof \DOMElement) {
       while($path = array_pop($remove)) {
-        $item = $node->ownerDocument->find($path, $node)[0];
-        $item->parentNode->removeChild($item);
+        $node->ownerDocument->find("..{$path}", $node)[0]->remove();
       }
     } else {
-      $remove[] = sprintf('/%s/parent::*', $node->getNodePath());
+      $remove[] = $node->getNodePath();
     }
   }
   

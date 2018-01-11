@@ -15,11 +15,29 @@ class Overview extends \App\Controller {
     return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
   }
   
-  protected function GEThelp(\Model\Person $person) {
-
+  protected function GETedit(\Model\Person $person, ?string $type = null, ?string $id = null) {
+    $view = new \App\View('layout.html');
+    
+    if ($type === null) {
+      $this->types = (new \App\Data(['person', 'inventory', 'project', 'task']))->map(function($item) {
+        return ['type' => $item];
+      });
+      $view->set('content', 'manage.html');
+    }
+    
+    
+    if ($type !== null) {
+      $this->people = \Model\Person::list();
+      $this->type = $type;
+      $view->set('content', 'list.html');
+    }
+    
+    
+    
     $this->title = 'working still';
     $this->person = $person;
-    return (new \App\View('layout.html'))->set('content', 'bio.html');
+    
+    return $view;
   }
   
   
