@@ -28,16 +28,16 @@ $request->listen('repl', function () {
 try {
   echo $request->response();
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
-  /*
-   TODO
-   [ ] Show appropriate message when controller not found/incorrect
-   [ ] "                        for action
-   [ ] "                        for protected methods 
+  // figure out why the first two links aren't rendering ($line and $file are missing )
+  $trace = $e->getTrace();
+  echo (new View('layout/basic.html'))->set('content', 'content/error.html')->render([
+    'title' => $e->getMessage(),
+    // 'message' => print_r($trace, true),
+    'file'    => $e->getFile(),
+    'line'    => $e->getLine(),
+    'trace' => $trace,
+  ]);
   
-  */
-  echo "<h1>TYPE ERROR, REFLECTION EXCEPTION</h1><pre>";
-  print_r($e);
-  echo "</pre>";
 } catch (\Exception $e) {
   print_r($e);
 }

@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript">
       // <![CDATA[
-      (function(app, s, c, p1, p2) {
+      App = (function(app, s, c, p1, p2) {
         s.type = 'text/javascript';
-        app.cache = Object.create(null);
+        app.cache   = Object.create(null);
         app.require = function(u, p = false) {          
           let ctx = s.cloneNode();
               ctx.src = u; ctx.async = p;
@@ -24,11 +24,16 @@
         app.module =  k     => (k in app.cache) ? app.cache[k] : app.define.bind(app, k);
         app.define = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
         app.init   = (f, w) => c[w||'push'](f);
-        
-      }(this.app = {}, document.createElement('script'), [], [], []));
+        app.mobile = (/mobile|iPhone/i).test(navigator.userAgent);
+        //return () => js.map(Node.prototype.appendChild.bind(document.head));
+      })(this.app = {}, document.createElement('script'), [], [], []);
+      
+      
+      // load all scripts into the same array. On init, filter the non/async scripts and add load callback.
+      // js.filter(s=>!s.async)
+      // (this.app = , document.createElement('script'), []);
 
-      var mobile = (/mobile|iPhone/i).test(navigator.userAgent);
-      document.documentElement.classList.add(mobile ? 'touch' : 'desktop');
+      document.documentElement.classList.add(['touch','click'][+app.mobile]);
       app.require('/js/app.js');
       // ]]>
     </script>
