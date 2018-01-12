@@ -28,14 +28,21 @@ $request->listen('repl', function () {
 try {
   echo $request->response();
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
-  // figure out why the first two links aren't rendering ($line and $file are missing )
-  $trace = $e->getTrace();
+
+  // FIXME There is a tricky bug here: closures don't show up with a file,
+  // so the data is null, but it was messing with other items in the DOM
+  // tree as opposed to the file it was referencing. I think
+  // this may have something to do with the xpath removal of empty nodes
+  // in the cleanup. This points to a problem able to happen elsewhere
+
   echo (new View('layout/basic.html'))->set('content', 'content/error.html')->render([
     'title' => $e->getMessage(),
     // 'message' => print_r($trace, true),
     'file'    => $e->getFile(),
     'line'    => $e->getLine(),
-    'trace' => $trace,
+    'trace' => array_filter($e->getTrace(), function($item) {
+      return count($item) == 6;
+    }),
   ]);
   
 } catch (\Exception $e) {
