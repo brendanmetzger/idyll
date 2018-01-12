@@ -1,0 +1,43 @@
+:root {
+  font-family: Baskerville, Times;
+  color: #333;
+  font-size: 62.5%;
+  --phi: 1.618;
+}
+h1, h2, h3, header, footer, div{ margin: 0;}
+header {
+  margin: -2.5em -2.5em 2.5em -2.5em;
+  padding: 2.5em;
+  background-color: #EEE;
+}
+h1 { font-size: calc(var(--phi) * 4em) }
+h2 { font-size: calc(var(--phi) * 3em) }
+h3 { font-size: calc(var(--phi) * 2em) }
+p,li  { font-size: calc(var(--phi) * 1em) }
+body {
+  min-height: 100vh;
+  padding: 2.5em;
+  margin: 0;
+  background: radial-gradient(
+    #9A9AA4ff 0%,
+    #262B3133 40%,
+    #FAD19BAA 100%
+  ) repeat-y fixed;
+  background-size: 200vw 200vh;
+}
+footer {
+  margin: 5em -2.5em -2.5em;
+  background-image: linear-gradient(rgba(220,215,220, 0.5), rgba(255,255,255,0)), url(/media/facing-east.jpg);
+  background-size: 100% 100%, 100% auto;
+  background-position: 0 0, 50% 100%;
+  padding: 2.5em 2.5em 15% 15%;
+  box-shadow: inset 0 0 0.25em rgba(0,0,0,0.25);
+}
+
+nav ul {
+  margin: 0 5% 0 70%;
+  width: 25%;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+}

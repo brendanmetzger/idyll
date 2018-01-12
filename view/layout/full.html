@@ -1,42 +1,35 @@
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
     <title>[$title]</title>
-    <style type="text/css" media="screen">
-      /* <![CDATA[ */
-      :root {
-        font-family: Baskerville, Times;
-        color: #333;
-        font-size: 62.5%;
-        --phi: 1.618;
-      }
-      h1 { font-size: calc(var(--phi) * 4em) }
-      h2 { font-size: calc(var(--phi) * 3em) }
-      h3 { font-size: calc(var(--phi) * 2em) }
-      p,li  { font-size: calc(var(--phi) * 1em) }
-      body {
-        min-height: 100vh;
-        padding: 2.5em;
-        margin: 0;
-        background: radial-gradient(
-          #9A9AA4ff 0%,
-          #262B3133 40%,
-          #FAD19BAA 100%
-        ) repeat-y fixed;
-        background-size: 200vw 200vh;
-      }
-      footer {
-        margin: 5em -2.5em -2.5em;
-        background-image: linear-gradient(rgba(220,215,220, 0.5), rgba(255,255,255,0)), url(/media/facing-east.jpg);
-        background-size: 100% 100%, 100% auto;
-        background-position: 0 0, 50% 100%;
-        padding: 2.5em 2.5em 15% 15%;
-        box-shadow: inset 0 0 0.25em rgba(0,0,0,0.25);
-      }
-      /* ]]> */
-    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="user-scalable=yes,width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript">
       // <![CDATA[
-      
+      (function(app, s, c, p1, p2) {
+        s.type = 'text/javascript';
+        app.cache = Object.create(null);
+        app.require = function(u, p = false) {          
+          let ctx = s.cloneNode();
+              ctx.src = u; ctx.async = p;
+          p ? p2.push(ctx) : ctx.onload = app.load.bind(ctx, p1.push(ctx));
+        };
+        app.load = function(i, e) {
+          if (i === e) return p1.concat(p2).map(Node.prototype.appendChild.bind(document.head));
+          if (e && p1.length === i || i === true) while (c.length > 0) c.shift().call();
+        };
+        
+        app.remove =  k     => delete app.cache[k];
+        app.module =  k     => (k in app.cache) ? app.cache[k] : app.define.bind(app, k);
+        app.define = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
+        app.init   = (f, w) => c[w||'push'](f);
+        
+      }(this.app = {}, document.createElement('script'), [], [], []));
+
+      var mobile = (/mobile|iPhone/i).test(navigator.userAgent);
+      document.documentElement.classList.add(mobile ? 'touch' : 'desktop');
+      app.require('/js/app.js');
       // ]]>
     </script>
   </head>
@@ -48,5 +41,6 @@
       <!-- insert content/about.html -->
     </main>
     <!-- insert component/footer.html -->
+    <script type="text/javascript">app.load();</script>
   </body>
 </html>
