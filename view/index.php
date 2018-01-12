@@ -9,7 +9,7 @@ foreach (['data', 'dom', 'io', 'locus', 'mvc'] as $file) require_once "../app/{$
 
 # AUTOLOAD non-essential classes organized by namespace
 spl_autoload_register(function ($classname) {
-  @include '../' . str_replace('\\', '/', $classname) . '.php';
+  @include '../' . str_replace('\\', '/', strtolower($classname)) . '.php';
 });
 
 # INSTANTIATE the request.
