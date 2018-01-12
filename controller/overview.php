@@ -6,7 +6,7 @@ class Overview extends \App\Controller {
   
   public function GETindex($id = null) {
 
-    $layout   = new \App\View('layout.html');
+    $layout   = new \App\View('layout/full.html');
     
     if ($id) {
       $m = new \Model\Item($id);
@@ -15,14 +15,18 @@ class Overview extends \App\Controller {
     return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
   }
   
+  protected function GETcalendar(\Model\Person $user) {
+    return (new \App\View('layout/full.html'))->set('content', 'content/calendar.html');
+  }
+  
   protected function GETedit(\Model\Person $person, ?string $type = null, ?string $id = null) {
-    $view = new \App\View('layout.html');
+    $view = new \App\View('layout/full.html');
 
     if ($type === null) {
       $this->types = (new \App\Data(['person', 'inventory', 'project', 'task']))->map(function($item) {
         return ['type' => $item];
       });
-      $view->set('content', 'manage.html');
+      $view->set('content', 'content/manage.html');
     }
     
     

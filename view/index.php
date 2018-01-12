@@ -5,7 +5,7 @@ date_default_timezone_set ('America/Chicago');
 define('ID', explode(':', getenv('ID')));
 
 # REQUIREMENTS
-foreach (['data', 'dom', 'io', 'mvc'] as $file) require_once "../app/{$file}.php";
+foreach (['data', 'dom', 'io', 'locus', 'mvc'] as $file) require_once "../app/{$file}.php";
 
 # AUTOLOAD non-essential classes organized by namespace
 spl_autoload_register(function ($classname) {
@@ -27,7 +27,6 @@ $request->listen('repl', function () {
 
 try {
   echo $request->response();
-  
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
   /*
    TODO

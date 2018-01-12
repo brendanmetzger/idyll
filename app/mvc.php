@@ -62,12 +62,13 @@ abstract class Model implements \ArrayAccess {
   }
 }
 
+/********       **********************************************************************************/
 interface Agent {
   public function contact(string $subject, string $message);
   public function signature();
 }
 
-/****      *************************************************************************************/
+/****      ***************************************************************************************/
 class View {
   private $parent, $document, $slugs = [], $templates = [];
   
@@ -153,7 +154,6 @@ class View {
   private function import(Document $import, \DOMNode $ref, $swap = 'replaceChild'): \DOMNode {
     return $ref -> parentNode -> {$swap}( $this -> document -> importNode($import->documentElement, true), $ref );    
   }
-  
 }
 
 /*************            ***************************************************************************************/
@@ -199,5 +199,4 @@ abstract class Controller {
     $this->response->setContent($message instanceof View ? $message->render($this->store) : $message);
     return $this->response;
   }
-
 }

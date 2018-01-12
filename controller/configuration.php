@@ -17,7 +17,7 @@ trait Configuration {
     }
     
     $data = ['path' => urlencode(base64_encode($this->request->method->path))];
-    return ( new \App\View('layout.html') )->set('content', 'transaction/login.html')->render($this->merge($data));
+    return ( new \App\View('layout/full.html') )->set('content', 'transaction/login.html')->render($this->merge($data));
   }
   
   
