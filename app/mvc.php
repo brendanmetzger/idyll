@@ -92,8 +92,8 @@ class View {
     
     foreach ($this->getTemplates('iterate') as [$key, $ref]) {
       $view = new Self( $ref -> parentNode -> removeChild( $ref -> nextSibling ), $this);
-      foreach ($data[$key] ?? [] as $datum) {
-        $view->cleanup($this->import($view->render($datum), $ref, 'insertBefore'), false);
+      foreach ($data[$key] ?? [] as $idx => $datum) {
+        $view->cleanup($this->import($view->render($datum), $ref, 'insertBefore'), $idx+1);
       }
       $ref->parentNode->removeChild($ref);
     }
@@ -106,7 +106,7 @@ class View {
       }}
       
       if (! $this->parent instanceof self) {
-        $this->cleanup($this->document->documentElement, false);
+        $this->cleanup($this->document->documentElement, 1);
       }
     }
     return $this->document;
@@ -117,12 +117,15 @@ class View {
     return $this;
   }
   
-  private function cleanup(\DOMNode $node, $collect = true): void {
+  private function cleanup(\DOMNode $node, ?int $idx = null): void {
     static $remove = [];
-    if ($collect) $remove[] = $node->getNodePath();
-    else {
-      while ($path = array_pop($remove)) $node->ownerDocument->find("..{$path}", $node)[0]->remove();;
-      $node->cleaned = 'yes';
+    if ($idx) {
+      while ($path = array_shift($remove)) {
+        $list = $node->ownerDocument->find("..{$path}", $node);
+        if ($list->length == $idx) $list[$idx-1]->remove();
+      }
+    } else {
+      $remove[] = $node->getNodePath();
     }
   }
   
