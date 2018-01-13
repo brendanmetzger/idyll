@@ -26,16 +26,17 @@ $request->listen('repl', function () {
 });
 
 try {
+  
   echo $request->response();
+  
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException $e) {
-
   echo (new View('layout/basic.html'))->set('content', 'content/error.html')->render([
     'message' => $e->getMessage(),
     'file'    => $e->getFile(),
     'line'    => $e->getLine(),
-    'trace'   => $e->getTrace(),
+    'trace'   => array_reverse($e->getTrace()),
   ]);
   
 } catch (\Exception $e) {
-  print_r($e);
+  echo "something worse?";
 }

@@ -110,7 +110,7 @@ class Request {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
       $user  = new $Model( $this->token->decode($hash) );
-      $valid = $this->token->validate($hash, ...$user());
+      $valid = $this->token->validate($hash, ...$user->signature());
       // valid should be - instanceof 'something...'
       $method->setAccessible($valid);
       array_unshift($this->method->params, $user); 
@@ -170,7 +170,7 @@ class Response {
   public function authorize(string $model, string $message, string $key) {
     $id   = $this->request->token->decode($message);
     if ($this->request->token->validate($message, $key, $id)) {
-      $this->request->method->session($token, \App\Model::New($model, $id)());
+      $this->request->method->session($token, \App\Model::New($model, $id)->signature());
       $this->redirect('/');
     }
   }

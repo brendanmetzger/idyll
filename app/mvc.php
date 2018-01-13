@@ -52,11 +52,6 @@ abstract class Model implements \ArrayAccess {
     return true;
   }
   
-  public function __invoke(?array $keys = null): array
-  {
-    return [(string)$this, $this['@id']];
-  }
-  
   public function __toString() {
     return $this->context['@id'];
   }

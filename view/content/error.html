@@ -1,9 +1,43 @@
 <main>
-  <h1 style="font-size:10em;margin:0">🤭</h1>
-  <h2><a href="[txmt://open?url=file://$file&amp;line=$line]">[$message]</a></h2>
-  <h3>...trace</h3>
+  <style type="text/css" media="screen">
+    /* <![CDATA[ */
+    ol {
+      margin: 0;
+      list-style: none;
+      padding: 0;
+      overflow:auto;
+    }
+    ol li {
+      float:left;
+      text-align: center;
+      padding: 0.75em 1.5em;
+      font-size: 1.25em;
+      background-color: #EAEAEA;
+      margin: 0.25em;
+      position:relative;
+      border-radius:0.5em;
+    }
+    ol li i {
+      display: block;
+      font-size:1.25em;
+    }
+    ol li + li:before {
+      content: '→';
+      background-color: #EAEAEA;
+      position:absolute;
+      left:-0.75em;
+      top: calc(50% - 0.5em);
+      z-index:100;
+      
+    }
+    /* ]]> */
+  </style>
+  <header style="overflow:auto">
+    <h2 style="font-size:10em;margin:0;float:left;">🤭</h2>
+    <h1 style="margin:2em;float:left"><a href="[txmt://open?url=file://$file&amp;line=$line]">[$message]</a></h1>
+  </header>
   <ol>
     <!-- iterate trace -->
-    <li><strong>[$function]</strong> in <a href="[txmt://open?url=file://$file&amp;line=$line]">[$class]</a></li>
+    <li><a href="[txmt://open?url=file://$file&amp;line=$line]">[$class]</a><hr/><i>[$function]</i></li>
   </ol>
 </main>

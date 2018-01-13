@@ -22,9 +22,6 @@ class Person extends \App\Model implements \App\Agent {
     return array_combine(['first','last'], explode(' ', $context['@title']));
   }
   
-  public function __toString() {
-    return $this->context['@access'];
-  }
   
   public function contact(string $subject, string $message) {
     $token = getenv('EMAIL');
@@ -46,6 +43,6 @@ class Person extends \App\Model implements \App\Agent {
   }
   
   public function signature() {
-    return $this->context['@access'];
+    return [$this['@access'], $this['@id']];
   }
 }

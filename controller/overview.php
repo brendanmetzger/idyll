@@ -21,7 +21,6 @@ class Overview extends \App\Controller {
   
   protected function GETedit(\Model\Person $person, ?string $type = null, ?string $id = null) {
     $view = new \App\View('layout/full.html');
-
     if ($type === null) {
       $this->types = (new \App\Data(['person', 'inventory', 'project', 'task']))->map(function($item) {
         return ['type' => $item];
