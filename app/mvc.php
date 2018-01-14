@@ -3,6 +3,7 @@
 /*************       *************************************************************************************/
 abstract class Model implements \ArrayAccess {
   abstract protected function fixture(array $data): array;
+  
   protected $context;
 
   public function __construct($context, array $data = []) { 
@@ -52,7 +53,7 @@ abstract class Model implements \ArrayAccess {
     return true;
   }
   
-  public function __toString() {
+  final public function __toString() {
     return $this->context['@id'];
   }
 }
@@ -60,7 +61,7 @@ abstract class Model implements \ArrayAccess {
 /********       **********************************************************************************/
 interface Agent {
   public function contact(string $subject, string $message);
-  public function signature();
+  public function sign(Token $token);
 }
 
 /****      ***************************************************************************************/
@@ -115,13 +116,11 @@ class View {
   private function cleanup(\DOMNode $node, ?int $idx = null): void {
     static $remove = [];
     if ($idx) {
-      while ($path = array_shift($remove)) {
+      while ($path = array_pop($remove)) {
         $list = $node->ownerDocument->find("..{$path}", $node);
         if ($list->length == $idx) $list[$idx-1]->remove();
       }
-    } else {
-      $remove[] = $node->getNodePath();
-    }
+    } else $remove[] = $node->getNodePath();
   }
   
   private function getTemplates($key): iterable {

@@ -7,6 +7,8 @@ class Person extends \App\Model implements \App\Agent {
   const SOURCE = '../data/model.xml';
   const PATH   = '/model/person/item';
   
+  const SRC = ['../data/model.xml', '/model/person/item'];
+  
   protected function fixture(array $data): array  {
     return array_merge_recursive([
       '@title'   => '',
@@ -42,7 +44,7 @@ class Person extends \App\Model implements \App\Agent {
     return json_decode($result);
   }
   
-  public function signature() {
+  public function sign(\App\Token $token) {
     return [$this['@access'], $this['@id']];
   }
 }

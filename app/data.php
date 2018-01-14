@@ -24,6 +24,7 @@ class Data extends \ArrayIterator {
     $document = self::$sources[$source] ?: self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
     return $path ? new self($document->find($path)) : $document;
   }
+  
 
   private $maps = [];
   

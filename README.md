@@ -4,19 +4,17 @@ An austere way to develop websites with source code authored and designed to be 
 
 
 
-## Principles
+## Goals and Principles
 - Minimal Comments and explanations. No hopscotch of opening files and documentation to see what things mean.
 - No dependancies
-- This framework is designed to operate un-cached (caching is easy and often leads to slop)
-- Complete and non-negotiable separation of data/models and viems (templates are *exclusively* html/xml)
-- Minimalist
-- Perfect execution of DOM and output of valid markup
-- markup itself can be utilized as data
-- no component of the application will exceed ~150 lines, and no more than 5 files (max 1000 SLOC is a goal)
-- Avoid conditions whenever possible
-- Modeling and storing data is hard: the framework does not not model and store data—rather, it will elegantly deal with well designed, well structured data
-- things should break often, and edification should be delivered with each fracture.
-
+- No caching
+- Template files 100% html/xml
+  - markup is always valid
+  - markup itself can be utilized as data
+- Fully utilized Application (not implementation) to remain under 1000 SLOC. (hopefully well under)
+- Avoid conditions/branching
+- Things should break—either the code was improper, or the design was haphazard., and edification should be delivered with each fracture.
+- only one echo statement in entire application... at the end
 
 ## Requirements
 
@@ -26,9 +24,7 @@ An austere way to develop websites with source code authored and designed to be 
 
 # Application Philosophy
 
-After years of authoring code and debugging projects—often projects which I did not write—I've come closer to my own version of an ideal framework, and the philosophy is "do the absolute (absolute) minimum". This is essentially an  [Occam's Razor](https://en.wikipedia.org/wiki/Occam's_razor)-esque endeavor, and the thinking goes, given two solutions to a problem or hypothesis, the simpler one is superior. Many designs—knowingly or otherwise—omit such principles when trying to make more safe, powerful, and universally applicable products.
-
-So, philosophically, I've opted for an approach that aim's closer to the law of parsimony with the caveat that razor's are not wholly safe, nor are they inherently powerful and they have limited uses, but when used properly, the are exacting and effective.
+I've opted for an approach that aim's closer to the law of parsimony, and this application strives to be tiny, useful, exacting, and effective.
 
 Below is the outline of files and the classes therin.
  

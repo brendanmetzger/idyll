@@ -50,9 +50,9 @@ abstract class Method {
 /****     ****************************************************************************************/
 class CLI extends Method {
   public $scheme = 'repl';
-  public function __construct() {
+  public function __construct($timestamp) {
     $this->start = $timestamp;
-    $this->route  = preg_split('/\W/', $_SERVER['argv'][1]);
+    $this->route  = explode(':', $_SERVER['argv'][1] ?? ':');
     $this->params = array_slice($_SERVER['argv'], 2);
   }
   
@@ -102,15 +102,15 @@ class Request {
   }
     
   public function listen (string $scheme, callable $callback): void {
-
     $this->listeners[$scheme] = $callback;
   }
 
+  // TODO this is still bothering me.
   public function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
       $user  = new $Model( $this->token->decode($hash) );
-      $valid = $this->token->validate($hash, ...$user->signature());
+      $valid = $this->token->validate($hash, ...$user->sign($this->token));
       // valid should be - instanceof 'something...'
       $method->setAccessible($valid);
       array_unshift($this->method->params, $user); 
@@ -170,7 +170,7 @@ class Response {
   public function authorize(string $model, string $message, string $key) {
     $id   = $this->request->token->decode($message);
     if ($this->request->token->validate($message, $key, $id)) {
-      $this->request->method->session($token, \App\Model::New($model, $id)->signature());
+      $this->request->method->session($token, \App\Model::New($model, $id)->sign($this->request->token));
       $this->redirect('/');
     }
   }
@@ -186,7 +186,10 @@ class Response {
   
   public function __toString(): string {
     $timestamp = microtime(true) - $this->request->method->start;
-    $this->content->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
+    if ($this->content instanceof DOMDocument) {
+      $this->content->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
+    }
+    
     return (string) $this->content;
   }
 }

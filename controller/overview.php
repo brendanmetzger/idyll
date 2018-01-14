@@ -42,4 +42,9 @@ class Overview extends \App\Controller {
   }
   
   
+  public function CLIbenchmark()
+  {
+    return (microtime(true) - $start) . "\n";
+  }
+  
 }
