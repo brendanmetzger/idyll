@@ -80,8 +80,11 @@ class View {
     }
     
     foreach ($this->getTemplates('replace') as [$prop, $ref]) {
-      if (isset($this->templates[$prop])) {
-        $this->import((new Self($this->templates[$prop], $this))->render($data, false), $ref->nextSibling);
+      if (isset($this->templates[$prop]) && $template = $this->templates[$prop]) {
+        if (! $template instanceof Document) {
+          $template = (new Self($this->templates[$prop], $this))->render($data, false);
+        }
+        $this->import($template, $ref->nextSibling);
         $ref -> parentNode -> removeChild($ref);
       }
     } 

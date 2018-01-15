@@ -28,6 +28,7 @@ class Token {
       return $o . $msg[($i * $skip - 1)];
     }, ''));
   }
+  
 }
 
 /*************        ****************************************************************************/
@@ -94,15 +95,15 @@ class POST extends GET {
 /****         ************************************************************************************/
 class Request {
 
-  public $listeners = [], $token;
+  public $handlers = [], $token;
 
   public function __construct(Method $method) {
     $this->method = $method;
     $this->token  = new Token(ID);
   }
     
-  public function listen (string $scheme, callable $callback): void {
-    $this->listeners[$scheme] = $callback;
+  public function handle (string $scheme, callable $callback): void {
+    $this->handlers[$scheme] = $callback;
   }
 
   // TODO this is still bothering me.
@@ -120,7 +121,7 @@ class Request {
   }
   
   public function response() {
-    return $this->listeners[$this->method->scheme]->call($this);
+    return $this->handlers[$this->method->scheme]->call($this);
   }
   
   public function delegate(...$route) {

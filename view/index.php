@@ -14,11 +14,12 @@ spl_autoload_register(function ($classname) {
 # INSTANTIATE the request.
 $request = new Request( Method::New(getenv('REQUEST_METHOD')?:'CLI') );
 
-$request->listen('http', function () {
+$request->handle('http', function () {
+  $layout = new View('layout/full.html');
   return $this->delegate('overview', 'index');
 });
 
-$request->listen('repl', function () {
+$request->handle('repl', function () {
   return $this->delegate('overview', 'examine');
 });
 
@@ -69,5 +70,9 @@ TODO
 [ ] The token cookie value should represent the model it is storing a value for
 [ ] Use TRY/CATCH/FINALLLY to render output
 [ ] Should not be able to go to login page if already authenticated, and not unless sent there by the application
+[ ] Consider using typecasted controller params instantiating the classes they represent... `function GETEdit(\person $user, $type, \Factory $id)
+[ ] Controller should return a partial view. Application (index.php) can determine layout and merge rendered view.
+[ ] Look up http headers on sending custom data.
+[ ] Use __callStatic in a factory context. now, Model::Make($type, $id) goes to Model::$type($id);  
 
 */

@@ -6,13 +6,13 @@ class Overview extends \App\Controller {
   
   public function GETindex($id = null) {
 
-    $layout   = new \App\View('layout/full.html');
-    
     if ($id) {
       $m = new \Model\Item($id);
     }
     
-    return $layout->render(['items' => \Model\Item::list('/items/item'), 'title' => 'Working Draft']);
+    $this->items = \Model\Item::list('/items/item');
+    $this->title = 'Working Draft';
+    return new \App\View('layout/full.html');
   }
   
   protected function GETcalendar(\Model\Person $user) {
@@ -47,14 +47,13 @@ class Overview extends \App\Controller {
     // getelementbyid vs xpath
 
     $start = microtime(true);
-    for ($i=0; $i < 1; $i++) { 
-      $doc = new \App\Document('../data/model.xml');
-      $found = $doc->getElementById('brendan');
-    }
+    
+    
+    
 
   
     
-    return microtime(true) - $start . "\n";
+    return print_r(serialize($this->request->token));
   }
   
 }
