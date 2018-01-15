@@ -44,6 +44,8 @@ try {
     'trace'   => array_reverse($e->getTrace()),
   ]);
   ;
+} finally {
+  
 }
 
 
@@ -60,12 +62,12 @@ TODO
     - Could be Model::Make('person', $id);
     -          Controller::Make(['class', 'action'], $request); NOTE[ this factory is way more involved that the other two, could be problematic]
 [ ] Work on calendaring
-[ ] Throw an exception if a view template is not found or improper
+[X] Throw an exception if a view template is not found or improper
 [ ] Show Sunrise/Sunset/Weather
 [ ] Determine how models accept and merge input
-[ ] The `Model::sign` method should accept and return a token
+[ ] The `Model::sign` method should ~accept~ and return a token
 [ ] The token cookie value should represent the model it is storing a value for
-[ ] Consider using the `finally` construct to render output
+[ ] Use TRY/CATCH/FINALLLY to render output
 [ ] Should not be able to go to login page if already authenticated, and not unless sent there by the application
 
 */

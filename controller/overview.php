@@ -32,7 +32,7 @@ class Overview extends \App\Controller {
     if ($type !== null) {
       $this->people = \Model\Person::list();
       $this->type = $type;
-      $view->set('content', 'list.html');
+      $view->set('content', 'component/list.html');
     }
     
     $this->title = 'working still';
