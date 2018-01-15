@@ -2,25 +2,23 @@
 
 libxml_use_internal_errors(true);
 
-/****          *************************************************************************************/
+/****          ***********************************************************************************/
 class Document extends \DOMDocument {
   
-  const DECLARATIONS = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
-
   private $xpath = null,
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
-  function __construct($xml, $opts = []) {
+  function __construct($X, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
     
-    foreach (array_replace($this->opts, $opts) as $p => $v) $this->{$p} = $v;
-    foreach (['Element','Text','Attr'] as $c) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
+    foreach (array_replace($this->opts, $opts) as $prop => $val) $this->{$prop} = $val;
+    foreach (['Element','Text','Attr'] as $c ) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
     
-    if ($xml instanceof Element) 
-      $this->loadXML($xml->ownerDocument->saveXML($xml), self::DECLARATIONS);
-    else
-      $this->load($xml, self::DECLARATIONS);
+    if (! $raw = ($X instanceof Element ? $X->ownerDocument->saveXML($X) : file_get_contents($X)))
+      throw new \Error("{$xml} cannot be parsed", 1);
+    
+    $this->loadXML($raw, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL);
   }
 
   public function save($path = null) {

@@ -41,7 +41,7 @@ abstract class Method {
     $ClassName = "\\App\\{$method}";
     return new $ClassName($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true) );
   }
-
+  
   public function __toString(): string {
     return substr(static::class, 4);
   }
@@ -52,7 +52,7 @@ class CLI extends Method {
   public $scheme = 'repl';
   public function __construct($timestamp) {
     $this->start = $timestamp;
-    $this->route  = explode(':', $_SERVER['argv'][1] ?? ':');
+    $this->route  = array_filter(explode(':', $_SERVER['argv'][1] ?? ''));
     $this->params = array_slice($_SERVER['argv'], 2);
   }
   
@@ -124,7 +124,8 @@ class Request {
   }
   
   public function delegate(...$route) {
-    [$instance, $method] = Controller::Make($this, ...array_replace($route, $this->method->route));
+    $this->method->route = array_replace($route, $this->method->route);
+    [$instance, $method] = Controller::Make($this, ...$this->method->route);
     return $instance->output($method->invokeArgs($instance, $this->method->params));
   }
 }

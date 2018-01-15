@@ -42,9 +42,19 @@ class Overview extends \App\Controller {
   }
   
   
-  public function CLIbenchmark()
+  public function CLIexamine()
   {
-    return (microtime(true) - $start) . "\n";
+    // getelementbyid vs xpath
+
+    $start = microtime(true);
+    for ($i=0; $i < 1; $i++) { 
+      $doc = new \App\Document('../data/model.xml');
+      $found = $doc->getElementById('brendan');
+    }
+
+  
+    
+    return microtime(true) - $start . "\n";
   }
   
 }

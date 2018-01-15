@@ -19,7 +19,7 @@ $request->listen('http', function () {
 });
 
 $request->listen('repl', function () {
-  return $this->delegate('overview', 'benchmark');
+  return $this->delegate('overview', 'examine');
 });
 
 
@@ -36,8 +36,14 @@ try {
     'trace'   => array_reverse($e->getTrace()),
   ]);
   
-} catch (\Exception $e) {
-  echo "something worse?";
+} catch (\Exception | \Error $e) {
+  echo (new View('layout/basic.html'))->set('content', 'content/error.html')->render([
+    'message' => $e->getMessage(),
+    'file'    => $e->getFile(),
+    'line'    => $e->getLine(),
+    'trace'   => array_reverse($e->getTrace()),
+  ]);
+  ;
 }
 
 
