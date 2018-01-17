@@ -1,5 +1,6 @@
 <?php namespace Controller;
 
+
 class Overview extends \App\Controller {
   use configuration;
   
@@ -9,51 +10,59 @@ class Overview extends \App\Controller {
     if ($id) {
       $m = new \Model\Item($id);
     }
-    
+
     $this->items = \Model\Item::list('/items/item');
     $this->title = 'Working Draft';
-    return new \App\View('layout/full.html');
   }
   
   protected function GETcalendar(\Model\Person $user) {
-    return (new \App\View('layout/full.html'))->set('content', 'content/calendar.html');
+    return new \App\View('content/calendar.html');
   }
   
   protected function GETedit(\Model\Person $person, ?string $type = null, ?string $id = null) {
-    $view = new \App\View('layout/full.html');
+
     if ($type === null) {
       $this->types = (new \App\Data(['person', 'inventory', 'project', 'task']))->map(function($item) {
         return ['type' => $item];
       });
-      $view->set('content', 'content/manage.html');
+      $path = 'content/manage.html';
     }
-    
     
     if ($type !== null) {
       $this->people = \Model\Person::list();
       $this->type = $type;
-      $view->set('content', 'component/list.html');
+      $path = 'component/list.html';
     }
     
     $this->title = 'working still';
     $this->person = $person;
     
-    return $view;
+    return new \App\View($path);
   }
   
   
   public function CLIexamine()
   {
-    // getelementbyid vs xpath
 
     $start = microtime(true);
+    $count = 0;
     
     
-    
+    // $name = new \ReflectionClass('\\model\\item');
+    // $name = '\\model\\item';
+    $factory = \App\Factory::Model('item');
+    for ($i=0; $i < 1000; $i++) {
+      // $item = new $name('ABC');
+      $item = $factory->newInstance('ABC');
+      if ('ABC' == $item['@id']) {
+        $count++;
+      }
+    }
 
-  
     
-    return print_r(serialize($this->request->token));
+    
+    
+    return (microtime(true) - $start) . ' - ' . $count . "\n";
   }
   
 }

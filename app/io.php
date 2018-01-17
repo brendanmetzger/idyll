@@ -50,7 +50,7 @@ abstract class Method {
 
 /****     ****************************************************************************************/
 class CLI extends Method {
-  public $scheme = 'repl';
+  public $scheme = 'console';
   public function __construct($timestamp) {
     $this->start = $timestamp;
     $this->route  = array_filter(explode(':', $_SERVER['argv'][1] ?? ''));
@@ -72,7 +72,7 @@ class GET extends Method {
     $this->format = $_GET['_e_'] ?: 'html';
     $this->host   = sprintf('%s://%s', getenv('REQUEST_SCHEME'), getenv('SERVER_NAME'));
     $this->direct = stripos(getenv('HTTP_REFERER'), $this->host) === 0;
-    $this->path   = getenv('REQUEST_URI]');
+    $this->path   = getenv('REQUEST_URI');
   }
   
   public function session(Token $Tok, array $set = null) {
@@ -120,8 +120,8 @@ class Request {
     return false;
   }
   
-  public function response() {
-    return $this->handlers[$this->method->scheme]->call($this);
+  public function respond(?string $type = null) {
+    return $this->handlers[$type ?: $this->method->scheme]->call($this);
   }
   
   public function delegate(...$route) {
@@ -140,7 +140,7 @@ class Request {
 /****          ***********************************************************************************/
 class Response {
   
-  private $request, $content;
+  private $request, $template, $content, $output;
 
   public $content_type = [
     'html' => 'Content-Type: application/xhtml+xml; charset=utf-8',
@@ -162,17 +162,19 @@ class Response {
   }
   
   public function redirect($location_url, $code = 302) {
-    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: no-<text, no-cache, must-revalidate, max-age=0");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     header("Location: {$location_url}", false, $code);
     exit();
   }
   
-  public function authorize(string $model, string $message, string $key) {
-    $id   = $this->request->token->decode($message);
-    if ($this->request->token->validate($message, $key, $id)) {
-      $this->request->method->session($token, \App\Model::New($model, $id)->sign($this->request->token));
+  public function authorize(string $type, string $message, string $key) {
+    $id    = $this->request->token->decode($message);
+    $token = $this->request->token;
+    if ($token->validate($message, $key, $id)) {
+      
+      $this->request->method->session($token, Factory::Model($type)->newInstance($id)->sign($token));
       $this->redirect('/');
     }
   }
@@ -181,17 +183,21 @@ class Response {
     # code...
   }
   
+  public function setTemplate(View $view): void {
+    $this->template = $view;
+  }
+  
+  // object can be a domdocument, or view object, should be way to set more than one piece of content
   public function setContent($object): void {
-    // object can be a domdocument, or view object
     $this->content = $object;
   }
   
-  public function __toString(): string {
-    $timestamp = microtime(true) - $this->request->method->start;
-    if ($this->content instanceof DOMDocument) {
-      $this->content->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
-    }
-    
-    return (string) $this->content;
+  public function compose($data = []) {
+    return $this->output = ($this->template ? $this->template->set('content', $this->content)->render($data) : $this->content);
+  }
+  
+  public function __toString()
+  {
+    return (string) $this->output;
   }
 }

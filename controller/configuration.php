@@ -16,23 +16,26 @@ trait Configuration {
       $this->response->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
     }
     
-    $data = ['path' => urlencode(base64_encode($this->request->method->path))];
-    return ( new \App\View('layout/full.html') )->set('content', 'transaction/login.html')->render($this->merge($data));
+    $this->path = $p = urlencode(base64_encode($this->request->method->path));
+    return \App\View::transaction('login');
   }
   
   
-  public function POSTLogin(\App\Data $post, string $model, string $path) {
+  public function POSTLogin(\App\Data $post, string $type, string $path) {
     if (! $this->request->method->direct) $this->response->redirect('/');
-    
-    $body   = (new \App\View('layout/basic.html'))->set('content', 'transaction/email.html')->render($this->merge([
+            
+    $body = \App\View::layout('basic')->set('content', 'transaction/email.html')->render($this->merge([
       'token' => urlencode($this->request->token->encode(date_sunset(time(), SUNFUNCS_RET_TIMESTAMP), $post['@id'])),
       'host'  => $this->request->method->host,
-      'model' => $model,
-      'path' => $path,
+      'model' => $type,
+      'path'  => $path,
     ]));
     
-    \App\Model::New($model, $post['@id'])->contact('Your Login Awaits..', $body);
+    $out = \App\Factory::Model($type)->newInstance($post['@id'])->contact('Your Login Awaits..', $body);
     
-    return "<pre>".print_r($result, true)."</pre>";
+    $this->title = "email sent";
+    $this->message = "check your email for a message with a link that will log you in.";
+    return \App\View::transaction('message');
   }
+  
 }

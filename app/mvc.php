@@ -11,7 +11,7 @@ abstract class Model implements \ArrayAccess {
     if ($context instanceof Element) {
       $this->context = $context;
     } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
-      throw new \InvalidArgumentException("Unable to locate the requested resource ({$context}). (TODO, better exceptinon type, log this, inform it was logged)", 1);
+      throw new \InvalidArgumentException("Unable to locate '{$context}'", 1);
     } else {
       // create from a fixture
       // TODO determine how to create a new item
@@ -28,11 +28,6 @@ abstract class Model implements \ArrayAccess {
       // this should be a factory: if path is not standard, may be a different model
       return new static($item);
     });
-  }
-  
-  static public function New(string $classname, $params) {
-    $Classname = "\\Model\\{$classname}";
-    return new $Classname($params);
   }
   
   public function offsetExists($offset) {
@@ -68,12 +63,17 @@ interface Agent {
 class View {
   private $parent, $document, $slugs = [], $templates = [];
   
+  static public function __callStatic(string $dir, $path): self {
+    return new Self(sprintf('%s/%s.html', $dir, implode('/', $path)));
+  }
+
   public function __construct($input, ?self $parent = null) {
     $this->document = new Document($input);
     $this->parent   = $parent;
   }
   
-  public function render($data = [], bool $parse = true): Document {
+  
+  public function render($data = [], $parse = true): Document {
     
     foreach ($this->getTemplates('insert') as [$path, $ref]) {
       $this->import((new Self($path, $this))->render($data, false), $ref);
@@ -85,7 +85,7 @@ class View {
           $template = (new Self($this->templates[$prop], $this))->render($data, false);
         }
         $this->import($template, $ref->nextSibling);
-        $ref -> parentNode -> removeChild($ref);
+        $ref->parentNode->removeChild($ref);
       }
     } 
     
@@ -130,7 +130,7 @@ class View {
     $query = "./descendant::comment()[ starts-with(normalize-space(.), '{$key}')"
            . (($key == 'iterate') ? ']' : 'and not(./ancestor::*/preceding-sibling::comment()[iterate])]');
 
-    return (new Data($this -> document -> find( $query )))->map( function ($stub) {
+    return (new Data($this->document->find( $query )))->map( function ($stub) {
       return [preg_split('/\s+/', trim($stub->nodeValue))[1], $stub];
     });    
   }
@@ -138,11 +138,11 @@ class View {
   private function getSlugs(): iterable {
     return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
-      foreach ( $this -> document -> find("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
+      foreach ( $this->document->find("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {
-          $___ = $slug -> firstChild -> splitText($i) -> splitText(strlen($k)) -> previousSibling;
+          $___ = $slug->firstChild->splitText($i)->splitText(strlen($k))->previousSibling;
           if (substr( $___( substr($___,1) ),0,1 ) != '$') $out[] = [$___, explode(':', $___)];
         }
       }
@@ -152,7 +152,7 @@ class View {
   }
   
   private function import(Document $import, \DOMNode $ref, $swap = 'replaceChild'): \DOMNode {
-    return $ref -> parentNode -> {$swap}( $this -> document -> importNode($import->documentElement, true), $ref );    
+    return $ref->parentNode->{$swap}( $this->document->importNode($import->documentElement, true), $ref );    
   }
 }
 
@@ -160,8 +160,8 @@ class View {
 abstract class Controller {
   use Registry;
   
-  protected $request;
-  protected $response;
+  public $request;
+  public $response;
   
   abstract public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null);
   abstract public function POSTLogin(\App\Data $post, string $model, string $path);
@@ -179,24 +179,12 @@ abstract class Controller {
   
   final public function __construct($request) {
     $this->request  = $request;
-    $this->response = new \App\Response($request);
+    $this->response = new Response($request);
     [$this->controller, $this->action] = $request->method->route;
   }
   
-  protected function proxy(\ReflectionMethod $method, ...$params)
-  {
-    /*
-    thinking it out. logins are special, and you only login if you need to, so it needs to function
-    like a switch. no/invalid data should land you at this proxy method, which will
-    A) render a login page unless the number of params does not match.
-    */
-  }
-  
-  final public function output($message): Response {
-    // would be beneficial to render the data here if message instance of view;
-    // should be sending the response after setting the body, filters, etc.
-    // the response can be dealt with further or converted to a string.
-    $this->response->setContent($message instanceof View ? $message->render($this->store) : $message);
-    return $this->response;
+  final public function output($msg): self {
+    $this->response->setContent($msg instanceof View ? $msg->render($this->data) : $msg);
+    return $this;
   }
 }

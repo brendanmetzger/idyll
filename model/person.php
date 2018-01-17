@@ -7,7 +7,7 @@ class Person extends \App\Model implements \App\Agent {
   const SOURCE = '../data/model.xml';
   const PATH   = '/model/person/item';
   
-  const SRC = ['../data/model.xml', '/model/person/item'];
+  // const SRC = ['../data/model.xml', '/model/person/item'];
   
   protected function fixture(array $data): array  {
     return array_merge_recursive([
@@ -35,7 +35,7 @@ class Person extends \App\Model implements \App\Agent {
         'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$token}"
       ],
       CURLOPT_POSTFIELDS => json_encode([
-        'From' => getenv('SERVER_ADMIN'), 'To' => $this->context['@email'], 'Subject' => $subject, 'HTMLBody' => $message,
+        'From' => getenv('SERVER_ADMIN'), 'To' => $this->context['@access'], 'Subject' => $subject, 'HTMLBody' => $message,
       ]),
     ]);
 

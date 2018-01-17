@@ -1,11 +1,19 @@
 <?php namespace App;
 
+/****         ************************************************************************************/
+class Factory {
+  static public function __callStatic($namespace, $params) {
+    return new \ReflectionClass("\\{$namespace}\\{$params[0]}");
+  }
+}
+
+
 /* TODO 
 [ ] data object should implement ArrayAccess
 [ ] devise way so that when invoked without an index number, it returns the first item.
 [ ] PAIR function should deal with missing key and throw an exception
 */
-/****      *************************************************************************************/
+/****      ***************************************************************************************/
 class Data extends \ArrayIterator {
   
   static private $sources = [];
@@ -21,7 +29,7 @@ class Data extends \ArrayIterator {
   }
   
   static public function USE(string $source, ?string $path = null) {
-    $document = self::$sources[$source] ?: self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
+    $document = self::$sources[$source] ?? self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
     return $path ? new self($document->find($path)) : $document;
   }
   
@@ -57,18 +65,18 @@ class Data extends \ArrayIterator {
   }
 }
 
-
+/****          ***********************************************************************************/
 trait Registry {
-  protected $store = [];
+  public $data = [];
   public function __get($key) {
-    return $this->store[$key] ?? null;
+    return $this->data[$key] ?? null;
   }
   
   public function __set($key, $value) {
-    $this->store[$key] = $value;
+    $this->data[$key] = $value;
   }
   
   public function merge(array $data) {
-    return array_merge($this->store, $data);
+    return array_merge($this->data, $data);
   }
 }
