@@ -1,5 +1,11 @@
 <?php namespace App;
 
+/********       **********************************************************************************/
+interface Agent {
+  public function contact(string $subject, string $message);
+  public function sign(Token $token);
+}
+
 /*************       *************************************************************************************/
 abstract class Model implements \ArrayAccess {
   abstract protected function fixture(array $data): array;
@@ -13,14 +19,10 @@ abstract class Model implements \ArrayAccess {
     } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
       throw new \InvalidArgumentException("Unable to locate '{$context}'", 1);
     } else {
-      // create from a fixture
       // TODO determine how to create a new item
     }
     
-    if ($data) {
-      // Context will be an element, and the element will control the merging, not the model
-      $this->context->merge($data);
-    }
+    $this->context->merge($data);
   }
   
   static public function LIST(?string $path = null): \App\Data {
@@ -53,12 +55,6 @@ abstract class Model implements \ArrayAccess {
   }
 }
 
-/********       **********************************************************************************/
-interface Agent {
-  public function contact(string $subject, string $message);
-  public function sign(Token $token);
-}
-
 /****      ***************************************************************************************/
 class View {
   private $parent, $document, $slugs = [], $templates = [];
@@ -71,7 +67,6 @@ class View {
     $this->document = new Document($input);
     $this->parent   = $parent;
   }
-  
   
   public function render($data = [], $parse = true): Document {
     

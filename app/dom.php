@@ -1,6 +1,4 @@
-<?php namespace App;
-
-libxml_use_internal_errors(true);
+<?php namespace App; libxml_use_internal_errors(true);
 
 /****          ***********************************************************************************/
 class Document extends \DOMDocument {
@@ -12,6 +10,7 @@ class Document extends \DOMDocument {
   
   function __construct($input, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
+    
     foreach (array_replace($this->opts, $opts) as $prop => $val) $this->{$prop} = $val;
     foreach (['Element','Text','Attr'] as $c ) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
 
@@ -26,7 +25,6 @@ class Document extends \DOMDocument {
     return file_put_contents($path ?? $this->filepath, $this->saveXML(), LOCK_EX);
   }
 
-  // TODO find should return a data object, so it can be filtered/mapped, etc.
   public function find(string $path, \DOMElement $context = null): \DOMNodeList {
     return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
   }
@@ -40,6 +38,7 @@ class Document extends \DOMDocument {
   }
 }
 
+/****           **********************************************************************************/
 trait invocable {
   public function __invoke(?string $input): self {
     $this->nodeValue = htmlentities($input, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
@@ -88,9 +87,8 @@ class Element extends \DOMElement implements \ArrayAccess {
 
   public function offsetGet($offset) {
     if ($offset[0] === '@') {
-      $offset = substr($offset, 1);
       // TODO deal with creating an attribute as necessary  `$this->setAttribute($offset, '')`
-      return $this->getAttribute($offset);
+      return $this->getAttribute(substr($offset, 1));
     } else {
       // TODO create recursive function to deal with paths insead of tags, ie. ->select('a/b[@c]') if !exist must create/append <a><b c=""/></a>
       // TODO (?) this should be responsible for making an empty node if necessary , possibly with a created="(now)" updated="0" attributes

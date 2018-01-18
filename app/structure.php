@@ -7,12 +7,6 @@ class Factory {
   }
 }
 
-
-/* TODO 
-[ ] data object should implement ArrayAccess
-[ ] devise way so that when invoked without an index number, it returns the first item.
-[ ] PAIR function should deal with missing key and throw an exception
-*/
 /****      ***************************************************************************************/
 class Data extends \ArrayIterator {
   

@@ -90,4 +90,14 @@ TODO
 [ ] Set up HTTPS cert and document thouroughly
 [ ] Create data repo on server
 [ ] add version control class to inspect data evolution
+
+io.php, Response Object
+[ ] Consider implementing a way users and guests can see same page, with users having rendered session vars
+[ ] response should be in control of filtering/reordering DOM presentation?
+[ ] response should be in charge of caching, Apache in charge of getting cached page
+
+structure.php, Data Class
+[ ] devise way so that when invoked without an index number, it returns the first item. (this would be a nodelist tho)
+[ ] PAIR function should deal with missing key and throw an exception
+
 */

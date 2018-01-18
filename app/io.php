@@ -28,14 +28,10 @@ class Token {
       return $o . $msg[($i * $skip - 1)];
     }, ''));
   }
-  
 }
 
 /*************        ****************************************************************************/
 abstract class Method {
-  
-  abstract public function session(Token $token, array $set = null);
-  
   public $start, $route, $scheme = 'http', $format = 'txt', $params, $data;
   
   static public function New(string $method) {
@@ -46,6 +42,8 @@ abstract class Method {
   public function __toString(): string {
     return substr(static::class, 4);
   }
+  
+  abstract public function session(Token $token, array $set = null);
 }
 
 /****     ****************************************************************************************/
@@ -95,6 +93,16 @@ class POST extends GET {
 /****         ************************************************************************************/
 class Request {
 
+  static public $mime = [
+    'html' => 'application/xhtml+xml',
+    'json' => 'application/javascript',
+    'js'   => 'application/javascript',
+    'svg'  => 'image/svg+xml',
+    'jpg'  => 'image/jpeg',
+    'xml'  => 'text/xml',
+    'css'  => 'text/css'
+  ];
+  
   public $token;
 
   public function __construct(Method $method) {
@@ -102,14 +110,13 @@ class Request {
     $this->token  = new Token(ID);
   }
     
-  // TODO this is still bothering me.
+  // TODO this seems like a chunk of nonsense... simplify!
   private function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
       $user  = new $Model( $this->token->decode($hash) );
       $valid = $this->token->validate($hash, ...$user->sign($this->token));
-      // valid should be - instanceof 'something...'
-      $method->setAccessible($valid);
+      $method->setAccessible($user instanceof Agent);
       array_unshift($this->method->params, $user); 
       return $valid;
     }
@@ -138,27 +145,10 @@ class Request {
   }
 }
 
-/* TODO
-[ ] Consider implementing a way users and guests can see same page, with users having rendered session vars
-[ ] response should be in control of filtering/reordering DOM presentation
-[ ] response should be in charge of caching
-[ ] response should be able to return a partial if request is ajax.
-*/
 /****          ***********************************************************************************/
 class Response {
   
-  private $request, $template, $content, $output, $handler = [];
-
-  public $header = [];
-  public $content_type = [
-    'html' => 'Content-Type: application/xhtml+xml; charset=utf-8',
-    'json' => 'Content-Type: application/javascript; charset=utf-8',
-    'xml'  => 'Content-Type: text/xml; charset=utf-8',
-    'svg'  => 'Content-Type: image/svg+xml; charset=utf-8',
-    'jpg'  => 'Content-Type: image/jpeg',
-    'js'   => 'Content-Type: application/javascript; charset=utf-8',
-    'css'  => 'Content-Type: text/css; charset=utf-8'
-  ];
+  private $request, $template, $content, $output, $handler = [], $header = [];
   
   public function __construct(Request $request) {
     $this->request = $request;
@@ -172,11 +162,11 @@ class Response {
     return $this->handler[$type ?: $this->request->method->scheme]->call($this, $this->request);
   }
   
-  public function redirect($location_url, $code = 302) {
+  public function redirect(string $url, $code = 302) {
     $this->setHeader("Cache-Control: no-text, no-cache, must-revalidate, max-age=0");
     $this->setHeader("Cache-Control: post-check=0, pre-check=0", false);
     $this->setHeader("Pragma: no-cache");
-    $this->setHeader("Location: {$location_url}", false, $code);
+    $this->setHeader("Location: {$url}", false, $code);
   }
   
   public function setHeader(string $header, $replace = true, $code = null) {
@@ -187,7 +177,6 @@ class Response {
     $this->template = $view;
   }
   
-  // object can be a domdocument, or view object, should be way to set more than one piece of content
   public function setContent($object): void {
     $this->content = $object;
   }
