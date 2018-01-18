@@ -166,16 +166,6 @@ abstract class Controller {
   abstract public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null);
   abstract public function POSTLogin(\App\Data $post, string $model, string $path);
   
-  static final public function Make(Request $request, string $class, string $method): array {
-
-    $class  = "\controller\\{$class}";
-    $method = new \ReflectionMethod($class, $request->method . $method);
-    
-    if ($method->isProtected() && ! $request->authenticate($method)) {
-      $method = new \ReflectionMethod($class, $request->method . 'login');
-    }
-    return [(new \ReflectionClass($class))->newInstance($request), $method];
-  }
   
   final public function __construct($request) {
     $this->request  = $request;

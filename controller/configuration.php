@@ -3,7 +3,6 @@
 trait Configuration {
   
   /* TODO
-    [ ] add a method to the person model, something like 'implements email' so that you can just go '$model->send('email') ??
     [ ] redirect properly to the page requested
     [ ] consider putting most of the login stuff in the authorize method
     [ ] make a proper response to form submission
@@ -16,7 +15,7 @@ trait Configuration {
       $this->response->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
     }
     
-    $this->path = $p = urlencode(base64_encode($this->request->method->path));
+    $this->path = urlencode(base64_encode($this->request->method->path));
     return \App\View::transaction('login');
   }
   
@@ -35,6 +34,7 @@ trait Configuration {
     
     $this->title = "email sent";
     $this->message = "check your email for a message with a link that will log you in.";
+    
     return \App\View::transaction('message');
   }
   

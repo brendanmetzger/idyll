@@ -14,6 +14,8 @@ spl_autoload_register(function ($classname) {
 # INSTANTIATE the request.
 $request = new Request( Method::New(getenv('REQUEST_METHOD')?:'CLI') );
 
+
+# HANDLE different scenarios
 $request->handle('http', function () {
   $controller = $this->delegate('overview', 'index');
   
@@ -25,6 +27,31 @@ $request->handle('http', function () {
   
   return $controller;
 });
+
+// FUTURE
+
+// $response->handle('http', function($request) {
+//   $somethin_prob_controller = $request->delegate('overview', 'index');
+//   return '??';
+// });
+// 
+
+// $response->handle('error', function($request){
+//   if ($request->method == 'cli') {
+//     # code...
+//   }
+// });
+
+// try {
+//   $response->prepare();
+// } catch (\Exception $e) {
+//   $response->prepare('error');
+// } finally {
+//   echo $response;
+// }
+
+
+
 
 $request->handle('console', function () {
   return $this->delegate('overview', 'examine');
@@ -71,6 +98,7 @@ try {
 
 /*
 TODO
+
 [/] Determine a factory/configuration class that acts as a way to construct/instantiate common objects (Notably Models and views)
 [ ] Work on calendaring
 [X] Throw an exception if a view template is not found or improper

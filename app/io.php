@@ -107,7 +107,7 @@ class Request {
   }
 
   // TODO this is still bothering me.
-  public function authenticate(\ReflectionMethod $method): bool {
+  private function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
       $user  = new $Model( $this->token->decode($hash) );
@@ -120,13 +120,22 @@ class Request {
     return false;
   }
   
+  // todo request doesn't need to respond. that is up to the response $response
   public function respond(?string $type = null) {
     return $this->handlers[$type ?: $this->method->scheme]->call($this);
   }
   
-  public function delegate(...$route) {
-    $this->method->route = array_replace($route, $this->method->route);
-    [$instance, $method] = Controller::Make($this, ...$this->method->route);
+  public function delegate(...$defaults): Controller {
+    $this->method->route = array_replace($defaults, $this->method->route);
+    [$class, $action] = $this->method->route;
+    
+    $instance = Factory::Controller($class)->newInstance($this);
+    $method   = new \ReflectionMethod($instance, $this->method . $action);
+    
+    if ($method->isProtected() && ! $this->authenticate($method)) {
+      $method = new \ReflectionMethod($instance, $this->method . 'login');
+    }
+
     return $instance->output($method->invokeArgs($instance, $this->method->params));
   }
 }
@@ -161,8 +170,13 @@ class Response {
     $this->request = $request;
   }
   
+  // TODO, request shouldn't have a respond method; the response object should do the responding
+  public function prepare(?string $type = null) {
+    return $this->handlers[$type ?: $this->request->method->scheme]->call($this, $this->request);
+  }
+  
   public function redirect($location_url, $code = 302) {
-    header("Cache-Control: no-<text, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: no-text, no-cache, must-revalidate, max-age=0");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");
     header("Location: {$location_url}", false, $code);
