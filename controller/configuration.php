@@ -12,7 +12,8 @@ trait Configuration {
   public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null) {
 
     if ($model && $message) {
-      $this->response->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
+      $this->request->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
+      $this->response->redirect($redirect ?: '/');
     }
     
     $this->path = urlencode(base64_encode($this->request->method->path));

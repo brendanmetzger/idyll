@@ -95,17 +95,13 @@ class POST extends GET {
 /****         ************************************************************************************/
 class Request {
 
-  public $handlers = [], $token;
+  public $token;
 
   public function __construct(Method $method) {
     $this->method = $method;
     $this->token  = new Token(ID);
   }
     
-  public function handle (string $scheme, callable $callback): void {
-    $this->handlers[$scheme] = $callback;
-  }
-
   // TODO this is still bothering me.
   private function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
@@ -120,16 +116,18 @@ class Request {
     return false;
   }
   
-  // todo request doesn't need to respond. that is up to the response $response
-  public function respond(?string $type = null) {
-    return $this->handlers[$type ?: $this->method->scheme]->call($this);
+  public function authorize(string $type, string $message, string $key) {
+    $id = $this->token->decode($message);
+    if ($this->token->validate($message, $key, $id)) {
+      $this->method->session($this->token, Factory::Model($type)->newInstance($id)->sign($this->token));
+    }
   }
-  
-  public function delegate(...$defaults): Controller {
+    
+  public function delegate(Response $response, ...$defaults): Controller {
     $this->method->route = array_replace($defaults, $this->method->route);
     [$class, $action] = $this->method->route;
     
-    $instance = Factory::Controller($class)->newInstance($this);
+    $instance = Factory::Controller($class)->newInstance($this, $response);
     $method   = new \ReflectionMethod($instance, $this->method . $action);
     
     if ($method->isProtected() && ! $this->authenticate($method)) {
@@ -149,8 +147,9 @@ class Request {
 /****          ***********************************************************************************/
 class Response {
   
-  private $request, $template, $content, $output;
+  private $request, $template, $content, $output, $handler = [];
 
+  public $header = [];
   public $content_type = [
     'html' => 'Content-Type: application/xhtml+xml; charset=utf-8',
     'json' => 'Content-Type: application/javascript; charset=utf-8',
@@ -161,40 +160,27 @@ class Response {
     'css'  => 'Content-Type: text/css; charset=utf-8'
   ];
   
-  public $status = [
-    'unauthorized' => 'HTTP/1.0 401 Unauthorized',
-    'incorrect'    => '404',
-  ];
-  
   public function __construct(Request $request) {
     $this->request = $request;
   }
   
-  // TODO, request shouldn't have a respond method; the response object should do the responding
-  public function prepare(?string $type = null) {
-    return $this->handlers[$type ?: $this->request->method->scheme]->call($this, $this->request);
+  public function handle (string $scheme, callable $callback): void {
+    $this->handler[$scheme] = $callback;
+  }
+  
+  public function prepare(?string $type = null): Controller {
+    return $this->handler[$type ?: $this->request->method->scheme]->call($this, $this->request);
   }
   
   public function redirect($location_url, $code = 302) {
-    header("Cache-Control: no-text, no-cache, must-revalidate, max-age=0");
-    header("Cache-Control: post-check=0, pre-check=0", false);
-    header("Pragma: no-cache");
-    header("Location: {$location_url}", false, $code);
-    exit();
+    $this->setHeader("Cache-Control: no-text, no-cache, must-revalidate, max-age=0");
+    $this->setHeader("Cache-Control: post-check=0, pre-check=0", false);
+    $this->setHeader("Pragma: no-cache");
+    $this->setHeader("Location: {$location_url}", false, $code);
   }
   
-  public function authorize(string $type, string $message, string $key) {
-    $id    = $this->request->token->decode($message);
-    $token = $this->request->token;
-    if ($token->validate($message, $key, $id)) {
-      
-      $this->request->method->session($token, Factory::Model($type)->newInstance($id)->sign($token));
-      $this->redirect('/');
-    }
-  }
-  
-  public function setHeader() {
-    # code...
+  public function setHeader(string $header, $replace = true, $code = null) {
+    $this->header[] = [$header, $replace, $code];
   }
   
   public function setTemplate(View $view): void {
@@ -212,6 +198,7 @@ class Response {
   
   public function __toString()
   {
+    foreach ($this->header as $header) header(...$header);
     return (string) $this->output;
   }
 }

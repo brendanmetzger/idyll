@@ -160,16 +160,15 @@ class View {
 abstract class Controller {
   use Registry;
   
-  public $request;
-  public $response;
+  protected $request, $response;
   
   abstract public function GETLogin(?string $model = null, ?string $message = null, ?string $redirect = null);
   abstract public function POSTLogin(\App\Data $post, string $model, string $path);
   
   
-  final public function __construct($request) {
+  final public function __construct($request, $response) {
     $this->request  = $request;
-    $this->response = new Response($request);
+    $this->response = $response;
     [$this->controller, $this->action] = $request->method->route;
   }
   

@@ -5,30 +5,20 @@ libxml_use_internal_errors(true);
 /****          ***********************************************************************************/
 class Document extends \DOMDocument {
   
+  const   XMLDEC = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
   private $xpath = null,
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
-  // function __construct($X, $opts = []) {
-  //   parent::__construct('1.0', 'UTF-8');
-  //   foreach (array_replace($this->opts, $opts) as $prop => $val) $this->{$prop} = $val;
-  //   foreach (['Element','Text','Attr'] as $c ) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
-  //
-  //   if (! $raw = ($X instanceof Element ? $X->ownerDocument->saveXML($X) : file_get_contents($X)))
-  //     throw new \Error("{$xml} cannot be parsed", 1);
-  //
-  //   $this->loadXML($raw, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL);
-  // }
-  
-  function __construct($X, $opts = []) {
+  function __construct($input, $opts = []) {
     parent::__construct('1.0', 'UTF-8');
     foreach (array_replace($this->opts, $opts) as $prop => $val) $this->{$prop} = $val;
     foreach (['Element','Text','Attr'] as $c ) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
 
-    if ($X instanceof Element) {
-      $this->loadXML($X->ownerDocument->saveXML($X), LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL);
+    if ($input instanceof Element) {
+      $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
     } else {
-      $this->load($X, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL);
+      $this->load($input, self::XMLDEC);
     }
   }
 
@@ -61,18 +51,16 @@ trait invocable {
   }
 }
 
-/****      *************************************************************************************/
+/****      ***************************************************************************************/
 class Text extends \DOMText {
   use invocable;
 }
 
-/****      *************************************************************************************/
+/****      ***************************************************************************************/
 class Attr extends \DOMAttr {
   use invocable;
   public function remove() {
-    if ($this->ownerElement) {
-      return $this->ownerElement->removeAttribute($this->nodeName);
-    }
+    return ($elem = $this->ownerElement) ? $elem->removeAttribute($this->nodeName) : null;
   }
 }
 
@@ -80,7 +68,7 @@ class Attr extends \DOMAttr {
 class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
   
-  // TODO this will be obsolete if I can figure out how to automatically return the first element if no index is specified
+  // TODO will become obsolete if I can figure out how to automatically return the first element if no index is specified
   public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);
     return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
@@ -119,9 +107,7 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
   
   public function remove() {
-    if ($this->parentNode) {
-      return $this->parentNode->removeChild($this);
-    }
+    return ($parent = $this->parentNode) ? $parent->removeChild($this) : null;
   }
 
 }

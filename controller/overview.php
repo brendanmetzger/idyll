@@ -10,7 +10,6 @@ class Overview extends \App\Controller {
     if ($id) {
       $m = new \Model\Item($id);
     }
-
     $this->items = \Model\Item::list('/items/item');
     $this->title = 'Working Draft';
   }

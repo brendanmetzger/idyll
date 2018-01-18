@@ -11,69 +11,45 @@ spl_autoload_register(function ($classname) {
   @include '../' . str_replace('\\', '/', strtolower($classname)) . '.php';
 });
 
-# INSTANTIATE the request.
-$request = new Request( Method::New(getenv('REQUEST_METHOD')?:'CLI') );
-
+# INSTANTIATE the request. 
+$request  = new Request( Method::New(getenv('REQUEST_METHOD') ?: 'CLI') );
+$response = new Response($request);
 
 # HANDLE different scenarios
-$request->handle('http', function () {
-  $controller = $this->delegate('overview', 'index');
-  
+$response->handle('http', function($request) {
+  $controller = $request->delegate($this, 'overview', 'index');
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {
-    $controller->response->setTemplate(new View('layout/full.html'));
+    $this->setTemplate(new View('layout/full.html'));
     // add before/after filter to move html around     
   }
-  
   return $controller;
 });
 
-// FUTURE
 
-// $response->handle('http', function($request) {
-//   $somethin_prob_controller = $request->delegate('overview', 'index');
-//   return '??';
-// });
-// 
-
-// $response->handle('error', function($request){
-//   if ($request->method == 'cli') {
-//     # code...
-//   }
-// });
-
-// try {
-//   $response->prepare();
-// } catch (\Exception $e) {
-//   $response->prepare('error');
-// } finally {
-//   echo $response;
-// }
-
-
-
-
-$request->handle('console', function () {
-  return $this->delegate('overview', 'examine');
+$response->handle('console', function ($request) {
+  return $request->delegate($this, 'overview', 'examine');
 });
 
 
 # RESPOND with some output
 try {
   
-  $controller = $request->respond();
-  $output     = $controller->response->compose($controller->data);
+  $controller = $response->prepare();
+  $output     = $response->compose($controller->data);
   
   // $debugging
   if ($output instanceof \DOMDocument) {
-    $timestamp = microtime(true) - $controller->request->method->start;
+    $timestamp = microtime(true) - $request->method->start;
     $output->documentElement->appendChild(new \DOMElement('script', "console.log({$timestamp});"));
   }
   
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException | \Exception | \Error $e) {
-  // Need a controller here.
-  // $controller = $request->respond('error');
   
+  if ($request->method == 'CLI') {
+    print_r($data);
+    exit();
+  }
   $data = [
     'trace'   => array_reverse($e->getTrace()),
     'file'    => $e->getFile(),
@@ -81,17 +57,13 @@ try {
     'message' => $e->getMessage(),
   ];
   
-  if ($request->method == 'CLI') {
-    print_r($data);
-  } else {
-    echo View::layout('basic')->set('content', 'content/error.html')->render($data);
-  }
-  exit();
-  
+  $response->setContent(View::content('error')->render($data));
+  $response->setTemplate(View::layout('basic'));
+  $response->compose();
 
 } finally {
   // produce output
-  echo $controller->response;
+  echo $response;
 }
 
 
@@ -99,6 +71,8 @@ try {
 /*
 TODO
 
+[ ] Show XML errors in a helpful way (revisit the solution in pedagogy)
+[ ] use an anonymous class to create a controller en the event of an error new class($response) extends Controller;
 [/] Determine a factory/configuration class that acts as a way to construct/instantiate common objects (Notably Models and views)
 [ ] Work on calendaring
 [X] Throw an exception if a view template is not found or improper
@@ -112,5 +86,8 @@ TODO
 [X] Controller should return a partial view. Application (index.php) can determine layout and merge rendered view.
 [ ] Look up http headers on sending custom data.
 [X] Use __callStatic in a factory context. now, Model::Make($type, $id) goes to Model::$type($id);  
-[ ] Rethinking all the request/response shuffling around. Response is tied to a controller, but that seems unnecessary
+[X] Rethinking all the request/response shuffling around. Response is tied to a controller, but that seems unnecessary
+[ ] Set up HTTPS cert and document thouroughly
+[ ] Create data repo on server
+[ ] add version control class to inspect data evolution
 */
