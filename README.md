@@ -142,7 +142,18 @@ As all data will be modeled into a structure represented by the Document Object 
 
 This is my rewrite, where you see EXT's, I put in the files I might expect to generate with the framework, which would be: 
 
-## Web Server
+# Web Server
+
+## Setup
+
+1 Start an AWS Ubuntu instance, micro is fine.
+2 Install Apache and PHP 7.1+
+3 Get a certificate using [certbot](https://certbot.eff.org/), which will go through instructions on how to install certbot
+ - note: configtest will fail if not running as root
+ - crontab config I use is : 13 0,12 * * * /usr/bin/certbot renew -q, install as root
+4 Add a repo to the server to store data in; [instructions](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)
+
+## Virtual Host
 `html|xml|css|js|svg|json|jpe?g|png`
 ```
 
@@ -152,3 +163,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([A-z]*)\/?([A-z]*)\/?((?:[A-z0-9-:\/_*=]|\.[^A-z])*)(?:\.(EXT's))?$ index.php?_r_[]=$1&_r_[]=$2&_p_=$3&_e_=$4 [B,QSA,L]
 
 ```
+
