@@ -1,12 +1,12 @@
 <?php namespace App;
 
-/********       **********************************************************************************/
+/********       ************************************************************************* AGENT */
 interface Agent {
   public function contact(string $subject, string $message);
   public function sign(Token $token);
 }
 
-/*************       *************************************************************************************/
+/*************       ********************************************************************* MODEL */
 abstract class Model implements \ArrayAccess {
   abstract protected function fixture(array $data): array;
   
@@ -16,7 +16,8 @@ abstract class Model implements \ArrayAccess {
     
     if ($context instanceof Element) {
       $this->context = $context;
-    } else if (empty($data) && ! $this->context = Data::USE(static::SOURCE)->getElementById($context)){
+      
+    } else if (empty($data) && ! $this->context = Data::use(static::SOURCE)->getElementById($context)) {
       throw new \InvalidArgumentException("Unable to locate '{$context}'", 1);
     } else {
       // TODO determine how to create a new item
@@ -37,8 +38,8 @@ abstract class Model implements \ArrayAccess {
   }
 
   public function offsetGet($offset) {
-    $method  = "get{$offset}";
-    return method_exists($this, $method) ? $this->{$method}($this->context) : $this->context[$offset];
+    $get  = "get{$offset}";
+    return method_exists($this, $get) ? $this->{$get}($this->context) : $this->context[$offset];
   }
 
   public function offSetSet($offset, $value) {
@@ -55,8 +56,9 @@ abstract class Model implements \ArrayAccess {
   }
 }
 
-/****      ***************************************************************************************/
+/****      ******************************************************************************** VIEW */
 class View {
+  
   private $parent, $document, $slugs = [], $templates = [];
   
   static public function __callStatic(string $dir, $path): self {
@@ -151,7 +153,7 @@ class View {
   }
 }
 
-/*************            ***************************************************************************************/
+/*************            ************************************************************************** CONTROLLER */
 abstract class Controller {
   use Registry;
   

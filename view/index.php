@@ -1,22 +1,21 @@
 <?php namespace App;
 
-# CONFIGURE (Apache and php.ini are where majority of configuration occurs)
+/************************************************************************************* CONFIGURE */
+
 define('ID', explode(':', (getenv('ID') ?: ':::')));
 
-# REQUIRE application files
 foreach (['structure', 'dom', 'io', 'locus', 'mvc'] as $file) require_once "../app/{$file}.php";
 
-# AUTOLOAD non-essential classes organized by namespace
 spl_autoload_register(function ($classname) {
   @include '../' . str_replace('\\', '/', strtolower($classname)) . '.php';
 });
 
-# INSTANTIATE the request. 
-$request  = new Request( Method::New(getenv('REQUEST_METHOD') ?: 'CLI') );
-$response = new Response($request);
+/***************************************************************************************** SETUP */
 
-# HANDLE different scenarios
-$response->handle('http', function($request) {
+$response = new Response( new Request( Method::New(getenv('REQUEST_METHOD') ?: 'CLI') ) );
+
+
+$response->handle('http', function ($request) {
   $controller = $request->delegate($this, 'overview', 'index');
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {
@@ -32,7 +31,8 @@ $response->handle('console', function ($request) {
 });
 
 
-# RESPOND with some output
+/*************************************************************************************** EXECUTE */
+
 try {
   
   $controller = $response->prepare();

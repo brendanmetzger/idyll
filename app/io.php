@@ -1,6 +1,6 @@
 <?php namespace App;
 
-/****       **************************************************************************************/
+/****       ****************************************************************************** TOKEN */
 class Token {
   private $algo, $size, $secret;
   public  $expire, $version, $secure = true;
@@ -30,7 +30,7 @@ class Token {
   }
 }
 
-/*************        ****************************************************************************/
+/*************        ******************************************************************* METHOD */
 abstract class Method {
   public $start, $route, $scheme = 'http', $format = 'txt', $params, $data;
   
@@ -46,7 +46,7 @@ abstract class Method {
   abstract public function session(Token $token, array $set = null);
 }
 
-/****     ****************************************************************************************/
+/****     ********************************************************************************** CLI */
 class CLI extends Method {
   public $scheme = 'console';
   public function __construct($timestamp) {
@@ -60,7 +60,7 @@ class CLI extends Method {
   }
 }
 
-/****     ****************************************************************************************/
+/****     ********************************************************************************** GET */
 class GET extends Method {
   public $direct = false;
   public function __construct(float $timestamp) {    
@@ -81,7 +81,7 @@ class GET extends Method {
   }
 }
 
-/****      ***************************************************************************************/
+/****      ******************************************************************************** POST */
 class POST extends GET {
   
   public function __construct(float $timestamp) {
@@ -90,7 +90,7 @@ class POST extends GET {
   }
 }
 
-/****         ************************************************************************************/
+/****         ************************************************************************** REQUEST */
 class Request {
 
   static public $mime = [
@@ -110,7 +110,7 @@ class Request {
     $this->token  = new Token(ID);
   }
     
-  // TODO this seems like a chunk of nonsense... simplify!
+  // TODO I'm not particular to the double returns.. simplify!
   private function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();
@@ -145,7 +145,7 @@ class Request {
   }
 }
 
-/****          ***********************************************************************************/
+/****          ************************************************************************ RESPONSE */
 class Response {
   
   private $request, $template, $content, $output, $handler = [], $header = [];

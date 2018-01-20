@@ -1,10 +1,10 @@
 <?php namespace App; libxml_use_internal_errors(true);
 
-/****          ***********************************************************************************/
+/****          ************************************************************************ DOCUMENT */
 class Document extends \DOMDocument {
   
   const   XMLDEC = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
-  private $xpath = null,
+  private $xpath = null, $filepath = null,
           $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
                      'resolveExternals'   => true , 'validateOnParse' => false ];
   
@@ -17,6 +17,7 @@ class Document extends \DOMDocument {
     if ($input instanceof Element) {
       $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
     } else {
+      $this->filepath = $input;
       $this->load($input, self::XMLDEC);
     }
   }
@@ -35,10 +36,10 @@ class Document extends \DOMDocument {
   
   public function __toString() {
     return $this->saveXML();
-  }
+  }  
 }
 
-/****           **********************************************************************************/
+/****           ********************************************************************** INVOCABLE */
 trait invocable {
   public function __invoke(?string $input): self {
     $this->nodeValue = htmlentities($input, ENT_COMPAT|ENT_XML1, 'UTF-8', false);
@@ -50,12 +51,12 @@ trait invocable {
   }
 }
 
-/****      ***************************************************************************************/
+/****      ******************************************************************************** TEXT */
 class Text extends \DOMText {
   use invocable;
 }
 
-/****      ***************************************************************************************/
+/****      ******************************************************************************** ATTR */
 class Attr extends \DOMAttr {
   use invocable;
   public function remove() {
@@ -63,11 +64,10 @@ class Attr extends \DOMAttr {
   }
 }
 
-/****         *************************************************************************************/
+/****         *************************************************************************** ELEMENT */
 class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
   
-  // TODO will become obsolete if I can figure out how to automatically return the first element if no index is specified
   public function select(string $tag, int $offset = 0): self {
     $nodes = $this->selectAll($tag);
     return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
@@ -107,5 +107,4 @@ class Element extends \DOMElement implements \ArrayAccess {
   public function remove() {
     return ($parent = $this->parentNode) ? $parent->removeChild($this) : null;
   }
-
 }
