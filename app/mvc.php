@@ -12,22 +12,20 @@ abstract class Model implements \ArrayAccess {
   
   protected $context;
 
-  public function __construct($input, array $data = []) { 
+  public function __construct($input) { 
     $this->context = ($input instanceof Element) ? $input : Data::use(static::SRC)->claim($input);
   }
   
   static public function List(string $path): \App\Data {
     return Data::USE(static::SRC, $path)->map(function($item) {
-      // this should be a factory: if path is not standard, may be a different model
       return new static($item);
     });
   }
   
-  static public function Create(array $data) {
-    // need to create a context object
-    // create an instance of self using context object and data
-    // merge in data     
-    // $this->context->merge($this->fixture($data));
+  // TODO merge data somehow ... ? ... $this->context->merge($this->fixture($data));
+  static public function Create(array $data = []) {
+    [$path, $name] = preg_split('/\/(?!.*\/)/', static::PATH);    
+    return new static(Data::Use(static::SRC)->query($path)->item(0)->appendChild(new Element($name)));
   }
   
   public function offsetExists($offset) {

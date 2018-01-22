@@ -2,8 +2,7 @@
 /****        **************************************************************************** PERSON */
 class Person extends \App\Model implements \App\Agent {
   const SRC  = '../data/model.xml';
-  
-  // const SRC = ['../data/model.xml', '/model/person/item'];
+  const PATH = '/model/person/item'; // this represents the place to find and store elements. 
   
   protected function fixture(array $data): array  {
     return array_merge_recursive([

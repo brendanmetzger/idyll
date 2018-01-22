@@ -35,13 +35,8 @@ class Token {
 
 /*************        ******************************************************************* METHOD */
 abstract class Method {
-  public $start, $route, $scheme = 'http', $format = 'txt', $params, $data;
-  
-  static public function Factory(string $method) {
-    $ClassName = "\\App\\{$method}";
-    return new $ClassName($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true) );
-  }
-  
+  public $route, $scheme = 'http', $format = 'txt', $params, $data;
+    
   public function __toString(): string {
     return substr(static::class, 4);
   }
@@ -52,8 +47,7 @@ abstract class Method {
 /****     ********************************************************************************** CLI */
 class CLI extends Method {
   public $scheme = 'console';
-  public function __construct($timestamp) {
-    $this->start = $timestamp;
+  public function __construct() {
     $this->route  = array_filter(explode(':', $_SERVER['argv'][1] ?? ''));
     $this->params = array_slice($_SERVER['argv'], 2);
   }
@@ -66,8 +60,7 @@ class CLI extends Method {
 /****     ********************************************************************************** GET */
 class GET extends Method {
   public $direct = false;
-  public function __construct(float $timestamp) {    
-    $this->start  = $timestamp;
+  public function __construct() {    
     $this->route  = array_filter($_GET['_r_']);
     $this->params = array_filter(explode('/', $_GET['_p_']));
     $this->format = $_GET['_e_'] ?: 'html';
@@ -87,8 +80,8 @@ class GET extends Method {
 /****      ******************************************************************************** POST */
 class POST extends GET {
   
-  public function __construct(float $timestamp) {
-    parent::__construct($timestamp);
+  public function __construct() {
+    parent::__construct();
     array_unshift($this->params, new Data($_POST));
   }
 }

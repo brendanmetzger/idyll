@@ -4,7 +4,7 @@
 class Document extends \DOMDocument {
   
   const   XMLDEC   = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
-  private $xpath   = null, $filepath = null,
+  private $xpath   = null, $input = null,
           $options = [ 'preserveWhiteSpace' => false, 'formatOutput' => true ,
                        'resolveExternals'   => true , 'encoding'     => 'UTF-8',
                      ];
@@ -19,15 +19,21 @@ class Document extends \DOMDocument {
       $this->registerNodeClass("\\DOM{$classname}", "\\App\\{$classname}");
 
     if ($input instanceof Element) {
-      $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
+      $status = $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
     } else {
-      $this->filepath = $input;
-      $this->load($input, self::XMLDEC);
+      $this->input = $input;
+      $status = $this->load($input, self::XMLDEC);
+    }
+    
+    if (!$status) {
+      $errors = $this->errors()->map(function ($error) { return (array) $error; });
+      $this->appendChild($this->importNode(View::Error('markup')->render(['errors' => $errors])->documentElement, true));
+
     }
   }
 
   public function save($path = null) {
-    return file_put_contents($path ?: $this->filepath, $this->saveXML(), LOCK_EX);
+    return file_put_contents($path ?: $this->input, $this->saveXML(), LOCK_EX);
   }
 
   public function query(string $path, \DOMElement $context = null): \DOMNodeList {
@@ -38,8 +44,8 @@ class Document extends \DOMDocument {
     return $this->getElementById($id);
   }
 
-  public function errors() {
-    return libxml_get_errors();
+  public function errors(): Data {
+    return new Data(libxml_get_errors());
   }
   
   public function __toString() {
