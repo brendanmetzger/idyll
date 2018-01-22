@@ -1,11 +1,7 @@
 <?php namespace Model;
-
-/**
- * Person
- */
+/****        **************************************************************************** PERSON */
 class Person extends \App\Model implements \App\Agent {
-  const SOURCE = '../data/model.xml';
-  const PATH   = '/model/person/item';
+  const SRC  = '../data/model.xml';
   
   // const SRC = ['../data/model.xml', '/model/person/item'];
   
@@ -24,18 +20,24 @@ class Person extends \App\Model implements \App\Agent {
     return array_combine(['first','last'], explode(' ', $context['@title']));
   }
   
+  public function sign(\App\Token $token) {
+    return [$this['@access'], $this['@id']];
+  }  
   
   public function contact(string $subject, string $message) {
-    $token = getenv('EMAIL');
-    $ch = curl_init("https://api.postmarkapp.com/email");
+    $key = getenv('EMAIL');
+    $ch  = curl_init("https://api.postmarkapp.com/email");
     
     curl_setopt_array($ch, [
       CURLOPT_RETURNTRANSFER	=> true,
       CURLOPT_HTTPHEADER => [
-        'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$token}"
+        'Accept: application/json', 'Content-Type: application/json', "X-Postmark-Server-Token: {$key}"
       ],
       CURLOPT_POSTFIELDS => json_encode([
-        'From' => getenv('SERVER_ADMIN'), 'To' => $this->context['@access'], 'Subject' => $subject, 'HTMLBody' => $message,
+        'From' => getenv('SERVER_ADMIN'),
+        'To'   => $this->context['@access'],
+        'Subject'  => $subject,
+        'HTMLBody' => $message,
       ]),
     ]);
 
@@ -44,7 +46,4 @@ class Person extends \App\Model implements \App\Agent {
     return json_decode($result);
   }
   
-  public function sign(\App\Token $token) {
-    return [$this['@access'], $this['@id']];
-  }
 }

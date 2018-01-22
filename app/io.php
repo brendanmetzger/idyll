@@ -2,28 +2,31 @@
 
 /****       ****************************************************************************** TOKEN */
 class Token {
-  private $algo, $size, $secret;
+  private $algo, $size, $key, $valid = false;
   public  $expire, $version, $secure = true;
           
   public function __construct(array $config, ?int $expire = null) {
-    [$this->algo, $this->size, $this->secret, $this->version] = $config;
+    [$this->algo, $this->key, $this->version] = $config;
     $this->secure = $this->version !== 'local';
     $this->expire = ($expire !== null ? $expire : 3600 * 24 * 90) + time();
   }
   
   public function validate(string $hash, string $private, string $public) {
-    return hash_equals($hash, $this->encode($private, $public));
+    return $this->valid = hash_equals($hash, $this->encode($private, $public));
   }
   
-  public function encode(string $key, string $msg): string {
+  public function encode(string $salt, string $msg): string {
     return array_reduce(str_split(str_rot13($msg)), \Closure::bind(function($H, $L)  {
       return substr_replace($H, $L, $this->i -= $this->s, 0);
-    }, (object)['s'=>floor($this->size/strlen($msg)),'i'=>0]), hash_hmac($this->algo, $key, $this->secret));
+    }, (object)[
+      's' => floor(strlen(hash($this->algo, '')) / strlen($msg)),'i' => 0
+    ]), hash_hmac($this->algo, $salt, $this->key));
   }
   
   public function decode(string $msg): string {
-    $size = strlen($msg) - 32;
-    $skip = floor($this->size / $size) * -1;
+    $width = strlen(hash($this->algo, ''));
+    $size = strlen($msg) - $width;
+    $skip = floor($width / $size) * -1;
     return str_rot13(array_reduce(range(1, $size), function($o, $i) use($msg, $skip) {
       return $o . $msg[($i * $skip - 1)];
     }, ''));
@@ -34,7 +37,7 @@ class Token {
 abstract class Method {
   public $start, $route, $scheme = 'http', $format = 'txt', $params, $data;
   
-  static public function New(string $method) {
+  static public function Factory(string $method) {
     $ClassName = "\\App\\{$method}";
     return new $ClassName($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true) );
   }

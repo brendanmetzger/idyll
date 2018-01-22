@@ -22,12 +22,11 @@ class Data extends \ArrayIterator {
     return $data;
   }
   
-  static public function USE(string $source, ?string $path = null) {
+  static public function Use(string $source, ?string $path = null) {
     $document = self::$sources[$source] ?? self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
-    return $path ? new self($document->find($path)) : $document;
+    return $path ? new self($document->query($path)) : $document;
   }
   
-
   private $maps = [];
   
   public function __construct(iterable $data) {

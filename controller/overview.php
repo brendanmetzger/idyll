@@ -9,8 +9,10 @@ class Overview extends \App\Controller {
 
     if ($id) {
       $m = new \Model\Item($id);
+      print_r($m);
     }
-    $this->items = \Model\Item::list('/items/item');
+    
+    $this->items = \Model\Item::List('/items/*');
     $this->title = 'Working Draft';
   }
   
@@ -28,7 +30,7 @@ class Overview extends \App\Controller {
     }
     
     if ($type !== null) {
-      $this->people = \Model\Person::list();
+      $this->people = \Model\Person::List('/model/person/*');
       $this->type = $type;
       $path = 'component/list.html';
     }

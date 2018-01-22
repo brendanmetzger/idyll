@@ -12,7 +12,8 @@ spl_autoload_register(function ($classname) {
 
 /***************************************************************************************** SETUP */
 
-$response = new Response( new Request( Method::New(getenv('REQUEST_METHOD') ?: 'CLI') ) );
+$type     = getenv('REQUEST_METHOD') ?: 'CLI'; // GET, POST, or CLI
+$response = new Response( new Request( Method::Factory($type) ) );
 
 
 $response->handle('http', function ($request) {

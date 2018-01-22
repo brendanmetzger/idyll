@@ -12,25 +12,22 @@ abstract class Model implements \ArrayAccess {
   
   protected $context;
 
-  public function __construct($context, array $data = []) { 
-    
-    if ($context instanceof Element) {
-      $this->context = $context;
-      
-    } else if (empty($data) && ! $this->context = Data::use(static::SOURCE)->getElementById($context)) {
-      throw new \InvalidArgumentException("Unable to locate '{$context}'", 1);
-    } else {
-      // TODO determine how to create a new item
-    }
-    
-    $this->context->merge($data);
+  public function __construct($input, array $data = []) { 
+    $this->context = ($input instanceof Element) ? $input : Data::use(static::SRC)->claim($input);
   }
   
-  static public function LIST(?string $path = null): \App\Data {
-    return Data::USE(static::SOURCE, $path ?: static::PATH)->map(function($item) {
+  static public function List(string $path): \App\Data {
+    return Data::USE(static::SRC, $path)->map(function($item) {
       // this should be a factory: if path is not standard, may be a different model
       return new static($item);
     });
+  }
+  
+  static public function Create(array $data) {
+    // need to create a context object
+    // create an instance of self using context object and data
+    // merge in data     
+    // $this->context->merge($this->fixture($data));
   }
   
   public function offsetExists($offset) {
@@ -117,7 +114,7 @@ class View {
     static $remove = [];
     if ($idx) {
       while ($path = array_pop($remove)) {
-        $list = $node->ownerDocument->find("..{$path}", $node);
+        $list = $node->ownerDocument->query("..{$path}", $node);
         if ($list->length == $idx) $list[$idx-1]->remove();
       }
     } else $remove[] = $node->getNodePath();
@@ -127,7 +124,7 @@ class View {
     $query = "./descendant::comment()[ starts-with(normalize-space(.), '{$key}')"
            . (($key == 'iterate') ? ']' : 'and not(./ancestor::*/preceding-sibling::comment()[iterate])]');
 
-    return (new Data($this->document->find( $query )))->map( function ($stub) {
+    return (new Data($this->document->query( $query )))->map( function ($stub) {
       return [preg_split('/\s+/', trim($stub->nodeValue))[1], $stub];
     });    
   }
@@ -135,7 +132,7 @@ class View {
   private function getSlugs(): iterable {
     return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
-      foreach ( $this->document->find("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
+      foreach ( $this->document->query("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
         preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {

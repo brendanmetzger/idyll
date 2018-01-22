@@ -3,16 +3,20 @@
 /****          ************************************************************************ DOCUMENT */
 class Document extends \DOMDocument {
   
-  const   XMLDEC = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
-  private $xpath = null, $filepath = null,
-          $opts  = [ 'preserveWhiteSpace' => false, 'formatOutput'    => true , 'encoding' => 'UTF-8', 
-                     'resolveExternals'   => true , 'validateOnParse' => false ];
+  const   XMLDEC   = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
+  private $xpath   = null, $filepath = null,
+          $options = [ 'preserveWhiteSpace' => false, 'formatOutput' => true ,
+                       'resolveExternals'   => true , 'encoding'     => 'UTF-8',
+                     ];
   
-  function __construct($input, $opts = []) {
+  function __construct($input, $options = []) {
     parent::__construct('1.0', 'UTF-8');
     
-    foreach (array_replace($this->opts, $opts) as $prop => $val) $this->{$prop} = $val;
-    foreach (['Element','Text','Attr'] as $c ) $this->registerNodeClass("\\DOM{$c}", "\\App\\{$c}");
+    foreach (array_replace($this->options, $options) as $property => $value)
+      $this->{$property} = $value;
+    
+    foreach (['Element','Text','Attr'] as $classname)
+      $this->registerNodeClass("\\DOM{$classname}", "\\App\\{$classname}");
 
     if ($input instanceof Element) {
       $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
@@ -23,11 +27,15 @@ class Document extends \DOMDocument {
   }
 
   public function save($path = null) {
-    return file_put_contents($path ?? $this->filepath, $this->saveXML(), LOCK_EX);
+    return file_put_contents($path ?: $this->filepath, $this->saveXML(), LOCK_EX);
   }
 
-  public function find(string $path, \DOMElement $context = null): \DOMNodeList {
+  public function query(string $path, \DOMElement $context = null): \DOMNodeList {
     return ($this->xpath ?: ($this->xpath = new \DOMXpath($this)))->query($path, $context);
+  }
+  
+  public function claim(string $id): \DOMElement {
+    return $this->getElementById($id);
   }
 
   public function errors() {
@@ -74,7 +82,7 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
   
   public function selectAll(string $path) {
-    return $this->ownerDocument->find($path, $this);
+    return $this->ownerDocument->query($path, $this);
   }
   
   public function merge(array $data) {
