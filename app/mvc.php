@@ -23,9 +23,21 @@ abstract class Model implements \ArrayAccess {
   }
   
   // TODO merge data somehow ... ? ... $this->context->merge($this->fixture($data));
-  static public function Create(array $data = []) {
-    [$path, $name] = preg_split('/\/(?!.*\/)/', static::PATH);    
-    return new static(Data::Use(static::SRC)->query($path)->item(0)->appendChild(new Element($name)));
+  static public function Create($type) {
+    $model  = Factory::Model($type);
+    $src    = $model->getConstant('SRC');
+    [$path, $tag] = preg_split('/\/(?!.*\/)/', $model->getConstant('PATH'));
+    
+    return $model->newInstance(Data::Use($src)->query($path)[0]->appendChild(new Element($tag)));
+  }
+  
+  public function merge(?array $data = null) {
+    $input = $this->fixture($data ?: []);
+    if ($data !== null) {
+      $this->context->merge($input);
+      echo htmlentities($this->context->ownerDocument->saveXML($this->context));
+    }
+    return $input;
   }
   
   public function offsetExists($offset) {

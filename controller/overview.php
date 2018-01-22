@@ -20,7 +20,7 @@ class Overview extends \App\Controller {
     return new \App\View('content/calendar.html');
   }
   
-  protected function GETedit(\Model\Person $person, ?string $type = null, ?string $id = null) {
+  protected function GETedit(\Model\Person $editor, ?string $type = null, ?string $id = null) {
 
     if ($type === null) {
       $this->types = (new \App\Data(['person', 'inventory', 'project', 'task']))->map(function($item) {
@@ -39,6 +39,17 @@ class Overview extends \App\Controller {
     $this->person = $person;
     
     return new \App\View($path);
+  }
+  
+  protected function GETcreate(\Model\Person $editor, string $type) {
+
+    $this->item = \App\Model::Create($type)->merge(null);
+    return \App\View::transaction('form', $type);
+  }
+  
+  protected function POSTcreate(\Model\Person $user, \App\Data $post, $type) {
+    $data = \App\Model::Create($type)->merge((array)$post);
+   
   }
   
   

@@ -91,6 +91,7 @@ TODO
 [X] Create data repo on server
 [ ] add version control class to inspect data evolution
 [ ] Configure server timezone, location, and sunrise/sunset
+[ ] Filter dom items to correct spot in layout (meta, link, style...)
 
 io.php, Response Object
 [ ] Consider implementing a way users and guests can see same page, with users having rendered session vars

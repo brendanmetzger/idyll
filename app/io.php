@@ -71,7 +71,7 @@ class GET extends Method {
   
   public function session(Token $Tok, array $set = null) {
     if ($set) {
-      setcookie($Tok->version, $Tok->encode(...$set), $Tok->expire, '/', '', $Tok->secure, true);
+      return setcookie($Tok->version, $Tok->encode(...$set), $Tok->expire, '/', '', $Tok->secure, true);
     }
     return $_COOKIE[$Tok->version];
   }
@@ -119,10 +119,10 @@ class Request {
     return false;
   }
   
-  public function authorize(string $type, string $message, string $key) {
+  public function authorize(string $type, string $message, string $key): bool {
     $id = $this->token->decode($message);
     if ($this->token->validate($message, $key, $id)) {
-      $this->method->session($this->token, Factory::Model($type)->newInstance($id)->sign($this->token));
+      return $this->method->session($this->token, Factory::Model($type)->newInstance($id)->sign($this->token));
     }
   }
     

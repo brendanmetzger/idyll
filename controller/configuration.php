@@ -13,7 +13,7 @@ trait Configuration {
 
     if ($model && $message) {
       $this->request->authorize($model, $message, date_sunset(time(), SUNFUNCS_RET_TIMESTAMP));
-      $this->response->redirect($redirect ?: '/');
+      $this->response->redirect($redirect ? base64_decode($redirect) : '/');
     }
     
     $this->path = urlencode(base64_encode($this->request->method->path));

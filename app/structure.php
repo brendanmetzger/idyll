@@ -7,6 +7,23 @@ class Factory {
   }
 }
 
+class Slug {
+  private $model, $key;
+  
+  private function slugify(string $input) {
+    return strtolower(preg_replace('/\W/', '-', $input));
+  }
+  
+  public function __construct(Model $model, string $key) {
+    $this->model = $model;
+    $this->key   = $key;
+  }
+  
+  public function __toString() {
+    return $this->slugify($this->model[$this->key]);
+  }
+}
+
 /****      ******************************************************************************** DATA */
 class Data extends \ArrayIterator {
   

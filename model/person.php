@@ -5,14 +5,14 @@ class Person extends \App\Model implements \App\Agent {
   const PATH = '/model/person/item'; // this represents the place to find and store elements. 
   
   protected function fixture(array $data): array  {
-    return array_merge_recursive([
+    return array_replace_recursive([
       '@title'   => '',
-      '@id'      => '', // generate id with some sort of invokable/tostring object. new Slug($this, '@title') would have a __toString() that could turn title into an id based on input, otherwise it could be random/numeric.
+      '@id'      => new \App\Slug($this, '@title'),
       '@access'  => '',
-      '@created' => time(),
-      '@updated' => time(),
+      '@created' => new \App\Clock,
+      '@updated' => new \App\Clock,
       'log'      => [] // should grab the fixture from log. maybe this needs to be static but then knowing about the instance would be difficult
-    ], $data);
+    ], array_filter($data));
   }
   
   public function getName(\DOMElement $context) {

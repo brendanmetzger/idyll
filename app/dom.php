@@ -3,32 +3,29 @@
 /****          ************************************************************************ DOCUMENT */
 class Document extends \DOMDocument {
   
-  const   XMLDEC   = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
   private $xpath   = null, $input = null,
           $options = [ 'preserveWhiteSpace' => false, 'formatOutput' => true ,
                        'resolveExternals'   => true , 'encoding'     => 'UTF-8',
                      ];
   
-  function __construct($input, $options = []) {
+  function __construct($input, $options = [], $method = 'load') {
     parent::__construct('1.0', 'UTF-8');
     
+    $this->input = $input;
     foreach (array_replace($this->options, $options) as $property => $value)
       $this->{$property} = $value;
     
     foreach (['Element','Text','Attr'] as $classname)
       $this->registerNodeClass("\\DOM{$classname}", "\\App\\{$classname}");
-
-    if ($input instanceof Element) {
-      $status = $this->loadXML($input->ownerDocument->saveXML($input), self::XMLDEC);
-    } else {
-      $this->input = $input;
-      $status = $this->load($input, self::XMLDEC);
-    }
     
-    if (!$status) {
+    if ($input instanceof Element) {
+      $this->input = $input->ownerDocument->saveXML($input);
+      $method = 'loadXML';
+    }
+
+    if (! $this->{$method}($this->input, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL)) {
       $errors = $this->errors()->map(function ($error) { return (array) $error; });
       $this->appendChild($this->importNode(View::Error('markup')->render(['errors' => $errors])->documentElement, true));
-
     }
   }
 
@@ -92,7 +89,11 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
   
   public function merge(array $data) {
-    // TODO figure out merge strategy
+    foreach ($data as $key => $value) {
+      if (!is_array($value)) {
+        $this[$key] = $value;
+      }
+    }
   }
 
   public function offsetExists($offset) {
@@ -100,9 +101,11 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
 
   public function offsetGet($offset) {
-    if ($offset[0] === '@') {
-      // TODO deal with creating an attribute as necessary  `$this->setAttribute($offset, '')`
-      return $this->getAttribute(substr($offset, 1));
+    if ($offset[0] === '@' && $offset = substr($offset, 1)) {
+      if (! $this->hasAttribute($offset)) {
+        $this->setAttributeNode(new Attr($offset)) ;
+      }
+      return $this->getAttributeNode($offset);
     } else {
       // TODO create recursive function to deal with paths insead of tags, ie. ->select('a/b[@c]') if !exist must create/append <a><b c=""/></a>
       // TODO (?) this should be responsible for making an empty node if necessary , possibly with a created="(now)" updated="0" attributes
@@ -110,8 +113,8 @@ class Element extends \DOMElement implements \ArrayAccess {
     }
   }
 
-  public function offSetSet($offset, $value) {
-    return $this[$offset]($value);
+  public function offsetSet($offset, $value) {
+    return $this->offsetGet($offset)($value);
   }
 
   public function offsetUnset($offset) {
