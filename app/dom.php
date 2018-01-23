@@ -113,7 +113,7 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
 
   public function offsetSet($offset, $value) {
-    return $this->offsetGet($offset)($value);
+    return $this->offsetGet($offset, true)($value);
   }
 
   public function offsetUnset($offset) {
