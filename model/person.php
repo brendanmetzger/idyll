@@ -4,15 +4,15 @@ class Person extends \App\Model implements \App\Agent {
   const SRC  = '../data/model.xml';
   const PATH = '/model/person/item'; // this represents the place to find and store elements. 
   
-  protected function fixture(array $data): array  {
-    return array_replace_recursive([
+  protected function fixture(): array  {
+    return [
       '@title'   => '',
       '@id'      => new \App\Slug($this, '@title'),
       '@access'  => '',
       '@created' => new \App\Clock,
       '@updated' => new \App\Clock,
-      'log'      => [] // should grab the fixture from log. maybe this needs to be static but then knowing about the instance would be difficult
-    ], array_filter($data));
+      'log'      => ''  // should grab the fixture from log model, or a List/Group. maybe this needs to be static but then knowing about the instance would be difficult
+    ];
   }
   
   public function getName(\DOMElement $context) {

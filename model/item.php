@@ -4,7 +4,7 @@ class item extends \app\model {
   const SRC  = '../data/item.xml';
   const PATH = '/items/item';
   
-  protected function fixture(array $data): array  {
-    return $data;
+  protected function fixture(): array  {
+    return [];
   }
 }

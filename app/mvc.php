@@ -8,7 +8,7 @@ interface Agent {
 
 /*************       ********************************************************************* MODEL */
 abstract class Model implements \ArrayAccess {
-  abstract protected function fixture(array $data): array;
+  abstract protected function fixture(): array;
   
   protected $context;
 
@@ -22,8 +22,7 @@ abstract class Model implements \ArrayAccess {
     });
   }
   
-  // TODO merge data somehow ... ? ... $this->context->merge($this->fixture($data));
-  static public function Create($type) {
+  static public function Create($type, array $data = []) {
     $model  = Factory::Model($type);
     $src    = $model->getConstant('SRC');
     [$path, $tag] = preg_split('/\/(?!.*\/)/', $model->getConstant('PATH'));
@@ -31,12 +30,11 @@ abstract class Model implements \ArrayAccess {
     return $model->newInstance(Data::Use($src)->query($path)[0]->appendChild(new Element($tag)));
   }
   
-  public function merge(?array $data = null) {
-    $input = $this->fixture($data ?: []);
-    if ($data !== null) {
-      $this->context->merge($input);
-      echo htmlentities($this->context->ownerDocument->saveXML($this->context));
-    }
+  public function load(array $data = []) {
+    $input = array_replace_recursive($this->fixture(), array_filter($data));
+
+    $this->context->merge($input);
+      // echo htmlentities($this->context->ownerDocument->saveXML($this->context));
     return $input;
   }
   

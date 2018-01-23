@@ -43,12 +43,12 @@ class Overview extends \App\Controller {
   
   protected function GETcreate(\Model\Person $editor, string $type) {
 
-    $this->item = \App\Model::Create($type)->merge(null);
+    $this->item = \App\Model::Create($type)->load();
     return \App\View::transaction('form', $type);
   }
   
   protected function POSTcreate(\Model\Person $user, \App\Data $post, $type) {
-    $data = \App\Model::Create($type)->merge((array)$post);
+    $data = \App\Model::Create($type)->load((array)$post);
    
   }
   
