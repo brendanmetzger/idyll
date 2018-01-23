@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript">
       // <![CDATA[
-      App = (function(app, s, c, p1, p2) {
+      ready = (function(app, s, c, js) {
         s.type = 'text/javascript';
         app.cache   = Object.create(null);
         app.require = function(u, p = false) {          
           let ctx = s.cloneNode();
               ctx.src = u; ctx.async = p;
-          p ? p2.push(ctx) : ctx.onload = app.load.bind(ctx, p1.push(ctx));
+              ctx.onload = app.load.bind(ctx, js.push(ctx));
+          
         };
         app.load = function(i, e) {
-          if (i === e) return p1.concat(p2).map(Node.prototype.appendChild.bind(document.head));
-          if (e && p1.length === i || i === true) while (c.length > 0) c.shift().call();
+          console.log(i, e, this.async);
+          // if (e && p1.length === i || i === true) while (c.length > 0) c.shift().call();
         };
         
         app.remove =  k     => delete app.cache[k];
@@ -25,12 +26,11 @@
         app.define = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
         app.init   = (f, w) => c[w||'push'](f);
         app.mobile = (/mobile|iPhone/i).test(navigator.userAgent);
-        //return () => js.map(Node.prototype.appendChild.bind(document.head));
+        return () => js.map(Node.prototype.appendChild.bind(document.head));
       })(this.app = {}, document.createElement('script'), [], [], []);
       
-      
       // load all scripts into the same array. On init, filter the non/async scripts and add load callback.
-      // js.filter(s=>!s.async)
+      // 
       // (this.app = , document.createElement('script'), []);
 
       document.documentElement.classList.add(['touch','click'][+app.mobile]);
@@ -46,6 +46,6 @@
       <!-- insert content/about.html -->
     </main>
     <!-- insert component/footer.html -->
-    <script type="text/javascript">app.load();</script>
+    <script type="text/javascript">ready();</script>
   </body>
 </html>

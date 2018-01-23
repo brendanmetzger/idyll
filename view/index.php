@@ -2,7 +2,7 @@
 
 /************************************************************************************* CONFIGURE */
 
-define('ID', explode(':', (getenv('ID') ?: ':::')));
+define('ID', explode(':', (getenv('ID') ?: '::')));
 
 foreach (['structure', 'dom', 'io', 'locus', 'mvc'] as $file) require_once "../app/{$file}.php";
 
@@ -12,10 +12,7 @@ spl_autoload_register(function ($classname) {
 
 /***************************************************************************************** SETUP */
 
-
-$method   = Factory::App(getenv('REQUEST_METHOD') ?: php_sapi_name())->newInstance();
-$response = new Response( new Request($method) );
-
+$response = new Response( new Request(Factory::App($_SERVER['REQUEST_METHOD'] ?? 'CLI')->newInstance()) );
 
 $response->handle('http', function ($request) {
   $controller = $request->delegate($this, 'overview', 'index');
