@@ -98,7 +98,7 @@ class Element extends \DOMElement implements \ArrayAccess {
     return $this->selectAll($offset)->length > 0;
   }
 
-  public function offsetGet($offset) {
+  public function offsetGet($offset, $create = false) {
     
     if ($offset[0] === '@' && $offset = substr($offset, 1)) {
       
