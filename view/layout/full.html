@@ -7,23 +7,24 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript">
       // <![CDATA[
-      addEventListener('DOMContentLoaded', (function(app, s, c, js) {
-        s.type = 'text/javascript';
-        app.cache   = Object.create(null);
-        app.include = (...a) => js.push(['src','async'].reduce((s,v,i) => {s[v]=a[i]; return s}, s.cloneNode()));
-        app.load    =  e     => { while (c.length > 0) c.shift().call() };
-        app.remove  =  k     => delete app.cache[k];
-        app.module  =  k     => (k in app.cache) ? app.cache[k] : app.define.bind(app, k);
-        app.define  = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
-        app.init    = (f, w) => c[w||'push'](f);
-        app.mobile  = (/mobile|iPhone/i).test(navigator.userAgent);
-        
+      addEventListener('DOMContentLoaded', (function(s, c, js) {
+        self.app = {
+          cache: Object.create(null),
+          include: (...a) => js.push(['src','async'].reduce((s,v,i) => {s[v]=a[i]; return s}, s.cloneNode())),
+          prepare: (f, w) => c[w||'push'](f),
+          release:   (e) => { while (c.length > 0) c.shift().call() },
+          remove: (k) => delete app.cache[k],
+          module: (k) => (k in app.cache) ? app.cache[k] : app.define.bind(app, k),
+          define: (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f,
+          mobile: (/mobile|iPhone/i).test(navigator.userAgent)
+        };
+        // TODO: still need to fire init
+        // ctx.addEventListener('load', app.release.bind(ctx, js.push(ctx)));
+        // var special = js.filter(s => !s.async).forEach((s, i, a) => s.onload = app.release.bind(s, i == a.length-1));
         return () => {
-          // ctx.addEventListener('load', app.load.bind(ctx, js.push(ctx)));
-          // var special = js.filter(s => !s.async).forEach((s, i, a) => s.onload = app.load.bind(s, i == a.length-1));
           js.map(Node.prototype.appendChild.bind(document.head));
         };
-      })(this.app = {}, document.createElement('script'), [], []));
+      })(document.createElement('script'), [], []));
       
       document.documentElement.classList.add(['touch','click'][+app.mobile]);
       app.include('/js/app.js', false);

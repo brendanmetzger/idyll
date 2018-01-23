@@ -11,6 +11,7 @@ class Slug {
   private $model, $key;
   
   private function slugify(string $input) {
+    // TODO: during slugify, validate model to see if slug is unique
     return strtolower(preg_replace('/\W/', '-', $input));
   }
   

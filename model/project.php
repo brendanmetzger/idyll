@@ -5,12 +5,15 @@ class Project extends \App\Model {
   
   protected function fixture(): array  {
     return [
-      '@title'   => '',
-      '@id'      => '', // generate id with some sort of invokable/tostring object. new Slug($this, '@title') would have a __toString() that could turn title into an id based on input, otherwise it could be random/numeric.
-      '@access'  => '',
-      '@created' => time(),
-      '@updated' => time(),
-      'log'      => [] // should grab the fixture from log. maybe this needs to be static but then knowing about the instance would be difficult
+      '@title'    => '',
+      '@id'       => new \App\Slug($this, '@title'),
+      '@access'   => '',
+      '@created'  => new \App\Clock,
+      '@updated'  => new \App\Clock,
+      '@duration' => '',
+      '@status'   => '', // represents a choice of (complete|underway|pending),
+      'log'       => [],
+      'agenda'    => [],
     ];
   }
   

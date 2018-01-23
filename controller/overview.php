@@ -48,7 +48,18 @@ class Overview extends \App\Controller {
   }
   
   protected function POSTcreate(\Model\Person $user, \App\Data $post, $type) {
-    $data = \App\Model::Create($type)->load((array)$post);
+    $model = \App\Model::Create($type);
+    $model->load((array)$post);
+    
+    
+    $outcome = $model->save();
+
+    if ($outcome !== true) {
+      $this->errors = $outcome;
+      return new \App\View('error/markup.html');
+    }
+    
+    print_r($model);
    
   }
   

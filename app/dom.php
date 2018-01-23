@@ -24,13 +24,14 @@ class Document extends \DOMDocument {
     }
 
     if (! $this->{$method}($this->input, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL)) {
-      $errors = $this->errors()->map(function ($error) { return (array) $error; });
-      $this->appendChild($this->importNode(View::Error('markup')->render(['errors' => $errors])->documentElement, true));
+      $view = View::Error('markup')->render(['errors' => $this->errors()]);
+      $this->appendChild($this->importNode($view->documentElement, true));
     }
   }
 
   public function save($path = null) {
-    return file_put_contents($path ?: $this->input, $this->saveXML(), LOCK_EX);
+    
+    return $this->validate() && file_put_contents($path ?: $this->input, $this->saveXML(), LOCK_EX);
   }
 
   public function query(string $path, \DOMElement $context = null): \DOMNodeList {
@@ -42,7 +43,7 @@ class Document extends \DOMDocument {
   }
 
   public function errors(): Data {
-    return new Data(libxml_get_errors());
+    return (new Data(libxml_get_errors()))->map(function ($error) { return (array) $error; });
   }
   
   public function __toString() {

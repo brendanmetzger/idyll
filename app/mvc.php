@@ -38,6 +38,11 @@ abstract class Model implements \ArrayAccess {
     return $input;
   }
   
+  public function save() {
+    $source = Data::Use(static::SRC);
+    return $source->save() ?: $source->errors();
+  }
+  
   public function offsetExists($offset) {
     return ! is_null($this->context);
   }
