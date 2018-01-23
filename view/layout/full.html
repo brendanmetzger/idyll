@@ -7,34 +7,27 @@
     <link rel="stylesheet" href="/css/master.css" type="text/css" media="screen" charset="utf-8" />
     <script type="text/javascript">
       // <![CDATA[
-      ready = (function(app, s, c, js) {
+      addEventListener('DOMContentLoaded', (function(app, s, c, js) {
         s.type = 'text/javascript';
         app.cache   = Object.create(null);
-        app.require = function(u, p = false) {          
-          let ctx = s.cloneNode();
-              ctx.src = u; ctx.async = p;
-              ctx.onload = app.load.bind(ctx, js.push(ctx));
-          
-        };
-        app.load = function(i, e) {
-          console.log(i, e, this.async);
-          // if (e && p1.length === i || i === true) while (c.length > 0) c.shift().call();
-        };
+        app.include = (...a) => js.push(['src','async'].reduce((s,v,i) => {s[v]=a[i]; return s}, s.cloneNode()));
+        app.load    =  e     => { while (c.length > 0) c.shift().call() };
+        app.remove  =  k     => delete app.cache[k];
+        app.module  =  k     => (k in app.cache) ? app.cache[k] : app.define.bind(app, k);
+        app.define  = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
+        app.init    = (f, w) => c[w||'push'](f);
+        app.mobile  = (/mobile|iPhone/i).test(navigator.userAgent);
         
-        app.remove =  k     => delete app.cache[k];
-        app.module =  k     => (k in app.cache) ? app.cache[k] : app.define.bind(app, k);
-        app.define = (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f;
-        app.init   = (f, w) => c[w||'push'](f);
-        app.mobile = (/mobile|iPhone/i).test(navigator.userAgent);
-        return () => js.map(Node.prototype.appendChild.bind(document.head));
-      })(this.app = {}, document.createElement('script'), [], [], []);
+        return () => {
+          // ctx.addEventListener('load', app.load.bind(ctx, js.push(ctx)));
+          // var special = js.filter(s => !s.async).forEach((s, i, a) => s.onload = app.load.bind(s, i == a.length-1));
+          js.map(Node.prototype.appendChild.bind(document.head));
+        };
+      })(this.app = {}, document.createElement('script'), [], []));
       
-      // load all scripts into the same array. On init, filter the non/async scripts and add load callback.
-      // 
-      // (this.app = , document.createElement('script'), []);
-
       document.documentElement.classList.add(['touch','click'][+app.mobile]);
-      app.require('/js/app.js');
+      app.include('/js/app.js', false);
+      app.include('/js/locus.js', true);
       // ]]>
     </script>
   </head>
@@ -46,6 +39,5 @@
       <!-- insert content/about.html -->
     </main>
     <!-- insert component/footer.html -->
-    <script type="text/javascript">ready();</script>
   </body>
 </html>

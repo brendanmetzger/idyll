@@ -11,7 +11,7 @@ class Person extends \App\Model implements \App\Agent {
       '@access'  => '',
       '@created' => new \App\Clock,
       '@updated' => new \App\Clock,
-      'log'      => ''  // should grab the fixture from log model, or a List/Group. maybe this needs to be static but then knowing about the instance would be difficult
+      'log'      => [],  // DSNSLNREQ: how to represent a List/Group.
     ];
   }
   
