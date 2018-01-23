@@ -35,32 +35,38 @@ class Overview extends \App\Controller {
       $path = 'component/list.html';
     }
     
+    if ($id !== null) {
+      $this->item = \App\Factory::Model($type)->newInstance($id);
+      $path = "transaction/form/{$type}.html";
+    }
+    
     $this->title = 'working still';
-    $this->person = $person;
     
     return new \App\View($path);
+  }
+  
+  protected function POSTedit(\Model\Person $editor, \App\Data $post, string $type, ?string $id = null) {
+    $this->item = $id ? \App\Factory::Model($type)->newInstance($id) : \App\Model::Create($type);
+    
+    $this->item->load((array)$post);
+    $outcome = $this->item->save();
+    
+    if ($outcome === true) {
+      $view = \App\View::transaction('form', $type);
+      $this->message = 'Data Saved';
+    } else {
+      $this->errors = $outcome;
+      $view = new \App\View('error/markup.html');
+    }
+    
+    return $view;
+    
   }
   
   protected function GETcreate(\Model\Person $editor, string $type) {
 
     $this->item = \App\Model::Create($type)->load();
     return \App\View::transaction('form', $type);
-  }
-  
-  protected function POSTcreate(\Model\Person $user, \App\Data $post, $type) {
-    $model = \App\Model::Create($type);
-    $model->load((array)$post);
-    
-    
-    $outcome = $model->save();
-
-    if ($outcome !== true) {
-      $this->errors = $outcome;
-      return new \App\View('error/markup.html');
-    }
-    
-    print_r($model);
-   
   }
   
   

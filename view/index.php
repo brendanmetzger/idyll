@@ -103,5 +103,6 @@ structure.php, Data Class
 UX, front-end design/implementation
 [ ] Show Sunrise/Sunset/Weather
 [ ] Work on calendaring
+[ ] Add validators I made for teaching to page
 
 */

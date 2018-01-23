@@ -2,17 +2,17 @@
 
 /****          ************************************************************************ DOCUMENT */
 class Document extends \DOMDocument {
-  
+  const   XMLDEC   = LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL;
   private $xpath   = null, $input = null,
           $options = [ 'preserveWhiteSpace' => false, 'formatOutput' => true ,
                        'resolveExternals'   => true , 'encoding'     => 'UTF-8',
                      ];
   
-  function __construct($input, $options = [], $method = 'load') {
-    parent::__construct('1.0', 'UTF-8');
+  function __construct($input, $opts = [], $method = 'load') { parent::__construct('1.0', 'UTF-8');
     
     $this->input = $input;
-    foreach (array_replace($this->options, $options) as $property => $value)
+    
+    foreach (array_replace($this->options, $opts) as $property => $value)
       $this->{$property} = $value;
     
     foreach (['Element','Text','Attr'] as $classname)
@@ -23,14 +23,13 @@ class Document extends \DOMDocument {
       $method = 'loadXML';
     }
 
-    if (! $this->{$method}($this->input, LIBXML_COMPACT|LIBXML_NOBLANKS|LIBXML_NOENT|LIBXML_NOXMLDECL)) {
+    if (! $this->{$method}($this->input, self::XMLDEC)) {
       $view = View::Error('markup')->render(['errors' => $this->errors()]);
       $this->appendChild($this->importNode($view->documentElement, true));
     }
   }
 
   public function save($path = null) {
-    
     return $this->validate() && file_put_contents($path ?: $this->input, $this->saveXML(), LOCK_EX);
   }
 
@@ -80,18 +79,16 @@ class Attr extends \DOMAttr {
 class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
   
-  public function select(string $tag, int $offset = 0): self {
-    $nodes = $this->selectAll($tag);
-    return $nodes->length <= $offset ? $this->appendChild(new self($tag)) : $nodes[$offset]; 
-  }
-  
   public function selectAll(string $path) {
     return $this->ownerDocument->query($path, $this);
   }
   
   public function merge(array $data) {
     foreach ($data as $key => $value) {
-      if (!is_array($value)) {
+      if (is_array($value)) {
+        // something like... perhaps
+        // $this[$key]->merge($value);
+      } else {
         $this[$key] = $value;
       }
     }
@@ -102,15 +99,16 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
 
   public function offsetGet($offset) {
+    
     if ($offset[0] === '@' && $offset = substr($offset, 1)) {
+      
       if (! $this->hasAttribute($offset)) {
         $this->setAttributeNode(new Attr($offset)) ;
       }
       return $this->getAttributeNode($offset);
     } else {
-      // TODO create recursive function to deal with paths insead of tags, ie. ->select('a/b[@c]') if !exist must create/append <a><b c=""/></a>
-      // TODO (?) this should be responsible for making an empty node if necessary , possibly with a created="(now)" updated="0" attributes
-      return $this->select($offset);
+      $nodes = $this->selectAll($offset);
+      return $nodes->length <= $offset ? $this->appendChild(new self($offset)) : $nodes[$offset];
     }
   }
 

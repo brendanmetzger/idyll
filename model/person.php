@@ -16,7 +16,8 @@ class Person extends \App\Model implements \App\Agent {
   }
   
   public function getName(\DOMElement $context) {
-    return array_combine(['first','last'], explode(' ', $context['@title']));
+    $parts = explode(' ', $context['@title']);
+    return array_combine(['first','last'], [array_shift($parts), array_pop($parts)]);
   }
   
   public function sign(\App\Token $token) {
