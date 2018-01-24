@@ -45,6 +45,10 @@ Provides some default methods and enforces some abstract methods when setting up
 
 The model, like all models, turns raw data into a useful thing. Each particular model will fixate on a protected property called the `$context`. In my version of data persistence, the context is always a `DOMElement`, and I have set things up accordingly (the framework could be rewritten to the particulars of a relational or object database, but according to application principles, I would revise core components to facilitate that).
 
+#### The Agent Interface
+Agents are models that can perform actions that are either private or exclusive—i.e., the ability to save or view certain records. The most important facility that it must implement is a `sign` method, which will receive and return a token. The program author can retrieve model data to determine if and how the token is to be signed. A sample workflow might be a class of person that holds all people who can login. A class of admin can extend the person class, the only difference being the `sign` method implemented. The controller can then accept the appropriate model in protected methods, and the inheritance chain can determine levels of access—`Admin` can of course go anywhere and do anything `Person` can go.
+
+
 ---
 
 ## The IO File Components

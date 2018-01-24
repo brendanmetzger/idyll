@@ -80,7 +80,7 @@ class Element extends \DOMElement implements \ArrayAccess {
   use invocable;
   
   public function selectAll(string $path) {
-    return $this->ownerDocument->query($path, $this);
+    return new Data($this->ownerDocument->query($path, $this));
   }
   
   public function merge(array $data) {
@@ -94,33 +94,33 @@ class Element extends \DOMElement implements \ArrayAccess {
     }
   }
 
-  public function offsetExists($offset) {
-    return $this->selectAll($offset)->length > 0;
+  public function offsetExists($key) {
+    return $this->selectAll($key)->count() > 0;
   }
 
-  public function offsetGet($offset, $create = false) {
-    
-    if ($offset[0] === '@' && $offset = substr($offset, 1)) {
-      
-      if (! $this->hasAttribute($offset)) {
-        $this->setAttributeNode(new Attr($offset)) ;
-      }
-      return $this->getAttributeNode($offset);
-    } else {
-      $nodes = $this->selectAll($offset);
-      return $nodes->length <= $offset ? $this->appendChild(new self($offset)) : $nodes[$offset];
-    }
+  public function offsetGet($key, $create = false) {    
+    $nodes = $this->selectAll($key);
+    if ($nodes->count() > 0)
+      return $nodes;
+    elseif ($create)
+      return $this->appendChild(($key[0] == '@') ? new Attr(substr($key, 1)) : new Element($key));
+    else 
+      throw new \UnexpectedValueException($key);
   }
 
-  public function offsetSet($offset, $value) {
-    return $this->offsetGet($offset, true)($value);
+  public function offsetSet($key, $value) {
+    return $this->offsetGet($key, true)($value);
   }
 
-  public function offsetUnset($offset) {
-    return $this[$offset]->remove();
+  public function offsetUnset($key) {
+    return $this[$key]->remove();
   }
   
   public function remove() {
     return ($parent = $this->parentNode) ? $parent->removeChild($this) : null;
+  }
+  
+  public function __call($key, $args): \DOMNode {
+    return $this->offsetSet($key, ...$args);
   }
 }

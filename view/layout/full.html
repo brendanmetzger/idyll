@@ -11,12 +11,12 @@
         self.app = {
           cache: Object.create(null),
           include: (...a) => js.push(['src','async'].reduce((s,v,i) => {s[v]=a[i]; return s}, s.cloneNode())),
-          prepare: (f, w) => c[w||'push'](f),
-          release:   (e) => { while (c.length > 0) c.shift().call() },
-          remove: (k) => delete app.cache[k],
-          module: (k) => (k in app.cache) ? app.cache[k] : app.define.bind(app, k),
-          define: (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f,
-          mobile: (/mobile|iPhone/i).test(navigator.userAgent)
+          module : (k   ) => (k in app.cache) ? app.cache[k] : app.define.bind(app, k),
+          define : (k, f) => (k in app.cache) ? app.cache[k] : app.cache[k] = f,
+          release: (e   ) => { while (c.length > 0) c.shift().call() },
+          mobile : (/mobile|iPhone/i).test(navigator.userAgent),
+          remove : (k   ) => delete app.cache[k],
+          prepare: (f, w) => c[w||'push'](f)
         };
         // TODO: still need to fire init
         // ctx.addEventListener('load', app.release.bind(ctx, js.push(ctx)));

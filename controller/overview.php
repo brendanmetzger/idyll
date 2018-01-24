@@ -77,21 +77,23 @@ class Overview extends \App\Controller {
     $count = 0;
     
     
-    // $name = new \ReflectionClass('\\model\\item');
-    // $name = '\\model\\item';
-    $factory = \App\Factory::Model('item');
-    for ($i=0; $i < 1000; $i++) {
-      // $item = new $name('ABC');
-      $item = $factory->newInstance('ABC');
-      if ('ABC' == $item['@id']) {
-        $count++;
-      }
-    }
-
+    $doc = new \App\Document('../data/item.xml');
+    
+    $context = $doc->documentElement->firstChild;
+    
+    $elem = $context['date'];
+    $nonelem = $context->nothing('plop')->{'@jene'}('sure')->parentNode->{'@pizza'}('yes!');
+    $att = $context['date/@begin'];
+    $nonatt = $context->{'@title'}('fartshard');
+    
+    // print_r($elem);
+    // print_r($nonelem);
+    // print_r($att);
+    // print_r($nonatt);
+    // $elem->appendChild(new \DOMAttr('title', 'this is an attribute'));
     
     
-    
-    return (microtime(true) - $start) . ' - ' . $count . "\n";
+    return $doc->saveXml($context) . "\n";
   }
   
 }

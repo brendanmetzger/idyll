@@ -146,11 +146,11 @@ class View {
     return $this->slugs ?: ( function (&$out) {
       $query = "substring(.,1,1)='[' and contains(.,'\$') and substring(.,string-length(.),1)=']' and not(*)";
       foreach ( $this->document->query("//*[{$query}]|//*/@*[{$query}]") as $slug ) {        
-        preg_match_all('/\$+[\@a-z\_\:0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
+        preg_match_all('/\$+[\@a-z_:|0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {
           $___ = $slug->firstChild->splitText($i)->splitText(strlen($k))->previousSibling;
-          if (substr( $___( substr($___,1) ),0,1 ) != '$') $out[] = [$___, explode(':', $___)];
+          if (substr( $___( substr($___,1) ),0,1 ) != '$') $out[] = [$___, explode(':', str_replace('|', '/', $___))];
         }
       }
       return $out;

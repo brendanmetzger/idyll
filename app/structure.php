@@ -35,7 +35,7 @@ class Data extends \ArrayIterator {
       if (! isset($data[$key]) && ! array_key_exists($key, $data) ) {
         throw new \UnexpectedValueException($key);
       }
-      $data = $data[$key];
+      $data = $data[$key];      
     }
     return $data;
   }
@@ -73,6 +73,14 @@ class Data extends \ArrayIterator {
 
   public function limit($start, $length) {
     return new \LimitIterator($this, $start, $length);
+  }
+  
+  public function __invoke($param) {
+    return $this->current()($param);
+  }
+  
+  public function __toString() {
+    return (string) $this->current();
   }
 }
 
