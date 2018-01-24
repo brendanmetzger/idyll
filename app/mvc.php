@@ -78,6 +78,9 @@ class View {
   public function __construct($input, ?self $parent = null) {
     $this->document = new Document($input);
     $this->parent   = $parent;
+    if (is_string($input) && ID[2] === 'local') {
+      $this->document->documentElement['@data-template'] = realpath($input);
+    }
   }
   
   public function render($data = [], $parse = true): Document {

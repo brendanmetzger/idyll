@@ -96,8 +96,9 @@ io.php, Response Object
 [ ] response should be in charge of caching, Apache in charge of getting cached page
 
 structure.php, Data Class
-[ ] devise way so that when invoked without an index number, it returns the first item. (this would be a nodelist tho)
-[ ] PAIR function should deal with missing key and throw an exception
+[X] devise way so that when invoked without an index number, it returns the first item. (this would be a nodelist tho)
+[X] PAIR function should deal with missing key and throw an exception
+[ ] PAIR function should be able to get correct namespace of attribute even if pipe not used to select xpath node (portability)
 
 
 UX, front-end design/implementation
