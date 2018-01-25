@@ -89,11 +89,19 @@ class Overview extends \App\Controller {
     // print_r($elem);
     // print_r($nonelem);
     // print_r($att);
-    // print_r($nonatt);
-    // $elem->appendChild(new \DOMAttr('title', 'this is an attribute'));
-    
+    // print_r($nonatt);    
     
     return $doc->saveXml($context) . "\n";
+  }
+  
+  public function CLIdoctype() {
+    $doc = new \App\Document('../data/item.xml');
+    $notes = $doc->doctype->notations;
+    print_r($doc->doctype->internalSubset);
+    foreach ($notes as $note) {
+      print_r($note);
+    }
+    return '';
   }
   
 }

@@ -99,10 +99,9 @@ class Element extends \DOMElement implements \ArrayAccess {
   }
 
   public function offsetGet($key, $create = false) {    
-    $nodes = $this->selectAll($key);
-    if ($nodes->count() > 0)
+    if (($nodes = $this->selectAll($key)) && ($nodes->count() > 0))
       return $nodes;
-    elseif ($create)
+    else if ($create)
       return $this->appendChild(($key[0] == '@') ? new Attr(substr($key, 1)) : new Element($key));
     else 
       throw new \UnexpectedValueException($key);

@@ -28,11 +28,11 @@ class Slug {
 /****      ******************************************************************************** DATA */
 class Data extends \ArrayIterator {
   
-  static private $sources = [];
+  static private $store = [];
   
   static public function PAIR(array $namespace, $data) {
     while ($key = array_shift($namespace)) {
-      if (! isset($data[$key]) && ! array_key_exists($key, $data) ) {
+      if (! isset($data[$key]) && ! array_key_exists($key, $data)) {
         throw new \UnexpectedValueException($key);
       }
       $data = $data[$key];      
@@ -41,7 +41,7 @@ class Data extends \ArrayIterator {
   }
   
   static public function Use(string $source, ?string $path = null) {
-    $document = self::$sources[$source] ?? self::$sources[$source] = new Document($source, ['validateOnParse' => true]);
+    $document = self::$store[$source] ?? self::$store[$source] = new Document($source, ['validateOnParse' => true]);
     return $path ? new self($document->query($path)) : $document;
   }
   
@@ -73,6 +73,10 @@ class Data extends \ArrayIterator {
 
   public function limit($start, $length) {
     return new \LimitIterator($this, $start, $length);
+  }
+  
+  public function merge(array $data) {
+    // this will be called when element is being merged against a list of data.
   }
   
   public function __invoke($param) {

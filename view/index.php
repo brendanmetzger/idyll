@@ -105,6 +105,6 @@ UX, front-end design/implementation
 [ ] Show Sunrise/Sunset/Weather
 [ ] Work on calendaring
 [ ] Add validators I made for teaching to page
-[ ] Add shortcut so can edit template when running in browser
+[/] Add shortcut so can edit template when running in browser
 
 */
