@@ -32,9 +32,7 @@ abstract class Model implements \ArrayAccess {
   
   public function load(array $data = []) {
     $input = array_replace_recursive($this->fixture(), array_filter($data));
-
     $this->context->merge($input);
-      // echo htmlentities($this->context->ownerDocument->saveXML($this->context));
     return $input;
   }
   

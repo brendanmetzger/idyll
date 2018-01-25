@@ -86,8 +86,14 @@ class Element extends \DOMElement implements \ArrayAccess {
   public function merge(array $data) {
     foreach ($data as $key => $value) {
       if (is_array($value)) {
-        // something like... perhaps
-        // $this[$key]->merge($value);
+        // this is a live document, so each find would result in the index being correct after the append
+        foreach ($value as $idx => $v) {
+          $nodes = $this->offsetGet($key, true, $idx);
+          if ($nodes->count() > $idx) {
+            // figure out a way to remove extra nodes - ie., deleting content
+          }
+          $nodes[$idx] = $v;
+        }
       } else {
         $this[$key] = $value;
       }
@@ -98,8 +104,8 @@ class Element extends \DOMElement implements \ArrayAccess {
     return $this->selectAll($key)->count() > 0;
   }
 
-  public function offsetGet($key, $create = false) {    
-    if (($nodes = $this->selectAll($key)) && ($nodes->count() > 0))
+  public function offsetGet($key, $create = false, $index = 0) {    
+    if (($nodes = $this->selectAll($key)) && ($nodes->count() > $index))
       return $nodes;
     else if ($create)
       return $this->appendChild(($key[0] == '@') ? new Attr(substr($key, 1)) : new Element($key));
