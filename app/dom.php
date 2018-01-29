@@ -87,8 +87,9 @@ class Element extends \DOMElement implements \ArrayAccess {
     foreach ($data as $key => $value) {
       if (is_array($value)) {
         // this is a live document, so each find would result in the index being correct after the append
+        $nodes = $this->offsetGet($key, true, $idx);
         foreach ($value as $idx => $v) {
-          $nodes = $this->offsetGet($key, true, $idx);
+          
           if ($nodes->count() > $idx) {
             // figure out a way to remove extra nodes - ie., deleting content
           }
