@@ -124,6 +124,7 @@ class Request {
     if ($this->token->validate($message, $key, $id)) {
       return $this->method->session($this->token, Factory::Model($type)->newInstance($id)->sign($this->token));
     }
+    return false;
   }
     
   public function delegate(Response $response, ...$defaults): Controller {

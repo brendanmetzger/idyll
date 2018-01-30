@@ -37,6 +37,7 @@ abstract class Model implements \ArrayAccess {
   }
   
   public function save() {
+    // FIXME: this should throw an exception.
     $source = Data::Use(static::SRC);
     return $source->save() ?: $source->errors();
   }

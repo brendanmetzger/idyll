@@ -70,11 +70,11 @@ try {
 /*
 TODO
 
-[X] Show XML errors in a helpful way (revisit the solution in pedagogy)
+[ ] Show XML errors in a helpful way (revisit the solution in pedagogy)
 [ ] use an anonymous class to create a controller en the event of an error new class($response) extends Controller;
 [X] Determine a factory/configuration class that acts as a way to construct/instantiate common objects (Notably Models and views)
 [X] Throw an exception if a view template is not found or improper
-[/] Determine how models accept and merge input
+[ ] Determine how models accept and merge input
 [ ] The `Model::sign` method should ~accept~ and return a token
 [ ] The token cookie value should represent the model it is storing a value for
 [X] Use TRY/CATCH/FINALLLY to render output
@@ -89,8 +89,7 @@ TODO
 [ ] add version control class to inspect data evolution
 [ ] Configure server timezone, location, and sunrise/sunset
 [ ] Filter dom items to correct spot in layout (meta, link, style...)
-[ ] Cache factory method
-
+[ ] Anything that results in an error page should throw an exception.
 io.php, Response Object
 [ ] Consider implementing a way users and guests can see same page, with users having rendered session vars
 [ ] response should be in control of filtering/reordering DOM presentation?
@@ -106,6 +105,6 @@ UX, front-end design/implementation
 [ ] Show Sunrise/Sunset/Weather
 [ ] Work on calendaring
 [ ] Add validators I made for teaching to page
-[/] Add shortcut so can edit template when running in browser
+[X] Add shortcut so can edit template when running in browser
 
 */

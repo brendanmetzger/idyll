@@ -32,7 +32,7 @@ trait Configuration {
     ]));
     
     $out = \App\Factory::Model($type)->newInstance($post['@id'])->contact('Your Login Awaits..', $body);
-    
+
     $this->title = "email sent";
     $this->message = "check your email for a message with a link that will log you in.";
     

@@ -20,6 +20,10 @@ class Person extends \App\Model implements \App\Agent {
     return array_combine(['first','last'], [array_shift($parts), array_pop($parts)]);
   }
   
+  public function getEmail(\DOMElement $context): string {
+    return (string)$context['@access'];
+  }
+  
   public function sign(\App\Token $token) {
     return [$this['@access'], $this['@id']];
   }  
@@ -35,7 +39,7 @@ class Person extends \App\Model implements \App\Agent {
       ],
       CURLOPT_POSTFIELDS => json_encode([
         'From' => getenv('SERVER_ADMIN'),
-        'To'   => $this->context['@access'],
+        'To'   => $this['email'],
         'Subject'  => $subject,
         'HTMLBody' => $message,
       ]),
