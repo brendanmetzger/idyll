@@ -1,4 +1,9 @@
-*[data-template]:hover {
-  outline: 1px dashed rgba(255,0,0,0.25);
-  outline-offset: -0.5em;  
+*[data-template]:hover:before {
+  font-family: var(--monospace);
+  font-size: 0.75em;
+  position: absolute;
+  padding:0.5em;
+  background-color: rgba(255,255,255,0.85);
+  content: attr(data-template);
+  opacity: 1;
 }

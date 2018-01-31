@@ -129,10 +129,10 @@ class View {
     static $remove = [];
     if ($idx) {
       while ($path = array_pop($remove)) {
-        $list = $node->ownerDocument->query("..{$path}", $node);
+        $list = $node->ownerDocument->query($path, $node);
         if ($list->length == $idx) $list[$idx-1]->remove();
       }
-    } else $remove[] = $node->getNodePath();
+    } else $remove[] = '..' . $node->getNodePath();
   }
   
   private function getTemplates($key): iterable {

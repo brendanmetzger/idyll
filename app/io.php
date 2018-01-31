@@ -106,7 +106,7 @@ class Request {
     $this->token  = new Token(ID);
   }
     
-  // TODO I'm not particular to the double returns.. simplify!
+  // TODO simplify!
   private function authenticate(\ReflectionMethod $method): bool {
     if ($hash = $this->method->session($this->token)) {
       $Model = (string) $method->getParameters()[0]->getType();

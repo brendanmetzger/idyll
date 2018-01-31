@@ -1,8 +1,9 @@
 :root {
-  font-family: Baskerville, Times;
+  font-family: 'Avenir Next', 'Helvetica Neue';
   color: #333;
   font-size: 62.5%;
   --phi: 1.618;
+  --monospace: Menlo, Inconsolata;
 }
 h1, h2, h3, header, footer, div{ margin: 0;}
 header {
@@ -41,3 +42,16 @@ nav ul {
   display: flex;
   justify-content: space-around;
 }
+
+
+/**** FORMS ****/
+
+input, textarea, button {
+  padding: 0.5em;
+  background-color: #FFF;
+  border: 1px solid rgba(0,0,0,0.25);
+  display: block;
+  font-size: 2em;
+  width: 50%;
+}
+

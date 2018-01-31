@@ -70,11 +70,11 @@ try {
 /*
 TODO
 
-[ ] Show XML errors in a helpful way (revisit the solution in pedagogy)
+[X] Show XML errors in a helpful way (revisit the solution in pedagogy)
 [ ] use an anonymous class to create a controller en the event of an error new class($response) extends Controller;
 [X] Determine a factory/configuration class that acts as a way to construct/instantiate common objects (Notably Models and views)
 [X] Throw an exception if a view template is not found or improper
-[ ] Determine how models accept and merge input
+[/...] Determine how models accept and merge input
 [ ] The `Model::sign` method should ~accept~ and return a token
 [ ] The token cookie value should represent the model it is storing a value for
 [X] Use TRY/CATCH/FINALLLY to render output
