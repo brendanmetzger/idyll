@@ -42,21 +42,21 @@ abstract class Model implements \ArrayAccess {
     return $source->save() ?: $source->errors();
   }
   
-  public function offsetExists($offset) {
+  public function offsetExists($key) {
     return ! is_null($this->context);
   }
 
-  public function offsetGet($offset) {
-    $get  = "get{$offset}";
-    return method_exists($this, $get) ? $this->{$get}($this->context) : $this->context[$offset];
+  public function offsetGet($key) {
+    $method  = "get{$key}";
+    return method_exists($this, $method) ? $this->{$method}($this->context) : $this->context[$key];
   }
 
-  public function offSetSet($offset, $value) {
-    return $this->context[$offset] = $value;
+  public function offSetSet($key, $value) {
+    return $this->context[$key] = $value;
   }
 
-  public function offsetUnset($offset) {
-    unset($this->context[$offset]);
+  public function offsetUnset($key) {
+    unset($this->context[$key]);
     return true;
   }
   
@@ -151,8 +151,8 @@ class View {
         preg_match_all('/\$+[\@a-z_:|0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {
-          $___ = $slug->firstChild->splitText($i)->splitText(strlen($k))->previousSibling;
-          if (substr( $___( substr($___,1) ),0,1 ) != '$') $out[] = [$___, explode(':', str_replace('|', '/', $___))];
+          $N = $slug->firstChild->splitText($i)->splitText(strlen($k))->previousSibling;
+          if (substr( $N( substr($N,1) ),0,1 ) != '$') $out[] = [$N, explode(':', str_replace('|', '/', $N))];
         }
       }
       return $out;

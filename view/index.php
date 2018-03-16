@@ -107,4 +107,8 @@ UX, front-end design/implementation
 [ ] Add validators I made for teaching to page
 [X] Add shortcut so can edit template when running in browser
 
+
+Optimizations
+[ ] write all css into small files and include with links as usual, during preflight, gather all document resource links and add the link header for http/2
+
 */

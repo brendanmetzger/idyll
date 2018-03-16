@@ -82,6 +82,7 @@ class Overview extends \App\Controller {
     $context = $doc->documentElement->firstChild;
     
     $elem = $context['date'];
+    //NOTE: perhaps this can be used to create a fixture
     $nonelem = $context->nothing('plop')->{'@jene'}('sure')->parentNode->{'@pizza'}('yes!');
     $att = $context['date/@begin'];
     $nonatt = $context->{'@title'}('fartshard');

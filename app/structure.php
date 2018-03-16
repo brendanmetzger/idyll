@@ -31,13 +31,14 @@ class Data extends \ArrayIterator {
   static private $store = [];
   
   static public function PAIR(array $namespace, $data) {
+    $out = $data;
     while ($key = array_shift($namespace)) {
-      if (! isset($data[$key]) && ! array_key_exists($key, $data)) {
+      if (! isset($data[$key]) && ! array_key_exists($key, $out)) {
         throw new \UnexpectedValueException($key);
       }
-      $data = $data[$key];      
+      $out = $out[$key];      
     }
-    return $data;
+    return $out;
   }
   
   static public function Use(string $source, ?string $path = null) {
@@ -76,7 +77,7 @@ class Data extends \ArrayIterator {
   }
   
   public function merge(array $data) {
-    // this will be called when element is being merged against a list of data.
+    // this will be called when element is being merged against a list of data. 
   }
   
   public function __invoke($param) {
@@ -103,3 +104,40 @@ trait Registry {
     return array_merge($this->data, $data);
   }
 }
+
+class Help implements \ArrayAccess {
+  public function offsetExists ($key) {}
+  public function offsetSet ($key, $value) {}
+  public function offsetUnset ($key) {}
+  public function offsetGet ($method) {
+    if (! is_callable($method)) throw new \Exception("{$method} is not callable");
+    return function (array $value) {
+      $method(...$value);
+    };
+  }
+    
+}
+
+
+/*
+
+helper methods in template? Say I wanted to the first character of a word—to accomplish, I've 
+always just generated a method in each individual model that might do a one off. (this can mildly bloat models, though this is a really really small problem)
+
+<p>[$item:firstletteroftitle]</p>
+
+this requires adding a method to every model whenever that feature is needed. something like
+
+<p>[$help\substr\item:title|0|1]</p>
+
+would attempt to do the function call automatically through composition of functions.
+
+
+the pair method would have to do something like:
+if(is_callable($out)) {
+  $out = $out(self::pair([$namespace, $data), ...explode('|', $namespace))]);
+}
+
+Thoughts: the template syntax, while intriguing, is looking a bit messy. I like the recursion of the
+PAIR method, and think that might work out elegantly. Continuing to ponder...
+*/
