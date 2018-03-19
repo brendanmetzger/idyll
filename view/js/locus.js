@@ -1,1 +1,0 @@
-console.log('locus.js is async.')

@@ -21,7 +21,7 @@ class Document extends \DOMDocument {
     if ($input instanceof Element) {
       $this->input = $input->ownerDocument->saveXML($input);
       $method = 'loadXML';
-    }
+    } else if (! file_exists($input)) throw new \InvalidArgumentException("Cannot load $input}");
 
     if (! $this->{$method}($this->input, self::XMLDEC)) {
       $view = View::Error('markup')->render(['errors' => $this->errors()]);

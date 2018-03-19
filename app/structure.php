@@ -31,14 +31,13 @@ class Data extends \ArrayIterator {
   static private $store = [];
   
   static public function PAIR(array $namespace, $data) {
-    $out = $data;
     while ($key = array_shift($namespace)) {
-      if (! isset($data[$key]) && ! array_key_exists($key, $out)) {
+      if (! isset($data[$key]) && ! array_key_exists($key, $data)) {
         throw new \UnexpectedValueException($key);
       }
-      $out = $out[$key];      
+      $data = $data[$key];      
     }
-    return $out;
+    return $data;
   }
   
   static public function Use(string $source, ?string $path = null) {

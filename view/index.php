@@ -2,7 +2,7 @@
 
 /************************************************************************************* CONFIGURE */
 
-define('ID', explode(':', (getenv('ID') ?: '::')));
+define('ID', ['sha1','secret','local']);
 
 foreach (['structure', 'dom', 'io', 'locus', 'mvc'] as $file) require_once "../app/{$file}.php";
 
@@ -15,10 +15,11 @@ spl_autoload_register(function ($classname) {
 $response = new Response( new Request(Factory::App($_SERVER['REQUEST_METHOD'] ?? 'CLI')->newInstance()) );
 
 $response->handle('http', function ($request) {
-  $controller = $request->delegate($this, 'overview', 'index');
+
+  $controller = $request->delegate($this, 'help', 'index');
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {
-    $this->setTemplate(new View('layout/full.html'));
+    $this->setTemplate(new View('help/layout.html'));
     // add before/after filter to move html around     
   }
   return $controller;
@@ -26,14 +27,12 @@ $response->handle('http', function ($request) {
 
 
 $response->handle('console', function ($request) {
-  return $request->delegate($this, 'overview', 'examine');
+  return $request->delegate($this, 'help', 'index');
 });
-
 
 /*************************************************************************************** EXECUTE */
 
-try {
-  
+try {  
   $controller = $response->prepare();
   $output     = $response->compose($controller->data);
   
@@ -45,10 +44,7 @@ try {
   
 } catch (\TypeError | \ReflectionException | \InvalidArgumentException | \Exception | \Error $e) {
   
-  if ($request->method == 'CLI') {
-    print_r($data);
-    exit();
-  }
+
   $data = [
     'trace'   => array_reverse($e->getTrace()),
     'file'    => $e->getFile(),
@@ -57,7 +53,7 @@ try {
   ];
   
   $response->setContent(View::error('framework')->render($data));
-  $response->setTemplate(View::layout('basic'));
+  $response->setTemplate(View::help('layout'));
   $response->compose();
 
 } finally {
