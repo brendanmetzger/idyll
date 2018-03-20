@@ -4,6 +4,29 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="/resource/kit.css" type="text/css" media="screen" />
     <title>[$title]</title>
+    <script type="text/javascript">
+      // <![CDATA[
+      addEventListener('DOMContentLoaded', (function(s, js, cb, cache) {
+        self.app = {
+          include: (...a) => js.push(['src','async'].reduce((s,v,i) => {s[v]=a[i]; return s}, s.cloneNode())),
+          release: (evt ) => { let f; while (f = cb.shift()) f.call(app, evt) },
+          module : (k   ) => (k in cache) ? cache[k] : app.define.bind(app, k),
+          define : (k, f) => (k in cache) ? cache[k] : cache[k] = f,
+          mobile : (/mobile|iPhone/i).test(navigator.userAgent),
+          remove : (k   ) => delete cache[k],
+          prepare: (f, w) => cb.push(f),
+        };
+        return (evt) => {
+          js.filter(s => !s.async).pop().addEventListener('load', app.release);
+          js.forEach(Node.prototype.appendChild.bind(document.head));
+        };
+      })(document.createElement('script'), [], [], Object.create(null)));
+      
+      document.documentElement.classList.add(['touch','click'][+app.mobile]);
+      
+      app.include('/resource/kit.js', false);
+      // ]]>
+    </script>
   </head>
   <body>
     <h1>poet <i>schematic patterns</i></h1>
