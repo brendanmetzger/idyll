@@ -1,0 +1,18 @@
+:root {
+  
+}
+body{-webkit-text-size-adjust:none;margin:0; padding:2em;font-family:'Avenir Next',Helvetica, Arial;font-size:0.625em;}
+h1 {margin:0;font-size:10em;font-weight:100;line-height:0.85;letter-spacing:-0.125ch;}
+h1 i {
+  font-size:25%;
+  display:block;
+  text-transform:lowercase;
+  font-family:Baskerville;
+  letter-spacing:0ch;
+  font-weight:400;
+  text-indent:1em;
+  color:rgba(255,0,127,0.75);
+}
+hr {border:0;border-top:1px solid #888;}
+img{border:0; height:auto; line-height:100%; outline:none; text-decoration:none;}
+a {padding: 0 0.125em; color:#fa5c64;text-decoration:none;background:linear-gradient(transparent, #fa5c64) no-repeat 50% 1em;background-size: 100% 2px;}
