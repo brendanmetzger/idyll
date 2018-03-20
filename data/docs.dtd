@@ -1,0 +1,21 @@
+<!ELEMENT docs (framework*)>
+<!ELEMENT item (date, name, text)>
+<!ATTLIST item
+  id    ID    #REQUIRED
+  title CDATA #IMPLIED
+>
+
+<!ELEMENT date (#PCDATA)>
+<!ATTLIST date
+  begin CDATA #REQUIRED
+  end CDATA #REQUIRED
+>
+
+<!ELEMENT name (#PCDATA)>
+<!ATTLIST name
+  first CDATA #REQUIRED
+  last  CDATA #REQUIRED
+>
+
+<!ELEMENT text (#PCDATA)>
+
