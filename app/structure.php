@@ -140,3 +140,5 @@ if(is_callable($out)) {
 Thoughts: the template syntax, while intriguing, is looking a bit messy. I like the recursion of the
 PAIR method, and think that might work out elegantly. Continuing to ponder...
 */
+
+

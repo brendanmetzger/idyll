@@ -1,38 +1,44 @@
 <article>
-  <p>A humble <span style="font-variant:small-caps">todo</span> list; It is both <em>necessary and useful</em> to get an application managed and documented from the beginning. This starting point will exemplify thoses principles.</p>
+  <p>A humble <span style="font-variant:small-caps">todo</span> list to get things up and running. It is both <em>necessary and useful</em> to document andm manage projects at the onset. This starting point will exemplify thoses principles.</p>
   
   <section>
     <h2>Checklist</h2>
-    <p>Before you begin, you have created a case-sensitive volume that houses all your web work. You have an Apache 2.4+ installed and a web server running and hosting projects. You have PHP 7.1+ running. You are familiar with virtual-hosting and your hosts file. You have downloaded this framework into the document root of your choosing.</p>
-    <p>If you are reading this, then obviously you are ready to move forward.</p>
-    <ul>
+    <p>Before you go further, ideally you have created a case-sensitive volume that houses all your web work. You have an Apache 2.4+ installed and a web server running and hosting projects. You have PHP 7.1+ running. You are familiar with virtual-hosting and your hosts file. You have downloaded this framework into the document root of your choosing.</p>
+    <ol class="bullet">
       <li>
-        <strong>Development Environment</strong>
+        <strong>Environment</strong>
         <ul>
           <li>
             <input id="A" type="checkbox"/>
             <label for="A">Set up version control, ignore the data dir, init a new repo for the data</label>
           </li>
           <li>
-            <input id="A" type="checkbox"/>
-            <label for="A">Add localhost domain to hosts file and configure virtual host</label>
+            <input id="B" type="checkbox"/>
+            <label for="B">Add localhost domain to hosts file and configure <a href="/?_r_[]=help&amp;_r_[]=page&amp;_p_=vhost">virtual host</a></label>
+          </li>
+          <li>
+            <input id="C" type="checkbox"/>
+            <label for="C">Configure <samp>DateTime</samp> settings and other <samp>php.ini</samp> material</label>
           </li>
         </ul>
       </li>
-      <li></li>
-      <li><strong>Choose host and set up dev server</strong></li>
-      <li></li>
-    </ul>
+      <li><strong>Permissions</strong></li>
+      <li><strong>Deployment</strong></li>
+      <li><strong>Controllers</strong></li>
+      <li><strong>Authentication</strong></li>
+      <li><strong>Models</strong></li>
+    </ol>
   </section>
   
   <section>
-    <h2>Policies</h2>
-    <ul>
+    <h2>Development Goals</h2>
+    <ul class="bullet">
       <li>Don't handle anything sensitive</li>
-      <li>Dependencies should be met with the same reaction as a flatulated elevator (Avoid, if unavoidable, make a stinky fug face)</li>
+      <li>Dependencies should be met with the same reaction as a flatulated elevator (Avoid. If unavoidable, make a stinky fug face)</li>
       <li>Think hard about how data is managed (especially RDBMS and mapping/models/patterns)</li>
-      <li>Never get the <q>easy</q> things wrong (markup)</li>
+      <li>Markup is the most important component</li>
       <li>Write very little program code (an entire application need not excede ~1000 <acronym>SLOC</acronym>)</li>
+      <li>No static units in CSS (only proporpotions and relative units)</li>
     </ul>
   </section>
 </article>
