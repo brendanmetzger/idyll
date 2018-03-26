@@ -46,9 +46,10 @@ SVG.prototype.cursorPoint = function (evt) {
 };
 
 SVG.prototype.b64url = function (styles) {
-  var wrapper     = document.createElement('div');
-  var clone       = wrapper.appendChild(this.element.cloneNode(true));
-  var style = this.createElement('style', null, clone);
-      style.textContent = styles;
-  return 'url(data:image/svg+xml;base64,'+btoa(wrapper.innerHTML)+')';
+  var clone = this.element.cloneNode(true);
+  this.createElement('style', null, clone).textContent = styles;
+  return `url(data:image/svg+xml;base64,${btoa(clone.outerHTML)})`;
 };
+
+
+// consider a 'Request' object, and a JSONP example using 'qwiki' (quick wiki) or weather
