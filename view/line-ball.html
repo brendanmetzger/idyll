@@ -1,13 +1,11 @@
 <article>
-  <blockquote>
-    <p><q>Jesus Aint’t say that.</q></p>
-  </blockquote>
   <style type="text/css" media="screen">
     /* <![CDATA[ */
     line {
       stroke: #555;
-      stroke-opacity: 0.125;
-      stroke-width: 10;
+      stroke-opacity: 0.025;
+      stroke-width: 100;
+      transition: stroke-width 0.25s;
     }
 
     svg {
@@ -16,36 +14,37 @@
       width: 100vw;
       position: absolute;
     }
-    blockquote {
+    figcaption {
+      margin: 5em;
       color: #555;
+      font-size: 500%;
       font-family: Baskerville;
       font-style: italic;
-      transform: translate(0, -50%);
     }
     /* ]]> */
   </style>
   
   <figure id="drawing">
-    <figcaption>An geometry experiment</figcaption>
+    <figcaption><q>Jesus aint’t say that.</q></figcaption>
   </figure>
   
   <script type="text/javascript" defer="defer">
     // <![CDATA[
       
       app.prepare(function (evt) {
-        var svg = new SVG(document.querySelector('#drawing'), 100,100);
+        var svg = new SVG(document.querySelector('#drawing'), innerWidth, innerHeight);
 
-        for (let i = 0; i < 500; i += 1) {
+        for (let i = 0; i < 250; i += 1) {
           svg.createElement('line', {
-            'x1': Math.random() * 100,
-            'y1': Math.random() * 100,
-            'x2': 50,
-            'y2': 50
+            'x1': Math.random() * svg.width + Math.cos(Math.random() * 2 * Math.PI) * 500,
+            'y1': Math.random() * svg.height+ Math.cos(Math.random() * 2 * Math.PI) * 500,
+            'x2': svg.width / 2 ,
+            'y2': svg.height / 2
           });
         }     
         
         let lines = svg.element.querySelectorAll('line');
-        
+        let r = Math.sqrt(svg.width) * 2;
         addEventListener('mousemove', function (evt) {
           let loc = svg.cursorPoint(evt);
           
@@ -53,11 +52,11 @@
             let x = parseFloat(line.getAttribute('x1')) - loc.x;
             let y = parseFloat(line.getAttribute('y1')) - loc.y;
             let h = Math.sqrt(x**2 + y**2);
-            let r = 10;
-            let dash = h - r +( Math.random() * 2);
-            line.style.strokeOpacity = (dash < r) ? 0 : 0.125;
+            
+            let dash = h - r + (Math.random() * 10);
+            line.style.strokeOpacity = (dash < r) ? 0 : 0.025;
             line.style.strokeDasharray = dash;
-            line.style.strokeWidth = 100 / 2 - h;
+            line.style.strokeWidth = (h / r * 10);
             // let m = (loc.y - y1) / (loc.x - x1);
             // let theta = evt.theta();
             // let r = 5;

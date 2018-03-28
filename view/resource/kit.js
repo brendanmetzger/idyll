@@ -17,6 +17,8 @@ var SVG = function (node, width, height) {
     svg:   'http://www.w3.org/2000/svg',
     xlink: 'http://www.w3.org/1999/xlink'
   });
+  this.width = width;
+  this.height = height;
   this.element = this.createElement('svg', {
     'xmlns:xlink': this.NS.xlink, 'xmlns': this.NS.svg, 'version': 1.1, 'viewBox': `0 0 ${width} ${height}`
   }, node);
@@ -26,7 +28,6 @@ var SVG = function (node, width, height) {
 
 
 SVG.prototype.createElement = function (name, opt, parent) {
-
   var node = document.createElementNS(this.NS.svg, name);
   for (var key in opt) {
     if (key == "xlink:href") {
