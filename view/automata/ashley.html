@@ -1,0 +1,91 @@
+<article>
+  <style type="text/css">
+    svg circle{
+      stroke-width:1;
+      stroke:#000;
+    }
+
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+  
+    var outline,
+        width  = 1000,
+        height = 600;
+
+  
+    function drawHeart (scale,angle) {
+      outline.clear();
+
+      var center = [width/2, height/3];
+
+      // (x1 y1 x2 y2 x y)
+
+      var p = {
+            a: {
+              x: scale,
+              y: 0,
+              x1: scale * Math.cos(Math.PI/angle) - scale,
+              y1: - scale * Math.sin(Math.PI/angle) - scale/5,
+              x2: scale * Math.cos(Math.PI/angle) * 2,
+              y2: - scale * Math.sin(Math.PI/angle) /1.5
+            },
+            b: {
+              x:-scale,
+              y: scale,
+              x2: Math.cos(angle)*scale/10,
+              y2: -Math.sin(Math.PI/angle)
+            },
+            c: {
+              x:-scale,
+              y:-scale,
+              x1:1,
+              y1:1,
+              x2:scale *Math.cos(angle),
+              y2:-scale/2
+            },
+            d: {
+              x:scale,
+              y:0,
+              x1:1,
+              y1: scale * Math.sin(angle),
+              x2:scale,
+              y2:scale/2 * Math.sin(angle)
+            }  
+          };
+    
+    
+      console.log(p.a.x1);
+      var path = 'M'+center.join(',')
+               + 'c'+(p.a.x1)+','+(p.a.y1)+' '+(p.a.x2)+ ',' +(p.a.y2)+ ' '+ (p.a.x) + ',' + (p.a.y)
+               + 's'+(p.b.x2)+ ',' +(p.b.y2)+ ' '+ (p.b.x) + ',' + (p.b.y)
+               + 'c'+(p.c.x1)+','+(p.c.y1)+' '+(p.c.x2)+ ',' +(p.c.y2)+ ' '+ (p.c.x) + ',' + (p.c.y)
+               + 'c'+(p.d.x1)+','+(p.d.y1)+' '+(p.d.x2)+ ',' +(p.d.y2)+ ' '+ (p.d.x) + ',' + (p.d.y);
+
+      outline.path(path).attr({'stroke':0,'fill':'#ec2e7e'});
+      
+      
+
+    }  
+
+    bootstrap.queue(function () {
+      Raphael(function () {
+        console.log('poop');
+        outline = Raphael("heart", width, height);    
+        drawHeart(350, -10);
+
+      });
+      
+    });
+  // ]]>
+  </script>
+  
+  <section>
+    <h2>Happy Valentines Day</h2>
+    <input type="range" min="-10" max="20" style="width:400px" value="-10" oninput="drawHeart(350, this.value);"/>
+    <h1 style="margin:0 0 1em 180px;color:#ec2e7e">you</h1>
+    <div id="heart"></div>
+  </section>
+</article>

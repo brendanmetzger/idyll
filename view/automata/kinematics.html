@@ -1,0 +1,52 @@
+<section>
+  <style type="text/css">
+    svg circle{
+      fill:#444;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    window.addEventListener('load', function() {
+      var div = document.body.appendChild(document.createElement('div'));
+      this.paper = Raphael(div, this.innerWidth, this.innerHeight);
+      console.log(this.paper);
+      
+      var circle = this.paper.circle(0,0,10);
+
+      this.paper.canvas.addEventListener('click', function(evt) {
+        move(circle, {x:evt.pageX, y:evt.pageY}, 1000);
+        
+      }, false);
+      
+      
+      // var testpath = paper.path('M100 100C30 10, 20 10, 190 190');
+      // testpath.animate({path:'M400 200C10 40, 390 390, 103 203'},10000);
+      
+      // 
+
+      setScreen();
+    }, false);
+
+
+    function setScreen () {
+      this.paper.setSize(this.innerWidth, this.innerHeight)
+      console.log(this.screen.width, this.screen.height, this.screenX, this.screenY, this.outerWidth, this.outerHeight, this.innerWidth, this.innerHeight);
+    }
+
+    var move = function(element, Sf, time) {
+      console.log(element.attrs.cx, element.attrs.cy);
+      // element.attr({cx:Sf.x,cy:Sf.y});
+      element.animate({cx:Sf.x,cy:Sf.y}, 300);
+      // Sxf = Sxi + Vxi * t;
+
+      // Syf = Syi + Vyi * t + 0.5 * a * Math.pow(2, t);
+    };
+
+    window.addEventListener('resize', setScreen, false);
+    // ]]>
+  </script>
+  
+</section>
+

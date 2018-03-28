@@ -1,0 +1,90 @@
+
+
+  <article>
+    <style type="text/css">
+      svg circle{
+        stroke-width:1;
+        stroke:#DDD;
+      }
+
+    </style>
+    <script type="text/javascript">
+      // <![CDATA[
+      bootstrap.embed('/js/raphael.js');
+      
+    
+      function gcf(a, b) { 
+       return ( b == 0 ) ? (a):( gcf(b, a % b) ); 
+      }
+      function lcm(a, b) { 
+       return ( a / gcf(a,b) ) * b; 
+      }
+    
+      function showTheta (value) {
+        var lcm_a = gcf(value, 180);
+        var html = "&#x03B8; = " + value + "&#x00B0;<br/>";
+        var n = (value/lcm_a) == 1 ? '' : (value/lcm_a);
+      
+        var d = (360/lcm_a) == 1 ? '' : ' / '+(360/lcm_a);
+      
+      
+        html += "&#x03B8; = " + n + "π " + d  + "rad<br/>";
+        document.getElementById('theta').innerHTML = html;
+
+
+
+      }
+      
+      bootstrap.queue(function () {
+        Raphael(function () {
+      
+
+          var rad = 20,
+              y = rad,
+              x = rad,
+              pad = 10,
+              columns = 24;
+      
+          var r = Raphael("holder", ((2*rad + rad) * columns), ((2*rad + rad) * 360 / columns));    
+      
+          for (var i = 360; i > 0; i-=1) {
+        
+            if ((i % columns) == 0) {
+              y += rad*2 + pad;  
+              x = 50;
+            } else {
+              x += rad*2 + pad;
+            }
+
+            var sweep = i >= 0 ? 1 : 0;
+            var large = i >= 180 ? 0 : 1;
+        
+    				// large = Math.round(Math.random());
+    				// sweep = Math.round(Math.random());
+
+
+            var y_2 = rad * Math.sin( i * (Math.PI/180) );
+            var cosTheta = Math.cos( i * (Math.PI/180) );
+            // var L = 4 * Math.tan(Math.abs(i-360) * (Math.PI/720) ) / 3;
+            // var coord = L * Math.cos(Math.PI/4);
+
+            r.circle(x, y, rad);
+            r.path('M'+x+','+y+'l'+rad+',0'); 
+            r.path('M'+x+','+y
+                   +'l'+(rad * cosTheta) + ',' + y_2
+                   +'A' + rad + ',' + rad + ' 0 '+large+',1 ' +(x+rad) + ',' + y
+           
+
+                  );
+        
+          };
+      
+        });
+      });
+      // ]]>
+    </script>
+    <span id="theta"></span>
+    <section id="holder">
+      
+    </section>
+  </article>

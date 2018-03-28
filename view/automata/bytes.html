@@ -1,0 +1,40 @@
+<article>
+  <style type="text/css">
+    body {
+      font-family:Inconsolata;
+      font-size:62.5%;
+    }
+    p {
+      font-size:2em;
+      margin:0;
+      text-align:right;
+      width:50%;
+    }
+  </style>
+  <script type="text/javascript">      
+    var time       = document.createElement('p');
+    var compliment = document.createElement('p');
+    var andwise = document.createElement('p');
+    var orwise = document.createElement('p');
+
+    var tick = function() {
+      var string = Math.floor((new Date()).getTime());
+      var cstring = (~string);
+      time.textContent = string.toString(2);
+      compliment.textContent = cstring.toString(2);
+      andwise.textContent = ("00000000" + (string & '11111').toString(2)).slice(-8);
+      orwise.textContent = ("00000000" + (string | '11111').toString(2)).slice(-8);
+    };
+    
+    var loader = function(evt) {
+      document.body.appendChild(time);
+      document.body.appendChild(compliment);
+      document.body.appendChild(andwise);
+      document.body.appendChild(orwise);
+      window.setInterval(tick, 250);
+    };
+    
+    document.body.onLoad = loader();
+
+  </script>
+</article>

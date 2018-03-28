@@ -1,0 +1,102 @@
+<article>
+  <style type="text/css">
+    section div {
+      color:#FFF;
+      margin:0;
+      background-color:#FFF;
+      float:left;
+      overflow:hidden;
+    }
+    section div span {
+      display:block;
+      float:left;
+      border-style:solid;
+      border-color:rgba(0,0,0,0.5);
+    }
+    .you {
+      background-color:#FFF;
+    }
+
+    .monty {
+      border: 5px solid #ffcf01
+    }
+
+    .lose {
+      background-color:#ec008c;
+    }
+
+    .neither {
+
+    }
+
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    bootstrap.queue(function() {
+      
+      var container = document.body.appendChild(document.createElement('section'));
+      var trials = new Array(1024);
+      
+      var area = this.innerWidth * this.innerHeight;
+      var square = Math.floor(Math.sqrt(trials.length));
+      var width =  Math.floor(this.innerWidth / square);
+      var height = Math.floor(this.innerHeight / square);
+      
+      // var css = document.styleSheets[0];
+      //
+      // css.rules[2].style.width = width + 'px';
+      // css.rules[2].style.height = height + 'px';
+      //
+      // var span_border = Math.ceil(Math.sqrt(width));
+      // css.rules[3].style.width  = Math.ceil((width/3) - (2 * span_border)) + 'px';
+      // css.rules[3].style.height = Math.ceil(height - (2 * span_border)) + 'px';
+      
+      
+      
+      // css.rules[3].style.borderWidth = span_border +'px';
+
+      for (var i = 0; i < trials.length; i++) {
+        trials[i] = container.appendChild(document.createElement('div'));
+        
+        
+        var boxes = [
+          document.createElement('span'),
+          document.createElement('span'),
+          document.createElement('span')
+        ];
+
+        for (var j = 0; j < boxes.length; j++) {
+          trials[i].appendChild(boxes[j]);
+        };
+
+        var win = Math.floor(Math.random() * 3);
+        var you = Math.floor(Math.random() * 3);
+
+        boxes[win].style.borderColor = 'rgba(255,255,255,0.5)';
+        boxes[you].className = 'you';
+
+        var monty = Math.floor(Math.random() * 3);
+        if (you != win) {
+          trials[i].style.backgroundColor = '#000'
+        };
+        
+
+      };
+
+      
+      // var testpath = paper.path('M100 100C30 10, 20 10, 190 190');
+      // testpath.animate({path:'M400 200C10 40, 390 390, 103 203'},10000);
+      
+      // 
+
+      
+    });
+
+
+    
+    
+  // ]]>
+  </script>
+</article>

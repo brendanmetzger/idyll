@@ -1,0 +1,40 @@
+<article>
+  <style type="text/css">
+    
+    .svgs div {display:inline-block;}
+    svg {
+      border:1px solid #000;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    var r,c,arc, text, rad = 10,
+          pad = 200,
+          y = rad + pad,
+          x = rad + pad;
+
+    function drawSquare (percentage, input) {
+      r.path('M0,0l250,250');
+      r2.path('M0,0l250,250').transform('t0,250s1,-1');
+    }
+    
+    bootstrap.queue(function () {
+      r = Raphael("polygons", 500, 500);
+      r2 = Raphael("polygons2", 500, 500);    
+      
+      drawSquare(0, 30);
+    });
+    
+  // ]]>
+  </script>
+
+  <section class="svgs">
+    <h2>Polygons</h2>
+    <input type="range" min="0" max="100" style="margin:2.5%;width:95%" value="0" onchange="drawSquare(this.value, 30);this.nextSibling.value = this.value"/><input />
+    <div id="polygons"></div>
+    <div id="polygons2"></div>
+  </section>
+    
+</article>

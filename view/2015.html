@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="utf-8" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="no"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BAM"/>
+    <link rel="shortcut icon" href="/images/favicon.ico"/>
+
+    <link rel="stylesheet" href="/css/fonts.css" type="text/css" media="screen" />
+    
+    <title>[@title]</title>
+    
+    <script type="text/javascript">
+      // <![CDATA[
+      window.bootstrap = (function(d,w,c,q,t) {
+        return { 
+          tag: function (src, async) {var s = d.createElement('script');s.type = 'text/javascript';s.src = src;s.async = async;return s;},
+          embed: function() {for (var i=0; i < arguments.length; i++) {var s = this.tag(arguments[i], false);s.onload = this.load; q.push(s);} return this;},
+          track: function (src) { for (var i=0; i < arguments.length; i++) {t.push(this.tag(arguments[i], true));} return this;},
+          load: function(){ if (q.length > 0) {d.body.appendChild(q.shift()); } else { w.bootstrap.init();}},
+          init: function() {w._sf_endpt = (new Date()).getTime(); c.forEach(function (f) { f.call();}); c=[]; while(t.length > 0) d.body.appendChild(t.shift());},
+          queue: function(f) {if (typeof f === 'function') c.unshift(f);}
+      };}(document, window, [], [], []));
+      
+      // bootstrap.embed('/js/bloc.js');
+      // ]]>
+    </script>
+  </head>
+  <body id="front">
+    <nav>
+      <ul>
+        <li class="CornflowerBlue"><a  href="/">Beginning</a></li>
+        <!-- iterate links -->
+        <li class="YellowGreen"><a href="[@url]">[@name]</a></li>
+      </ul>
+    </nav>
+    <!-- replace content nextSibling -->
+    <article>
+      <section>
+        <p>hey.</p>
+      </section>
+    </article>
+    
+    
+    <hr />
+    
+    
+    <footer>
+      <address>© <em>now</em> Brendan Metzger  &#x2803;&#x2817;&#x2811;&#x281D;&#x2819;&#x2801;&#x281D; &#x280D;&#x2811;&#x281E;&#x2835;&#x281B;&#x2811;&#x2817;</address>
+    </footer>
+    
+    <script type="text/javascript">
+      window.bootstrap.load();
+    </script>
+  </body>
+</html>

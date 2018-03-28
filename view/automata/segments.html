@@ -1,0 +1,91 @@
+<article>
+  <style type="text/css">
+    svg circle{
+      stroke-width:1;
+      /*stroke:#DDD;*/
+    }
+    math {
+      font-size:2em;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    var r,c,arc, text, rad = 150,
+        pad = 10,
+        y = rad + pad,
+        x = rad + pad;
+    
+    function drawSegment (input) {
+
+      r.clear();
+      if (input == 1) {
+        r.circle(x, y, rad).attr('stroke', '#333');
+        return;
+      };
+
+      var circumference = -(2 * Math.PI).toFixed(4)
+
+      var angle   = circumference / input;
+      var center  = [x,y];
+
+      for (var segments = input, theta = circumference / segments; segments > 0; segments--) {
+
+        
+        var angle = (theta * segments).toFixed(5);
+        var angle_2 = angle - theta;
+        var start = [x + (rad * Math.cos(angle)), y + (rad * Math.sin(angle))];
+        var arc   = [x + (rad * Math.cos(angle_2)), y + (rad * Math.sin(angle_2))];
+        
+        var sweep =  1;
+        var large =  0;
+      
+        if (angle > 0) {
+          sweep = 0;
+        };
+
+        // needed to add a an idditional
+        if (angle < circumference || angle > - circumference) {
+          var large = 1;
+        }
+        
+        sweep &= segments;
+        // large = Math.round(Math.random());
+        // sweep = large = 0;
+        
+        var path = 'M' + center.join(',')
+             +'L'+ start.join(',')
+             +'A' + rad + ',' + rad + ' 0 '+large+','+sweep+' ' + arc.join(',')
+             +'z';
+        
+        var opacity = Math.pow(1/segments, 0.5);
+        // opacity = Math.random();
+        r.path(path).attr({'stroke':'#FFF','stroke-opacity':0.25,'fill':'#333','fill-opacity':opacity, 'title':opacity});
+
+        var rect_width = ((Math.PI/input) *rad).toFixed(2);
+        
+        r.rect((input-segments)*rect_width,(rad+pad)*2.25,rect_width,rad).attr({'fill':'#333', 'stroke':'#FFF'});
+      }
+    }
+    
+    bootstrap.queue(function () {
+      r = Raphael("circleDeSegments", 1200, 900);    
+      
+      drawSegment(4);      
+    });
+    
+  // ]]>
+  </script>
+    
+  <section>
+    <h2>Circle sub-divided into equal segments</h2>
+    <input type="range" min="1" max="360" style="margin:2.5%;width:95%" value="4" oninput="drawSegment(this.value);this.nextSibling.value = this.value"/><input />
+    <div id="circleDeSegments"></div>
+  </section>
+  <section>
+    <h2>Section of specific size rotated about circle.</h2>
+    <input type="range" min="1" max="360" style="margin:2.5%;width:95%" value="4" oninput=""/><input />
+    <div id="Segments"></div>
+  </section>
+</article>

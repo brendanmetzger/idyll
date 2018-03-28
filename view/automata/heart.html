@@ -1,0 +1,130 @@
+<article>
+  <section>
+    <h2>Happy Valentines Day</h2>
+    <input type="range" min="2" max="35" style="width:50%" value="35" oninput="drawHeart(this.value);"/>
+    <h1 style="margin:0 0 1em;color:#ec2e7e">you</h1>
+    <div id="heart"></div>
+    <div id="console"></div>
+  </section>
+  <style type="text/css">
+    svg circle{
+      stroke-width:0;
+      fill:#FFF;
+    }
+    svg {
+      display:none;
+    }
+    #console {
+      background-color: transparent;
+      font-size:4em;
+      line-height:.9em;
+      font-family:Courier New;
+      word-wrap:break-word;
+    }
+    body {
+      background-repeat:repeat;
+    }
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    
+    bootstrap.embed('/js/raphael.js');
+  
+    var outline,
+        width  = 100,
+        height = 100;
+
+  
+    Number.prototype.toRatio = function(multiplier) {
+      return Math.pow(this, .9) * multiplier;
+    };
+
+
+    // apparently this entire thing could be drawn with
+    // -sqrt(sin(x)) + sqrt(abs(cos(x))) and sqrt(sin(x)) + sqrt(abs(cos(x))), then you can do crazier shit with polar coords.
+  
+    function drawHeart (angle) {
+      outline.clear();
+      angle = Number(angle);
+    
+      var ratio = Math.sin((1+angle)*(Math.PI/angle));
+    
+      var scale = 50;
+
+      var center = [width/2, height/(1+angle)];
+
+      // (x1 y1 x2 y2 x y)
+
+    
+      var p = {
+            a: {
+              x: scale * -ratio,
+              y: 0,
+              x1: 0,
+              y1: scale.toRatio(ratio),
+              x2: scale * -ratio,
+              y2: scale.toRatio(ratio)
+            },
+            b: {
+              x:scale*ratio,
+              y: scale*1.5,
+              x1: 0,
+              y1: scale.toRatio(1),
+              x2: scale * ratio,
+              y2: scale * -ratio
+            },
+            c: {
+              x:scale * ratio,
+              y:(scale*1.5) * ratio,
+              x1:0,
+              y1:(scale/angle) * ratio,
+              x2:scale * ratio,
+              y2:scale * ratio
+            },
+            d: {
+              x:scale * -ratio,
+              y:0,
+              x1:0,
+              y1:scale.toRatio(ratio),
+              x2:scale * -ratio,
+              y2:scale.toRatio(ratio)
+            }  
+          };
+    
+      var path = 'M'+center.join(',')
+               + 'c'+(p.a.x1)+','+(p.a.y1)+' '+(p.a.x2)+ ',' +(p.a.y2)+ ' '+ (p.a.x) + ',' + (p.a.y)
+               + 'c'+(p.b.x1)+','+(p.b.y1)+' '+(p.b.x2)+ ',' +(p.b.y2)+ ' '+ (p.b.x) + ',' + (p.b.y)
+               + 'c'+(p.c.x1)+','+(p.c.y1)+' '+(p.c.x2)+ ',' +(p.c.y2)+ ' '+ (p.c.x) + ',' + (p.c.y)
+               + 'c'+(p.d.x1)+','+(p.d.y1)+' '+(p.d.x2)+ ',' +(p.d.y2)+ ' '+ (p.d.x) + ',' + (p.d.y);
+
+      outline.path(path).attr({'stroke':0,'fill':'#ec2e7e'});
+
+      var s = "M"+(center[0]-100)+","+(center[1]*1.75)+"q150,100 200,0";
+    
+      outline.path(s).attr({'stroke':'#FFF', 'stroke-width': 3, 'stroke-opacity': (-1)*ratio});
+      outline.circle(center[0] - 100, center[1], 10).attr('fill-opacity', (-1)*ratio);
+      outline.circle(center[0] + 100, center[1], 5).attr('fill-opacity', (-1)*ratio);
+    
+    
+      var base_64_img = btoa(outline.canvas.parentNode.outerHTML.replace(/\<desc\>.*\<\/desc\>/g, '').slice(16,-6));
+    
+      document.body.style.backgroundImage = 'url(data:image/svg+xml;base64,'+base_64_img+')';
+      document.getElementById('console').innerHTML = base_64_img;
+
+
+    
+    }  
+    
+    bootstrap.queue(function () {
+      Raphael(function () {
+
+        outline = Raphael("heart", width, height);    
+        drawHeart(35);
+
+      });
+      
+    });
+
+  // ]]>
+  </script>
+</article>

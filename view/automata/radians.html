@@ -1,0 +1,129 @@
+<article>
+  <style type="text/css">
+    svg circle{
+      stroke-width:1;
+      stroke:#DDD;
+    }
+
+    math {
+      font-size:2em;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    var r,c,arc, text, rad = 200,
+          pad = 20,
+          y = rad + pad,
+          x = rad + pad,
+          
+          columns = 24;;
+    
+    function drawArc (angle) {
+      angle = Math.abs(angle-360);
+      
+      var radians = angle * (Math.PI/180);
+      
+      var y_2 = rad * Math.sin( radians );
+      var x_2 = rad * Math.cos( radians );
+      
+      var sweep =  (angle >= 360) ? 0 : 1;
+
+
+      var large = (angle >= 180 && angle < 360) || (angle > 360 && angle < 540) ? 0 : 1;
+      console.log(sweep, large);
+      
+
+
+      var path = 'M'+x+','+y
+           +'l'+ x_2 + ',' + y_2
+           +'A' + rad + ',' + rad + ' 0 '+large+','+sweep+' ' +(x+rad) + ',' + y;
+
+      
+      if (c) {
+        c.attr('path', path)
+      } else {
+        c = r.path(path).attr({'fill': '#333'});
+        text.toFront();
+      }
+      
+      
+      if (arc) {
+        arc.attr('path', "M10,0h"+ rad * Math.abs(angle-360) * (Math.PI/180));
+      } else {
+        arc = r.path("M10,0h"+ rad *  Math.abs(angle-360) * (Math.PI/180)).attr({'stroke-width': '3'});
+      }
+      
+      
+    }  
+
+
+    function gcf(a, b) { 
+     return ( b == 0 ) ? (a):( gcf(b, a % b) ); 
+    }
+    function lcm(a, b) { 
+     return ( a / gcf(a,b) ) * b; 
+    }
+    
+    function showTheta (value) {
+      var lcm_a = gcf(value, 180);
+      var radians = (value * (Math.PI/180)).toFixed(4);
+
+      var n = (value/lcm_a) == 1 ? '' : (value/lcm_a);
+      
+      
+      var html = "&#x03B8; = " + value + "&#x00B0; is subtended by an arc of " + Math.abs(rad * radians).toFixed(2)  + " pixels<br/>";
+          html = "<math><mi>&#x03B8;</mi><mo>=</mo>";
+      if ((180/lcm_a) != 1) {
+        html += "<mfrac><mrow><mn>"+n+"</mn><mi>π</mi></mrow><mn>"+(180/lcm_a)+"</mn></mfrac>";
+      } else {
+        html += "<mn>"+n+"</mn><mi>π</mi>";
+      }
+      html += "<mi>rad</mi></math>";
+
+      // html += "&#x03B8; = " + n + "π " + d  + " radians ("+radians+")<br/>";
+
+      var y_2 = y + rad/1.25 * Math.sin( Math.abs((value / 2)-360) * (Math.PI/180) );
+      var x_2 = (x + 5) + rad/1.25 * Math.cos( Math.abs((value / 2)-360) * (Math.PI/180) );
+      
+      text.attr({
+        x: x_2,
+        y: y_2,
+        text:'θ = '+value+'°'
+      });
+
+
+      document.getElementById('theta').innerHTML = html;
+
+      drawArc(value);
+
+    }
+    
+    bootstrap.queue(function () {
+      r = Raphael("holder", 1200, 500);    
+      
+
+      text = r.text(x, y, "θ = 0°").attr({'fill':'#FFF', 'font-size':'16'});
+      
+      // var L = 4 * Math.tan(Math.abs(i-360) * (Math.PI/720) ) / 3;
+      // var coord = L * Math.cos(Math.PI/4);
+
+      r.circle(x, y, rad);
+      r.path('M'+x+','+y+'l'+rad+',0'); 
+      
+    });
+    // ]]>
+  </script>
+
+  <p>todo: show the angle and the arc length about the circle using svg text</p>
+  <p>compute the angle based on the length of a given line.</p>
+  <!-- <h3 id="theta">degrees<br/>radans<br/>arc length</h3> -->
+  <div id="theta" xmlns='http://www.w3.org/1998/Math/MathML' display='block'>
+  </div>
+  <input id="slider" type="range" min="-360" max="360" style="margin:2.5%;width:95%" value="0" oninput="showTheta(this.value)"/>
+  
+  <section id="holder">
+    
+  </section>
+</article>

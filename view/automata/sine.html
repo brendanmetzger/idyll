@@ -1,0 +1,228 @@
+<article>
+    <section>
+
+      <h1>Using Bézier Curves</h1>
+      <input type="range" min="-500" max="500" style="width:50%" value="1" oninput="drawBezierWave(this.value, this.nextSibling.nextSibling.value, 1);"/>
+      <input type="range" min="1" max="10" style="width:50%" value="2" oninput="drawBezierWave(this.previousSibling.previousSibling.value, this.value, 1);"/>
+      <input type="range" min="0" max="1080" style="width:50%" value="1" oninput="drawBezierWave(this.previousSibling.previousSibling.previousSibling.previousSibling.value, this.previousSibling.previousSibling.value, this.value);"/>
+      <div id="bezier"></div>
+      <h3>thoughts:</h3>
+      <ul>
+        <li>shifting the graph and changing frequency/wavelength</li>
+        <li>What is the ratio of the length of the bezier tangent line to the number of points. Is there an equilibrium?</li>
+        <li>Is there a way to show the standard deviation that the given curve is from an actual sine wave.</li>
+      </ul>
+    </section>
+    <section>
+      <h1>Using Points</h1>
+      <input type="range" min="2" max="25" style="width:50%" value="2" oninput="drawPointWave(this.value)"/>
+      <div id="point"></div>
+    </section>
+    <section>
+      <h1>Using Lines</h1>
+      <input  type="range" min="2" max="25" style="width:50%" value="2" oninput="drawSawtoothWave(this.value)"/>
+      <div id="sawtooth"></div>
+    </section>
+
+    <section>
+ 
+      <h1>Using Linear Approximations</h1>
+      <p>This is heading towards nonsense land, but you can find the value of a function [say f(x)] with the linear approximation 
+        <math mode="display" display='inline'>
+        <mrow>
+          <mi>f</mi>
+          <mfenced>
+            <mi>x</mi>
+          </mfenced>
+          
+          <mo>=</mo>
+
+          <mi>f</mi>
+          <mfenced>
+            <msub>
+              <mi>x</mi>
+              <mn>0</mn>
+            </msub>
+          </mfenced>
+          <mo>+</mo>
+          <msup>
+            <mi>f</mi>
+            <mo>'</mo>
+          </msup>
+          
+          <mfenced>
+            <msub>
+              <mi>x</mi>
+              <mn>0</mn>
+            </msub>
+          </mfenced>
+          <mo>&#x2062;</mo>
+          <mfenced>
+            <mrow>  
+            <mi>x</mi>
+            <mo>&#x2212;<!-- − --></mo>
+            <msub>
+              <mi>x</mi>
+              <mn>0</mn>
+            </msub>
+            </mrow>
+          </mfenced>
+        </mrow>
+      </math>. Meaning, the shape of a wave can be drawn given enough values along the x axis, and showing all of these values at once would look like so:</p>
+      
+      <input  type="range" min="2" max="25" style="width:50%" value="2" oninput="drawApproxWave(this.value)"/>
+      <div id="linear"></div>
+
+      
+    </section>
+    <style type="text/css">
+      svg circle{
+        stroke-width:0;
+        fill:#000;
+      }
+      mi + mfenced {
+        margin-left:0.25em;
+      }
+      math mo {
+        margin:0 0.05em;
+      }
+      msup mo {
+        font-size:1.15em;
+        line-height:0em;
+        margin:0 0 0 0.25em;
+
+      }
+      msub mn {
+        font-size:0.5em;
+      }
+      section {
+        border: 1px solid #EEE;
+        margin:1em 0;
+        padding:1em;
+      }
+    </style>
+    <script type="text/javascript">
+    // <![CDATA[
+      
+      bootstrap.embed('/js/raphael.js');
+      
+      var scale = 180 / Math.PI;
+      var point_wave, sawtooth_wave;
+  
+      var x_axis = (6 * Math.PI) * scale,
+          y_axis = 300,
+          pad_left = 10;
+
+      Number.prototype.inverse = function () {
+        return this * (-1);
+      };
+
+      function drawAxes (canvas) {
+        for (var i = 0; i <= x_axis / scale; i += Math.PI/2 ) {
+          var x_dist = Math.round(i  * scale);
+          canvas.text(x_dist + pad_left, ((y_axis/2) + 10), x_dist + '°');//.attr('text-anchor', 'start');
+        }
+
+        var y_max = Math.sin(Math.PI/2);
+        var y_min = Math.sin(3*Math.PI/2);
+        canvas.text(3, y_axis/2 - y_max*scale, y_max);
+        canvas.text(3, y_axis/2 - y_min*scale, y_min);
+
+        var x = canvas.path('M0,'+(y_axis/2)+'l'+(x_axis)+',0').attr({'stroke-width': 1, 'stroke-dasharray': '. ', 'arrow-end': 'block-wide-long'});
+        var y = canvas.path('M'+pad_left+',0l0,'+y_axis).attr({'stroke-width': 1, 'stroke-dasharray': '. ', 'arrow-start': 'block-wide-long', 'arrow-end': 'block-wide-long'});
+        return [x,y];
+      }
+      function drawPointWave (limit) {
+        point_wave.clear();
+        drawAxes(point_wave);
+
+        for(var x = 0; x <= 8*Math.PI; x += (Math.PI/limit) ) {
+          var x_val = (x*scale) + pad_left;
+          var y_val = (y_axis / 2) + (Math.sin(x) * scale).inverse();
+          point_wave.circle(x_val,y_val,2.5);
+        }
+      }
+
+      function drawSawtoothWave (limit) {
+        sawtooth_wave.clear();
+        drawAxes(sawtooth_wave);
+        var path = '';
+        for(var x = 0; x <= 8*Math.PI; x += (Math.PI/limit)) {
+          x_val = (x*scale) + pad_left;
+          y_val = (y_axis / 2) + (Math.sin(x) * scale).inverse();
+          path  += ' L'+x_val+','+y_val;
+        }
+        sawtooth_wave.path("M"+pad_left+","+(y_axis / 2)+path);
+      }
+
+      function drawBezierWave (tan_endpoints, limit, theta) {
+    
+        this.points   = this.points || [];
+        this.tangents = this.tangents || [];
+        this.wave     = this.wave || bezier_wave.path();
+        this.trace = this.trace || bezier_wave.path();
+        this.points.forEach(function(item) {
+          item.remove();
+        });
+    
+        this.tangents.forEach(function(item) {
+          item.remove();
+        });
+    
+        this.trace.remove();
+        this.wave.remove();
+
+        var path = '';
+    
+
+        for(var x = 0; x <= 8*Math.PI; x += (Math.PI/limit)) {
+      
+          var deriv = Math.cos(x).inverse() * Math.sin(theta * (Math.PI / 180) );
+          var x_val = (x*scale)+pad_left;
+          var x_tan = tan_endpoints, y_tan = deriv * tan_endpoints;
+          var y_val = (y_axis / 2) + (Math.sin(x) * scale).inverse();
+      
+          this.points.push(bezier_wave.circle(x_val,y_val,2.5));
+          this.tangents.push(bezier_wave.path('M' + (x_val - tan_endpoints/2) + ',' + (y_val - (deriv * tan_endpoints / 2)) + 'l' + x_tan + ',' + y_tan).attr({'stroke-width': 1, 'stroke-opacity': Math.abs(tan_endpoints-500)/500, 'stroke': 'red'}));
+
+          // (x1 y1 x2 y2 x y)
+          // (x2 y2 x y)
+          path += 'S'+(x_val - tan_endpoints/2).toFixed(1) + ',' + (y_val - (deriv * tan_endpoints / 2)).toFixed(1) + ' ' + x_val+','+y_val;
+      
+        }
+
+        this.wave = bezier_wave.path("M"+pad_left+","+(y_axis / 2)+path).attr('stroke-dasharray', '--');
+
+        // console.log(this.wave.getPointAtLength(90), this.wave.getSubpath(100,105));
+
+        var idx = 0;
+        this.trace = bezier_wave.path(this.wave.getSubpath(idx,idx+3)).attr({'stroke-width':5, 'stroke':'#1779e3', 'stroke-linecap':'round'})
+        // if (this.interval) clear(this.interval);
+        // this.interval = setInterval(function() {
+        //   idx += 5;
+        //   this.trace.attr('path', this.wave.getSubpath(++idx,idx+3));
+        //   if (idx>=(360*4)) idx = 0;
+        // }, 50);
+    
+        this.points.push();
+      }
+
+      bootstrap.queue(function () {
+        point_wave = Raphael("point", x_axis, y_axis);
+        drawAxes(point_wave);
+
+        sawtooth_wave = Raphael("sawtooth", x_axis, y_axis);
+        drawAxes(sawtooth_wave);
+
+        bezier_wave = Raphael("bezier", x_axis, y_axis);
+        drawAxes(bezier_wave);
+
+        drawPointWave(2);
+        drawSawtoothWave(2);
+        drawBezierWave(1, 2);
+        
+        
+      });
+      //]]>
+    </script>
+</article>

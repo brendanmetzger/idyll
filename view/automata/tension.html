@@ -1,0 +1,160 @@
+<article>
+
+  <style type="text/css">
+    div.left {
+      float:left;
+    }
+    div._80 {
+      width:90%;
+    }
+    div._5 {
+      margin:10% 0;
+      width:10%;
+      outline:1px dotted #333;
+    }
+    input[type='range'] {
+     -webkit-appearance: slider-vertical;
+     height:200px;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js', '/js/math.js');
+    var r,c,arc, text, rad = 10,
+          pad = 200,
+          width = 1200,
+          height = 800,
+          y = rad + pad,
+          x = rad + pad;
+
+    bootstrap.queue(function () {
+      r = Raphael("tension", width, height);
+      r = Raphael("tension2", width, height);    
+    
+      draw(90, 90, 50, 9.8);
+      draw2(90, 90, 20, 9.8);
+    });
+
+    function draw2 (alpha, beta, m, g) {
+      var alpha_rad = (Math.PI/180) * alpha;
+      var beta_rad = (Math.PI/180) * beta;
+      var Fg = m * g;
+      var origin = {
+        p: "M{o.x},{o.y}",
+        x: 0,
+        y: 0
+      };
+
+      var gLine = r.path(Raphael.fullfill(origin.p+"l{x},{y}", {
+        o: origin,
+        x: 0,
+        y: Fg
+      }));
+
+      var Ty = Fg/2;
+      
+      var T1 = r.path(Raphael.fullfill(origin.p+"m{mx},{my}l{x},{y}", {
+        o: origin,
+        mx: 0,
+        my: Fg,
+        x: Ty / Math.sin(alpha_rad),
+        y: - Ty
+      }));
+
+
+      var T2 = r.path(Raphael.fullfill(origin.p+"m{mx},{my}m{m2x},{m2y}l{x},{y}", {
+        o: origin,
+        mx: 0,
+        my: Fg,
+        m2x: Ty / Math.sin(alpha_rad),
+        m2y: - Ty,
+        x: - Ty / Math.sin(beta_rad),
+        y: - Ty
+      }));
+    }
+
+    function draw (alpha, beta, m, g) {
+      var alpha_rad = (Math.PI/180) * alpha;
+      var beta_rad = (Math.PI/180) * beta;
+      var Fg = m * g;
+      var origin = {
+        p: "M{o.x},{o.y}",
+        x: 0,
+        y: 0
+      };
+
+      var gLine = r.path(Raphael.fullfill(origin.p+"l{x},{y}", {
+        o: origin,
+        x: 0,
+        y: Fg
+      }));
+
+      var Ty = Fg/2;
+      var T1 = r.path(Raphael.fullfill(origin.p+"m{mx},{my}l{x},{y}", {
+        o: origin,
+        mx: 0,
+        my: Fg,
+        x: Ty * Math.sin(alpha_rad),
+        y: - Ty * Math.cos(alpha_rad)
+      }));
+
+
+      var T2 = r.path(Raphael.fullfill(origin.p+"m{mx},{my}m{m2x},{m2y}l{x},{y}", {
+        o: origin,
+        mx: 0,
+        my: Fg,
+        m2x: Ty * Math.sin(alpha_rad),
+        m2y: - Ty * Math.cos(alpha_rad),
+        x: - Ty * Math.sin(beta_rad),
+        y: - Ty * Math.cos(beta_rad)
+      }));
+
+      console.log('Fg len', gLine.getTotalLength() ,'T len', T1.getTotalLength(), 'double T', 2 *T1.getTotalLength() );
+
+
+
+
+
+
+      // var t1 = r.path(Raphael.fullfill("M{ox},{oy}l{lx},{ly}", {
+      //   ox: 0,
+      //   oy: 0,
+      //   lx: m*g*Math.sin(alpha_rad),
+      //   ly: m*g*Math.cos(alpha_rad)
+      // }));
+      // var t1 = r.path(Raphael.fullfill("M{ox},{oy}l{lx},{ly}", {
+      //   ox: m*g*Math.sin(alpha_rad) + m*g*Math.sin(beta_rad),
+      //   oy: 0,
+      //   lx: -m*g*Math.sin(beta_rad),
+      //   ly: m*g*Math.cos(beta_rad)
+      // }));
+    }
+  
+  // ]]>
+  </script>
+    <section class="container">
+      <div class="_5 left">
+        <input type="range" min="0" max="90" step="5" value="90" onchange="draw2(this.value, this.value, 20, 9.8);this.nextSibling.value = this.value"/><input/>
+      </div>
+      
+      <div class="_80 left">
+        <h2>Tension</h2>
+        <div id="tension2"></div>
+      </div>
+    </section>
+
+
+    <section class="container">
+      <div class="_5 left">
+        <input type="range" min="0" max="90" step="5" value="90" onchange="draw(this.value, this.value, 50, 9.8);this.nextSibling.value = this.value"/><input/>
+      </div>
+      
+      <div class="_80 left">
+        <h2>Tension</h2>
+        <div id="tension"></div>
+      </div>
+      
+    </section>
+    
+  </article>

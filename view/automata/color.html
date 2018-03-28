@@ -1,0 +1,56 @@
+<article>
+    <style type="text/css">
+      body {
+        font-family:Inconsolata;
+        font-size:62.5%;
+      }
+      label {
+      	display:block;
+      }
+    </style>
+		<h1 id="color_by_center_of_mass">Color by Center of Mass</h1>
+		<p>This is an investigation of color</p>
+		<ul>
+			<li>Plant a seed, such as the day of week, or the daily weather.</li>
+		</ul>
+		<form id="form" method="get" accept-charset="utf-8">
+			<label for="red">red</label>
+			<input type="range" name="r" value="255" min="0" max="255" />
+			
+			<label for="red">green</label>
+			<input type="range" name="g" value="255" min="0" max="255" />
+			
+			<label for="red">blue</label>
+			<input type="range" name="b" value="255" min="0" max="255" />
+		</form>
+		
+    <script type="text/javascript">
+		// <![CDATA[
+		var colorize = function(hex, clicked) {
+			
+			// console.log(clicked);
+			for(var i = hex.length - 1; i >= 0; i--) {
+				if (hex[i] != clicked) {
+					hex[i].value = (255 - clicked.value) + Math.sqrt(hex[i].value);
+					
+				};
+			}
+			// console.log(hex.r.value, hex.g.value, hex.b.value);
+			
+			document.body.style.backgroundColor = 'rgba('+hex.r.value+','+hex.g.value+','+hex.b.value+',1)';
+		
+		};
+		
+		var setup = function() {
+			var form = document.getElementById('form');
+			
+			form.addEventListener('change', function(evt) {
+				// console.log(evt.srcElement, this);
+				colorize(this.elements, evt.srcElement);
+			});
+		
+	  }
+		window.addEventListener('load', setup);
+  // ]]>
+  </script>
+</article>

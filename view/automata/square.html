@@ -1,0 +1,150 @@
+<article>
+  <style type="text/css">
+    svg circle{
+      stroke-width:1;
+      /*stroke:#DDD;*/
+    }
+
+
+    .thin {
+      stroke-width:1;
+      stroke:#ec008c;
+      fill:none;
+    }
+
+    .ref_line {
+      stroke:#333;
+      
+      stroke-dasharray: 5 2;
+    }
+
+  </style>
+  <script type="text/javascript">
+  // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    (function(argument, old_date) {
+      for (var i = 1000000 - 1; i >= 0; i--) {
+        // ...wait
+      };
+      console.log(argument, old_date, (new Date()).getMilliseconds());
+
+    })('this is my argument', (new Date()).getMilliseconds());
+
+    var r,c,arc, text, rad = 10,
+          pad = 200,
+          y = rad + pad,
+          x = rad + pad;
+
+
+    Number.prototype.mInv = function() {
+      return this * (-1);
+    }
+    
+    function drawSquare (angle, scl) {
+
+      r.clear();
+    
+      var sq = rad*scl;
+      
+      var O = [(pad+scl), (sq+pad)];
+      
+      percentage = angle/100;
+      console.log(angle);
+      
+      r.rect(O[0],pad,sq,sq).node.setAttribute('class', 'ref_line');
+      
+      // var hyp = r.path('M'+O[0]+','+(sq+pad)+'l'+sq+','+(-sq));
+      // console.log(hyp.getTotalLength().toFixed(2), Math.sqrt(2 * Math.pow(sq, 2)).toFixed(2) );
+      
+      var arc_path = 'M'+O[0]+','+(sq+pad)+'m'+sq+',0'+'a' + sq + ',' + sq + ' 0 0,0 -'+sq+',-'+sq;
+      
+      var arc = r.path(arc_path);
+      arc.node.setAttribute('class', 'ref_line');
+      
+      // +'a' + rad + ',' + rad + ' 0 '+large+','+sweep+' ' +(x+rad) + ',' + y;
+      // r.circle((pad*scl),sq,sq).attr({'stroke-dasharray': '. '});
+      
+      // var quarter_2 = r.path('M'+O[0]+','+(sq+pad)+'l'+ sq * Math.cos(Math.PI/8)+','+(-sq)*Math.sin(Math.PI/8));
+
+      // var quarter_1 = r.path('M'+O[0]+','+(sq+pad)+'l'+ sq * (Math.cos((Math.PI/8) * 3))+','+(-sq)*(Math.sin((Math.PI/8 * 3))));
+
+      var length = Math.abs(sq * Math.PI/2);
+      var arcLength = arc.getTotalLength();
+      // console.log(length, arcLength, '% error = ' + ((Math.abs(arcLength - length)/length) * 100).toFixed(2) + '%');
+      
+      // r.path('M'+(pad*scl)+','+(sq+pad)+'m'+ sq * Math.cos(Math.PI/4)+','+(-sq)*Math.sin(Math.PI/4)+ 'm-'+length/2+',-'+length/2+'l'+length+','+length );
+
+      // r.path('M' + (O[0] + 0 ) + ',' + (pad + (0 - 0                )) + 'l' + arcLength + ',' + 0);
+      // r.path('M' + (O[0] + sq*percentage) + ',' + (pad + (sq*percentage - arcLength*percentage))     + 'l' + (1 - percentage) + ',' + arcLength*percentage);
+      
+      var cos = arcLength * Math.cos(Math.PI/4);
+      var sin = arcLength * Math.sin(Math.PI/4);
+      
+
+      // r.path('M'+O.join(',') +'m' +  (Math.sin(Math.PI/4) * (sq - (arcLength /2)) ) + ',' + (-Math.sin(Math.PI/4) * (sq + (arcLength /2)) ) + 'l'+cos+','+sin);
+      // r.path('M'+O.join(',') +'m' +  (Math.sin(Math.PI/4) * (sq - (arcLength /2)) ) + ',' + (-Math.sin(Math.PI/4) * (sq + (arcLength /2)) ) + 'l'+cos+','+sin);
+
+      
+
+      var theta = (angle * (Math.PI/180));
+      
+      r.path(Raphael.fullfill("M{ox},{oy}m{mx},{my}l{lx},{ly}", {
+        ox: (scl + pad),
+        oy: (sq + pad),
+        mx: (sq * (Math.sin(theta) - (theta * Math.cos(theta)))),
+        my: (sq * (Math.cos(theta) + (theta * Math.sin(theta)))).mInv(),
+        lx: arcLength * Math.cos(theta),
+        ly: arcLength * Math.sin(theta)
+      })).attr({'stroke-width': 5, 'stroke':randomColor()});
+
+
+      r.path(Raphael.fullfill("M{ox},{oy}l{x1},{y1}l{x2},{y2}z", {
+        ox:(scl+pad),
+        oy:(sq+pad),
+        x1: (sq * Math.sin(theta)),
+        y1: (sq * Math.cos(theta)).mInv(),
+        x2:0,
+        y2: (sq * Math.cos(theta))
+      })).attr({'fill':randomColor(),'fill-opacity':(angle/90)}).node.setAttribute('class', 'ref_line');
+
+      
+      
+      
+      r.path(Raphael.fullfill("M{ox},{oy}m{x},{y}l{x1},{y1}l{x2},{y2}z", {
+        ox:(scl+pad),
+        oy:(sq+pad),
+        x: (sq * Math.sin(theta)),
+        y: (sq * Math.cos(theta)).mInv(),
+        x1: 0,
+        y1: (sq * (theta * Math.sin(theta))).mInv(),
+        x2: (sq * (theta * Math.cos(theta))).mInv(),
+        y2: 0
+      })).attr({'fill':randomColor(),'fill-opacity':(angle/90)}).node.setAttribute('class', 'ref_line');
+      
+      console.log(arcLength/sq);
+
+      // console.log('y', sin, sq);
+      // console.log('x', cos);
+    }  
+
+    function randomColor (scale) {
+      var r = Math.ceil(Math.random()*15).toString(16)+Math.ceil(Math.random()*15).toString(16),
+          g = Math.ceil(Math.random()*15).toString(16)+Math.ceil(Math.random()*15).toString(16),
+          b = Math.ceil(Math.random()*15).toString(16)+Math.ceil(Math.random()*15).toString(16);
+          console.log('#'+r+g+b);
+      return '#'+r+g+b;
+    }
+    bootstrap.queue(function () {
+      r = Raphael("polygons", 1200, 900);    
+      
+      drawSquare(0, 30);
+    });
+  // ]]>
+  </script>
+  <section>
+    <h2>tangents, arc length</h2>
+    <input type="range" min="0" max="90" style="margin:0;width:50%" value="0" oninput="drawSquare(this.value, 30);this.nextSibling.value = this.value"/><input />
+    <div id="polygons"></div>
+  </section>
+    
+  </article>

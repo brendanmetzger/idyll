@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="utf-8" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="no"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BAM"/>
+    <link type="text/css" rel="stylesheet" href="//fast.fonts.net/cssapi/c0d6de37-0902-408e-9aec-1d4da6d5c5fe.css" media="screen"/>
+
+    <title>BAM</title>
+    <style type="text/css" media="screen">
+      /* <![CDATA[ */
+      :root {
+        --unit: 3.5em;
+        --phi: 1.618;
+        --hue: 0;
+        --foreground: hsla(var(--hue), 20%, 20%, 1);
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body, main, article { margin:0; }
+      html {
+        background: linear-gradient(300deg, #fff, hsla(var(--hue), 65%, 95%, 0.75)) fixed;
+        background-size: auto 100%;
+      }
+      
+      body {
+        min-height:100vh;
+        font-family: 'Serifa W01_45 Light', 'ITC Avant Garde Gothic W01 Bk', 'Avenir Next';
+        color: var(--foreground);
+        border-left: 1vw solid transparent;
+        font-weight: 100;
+      }
+      a { text-decoration:none;color:hsla(var(--hue), 75%, 50%, 1);}
+      a:not(.active):hover { background-color:#fff; }
+      a[href^='#']:not(.active) { color: hsl(var(--hue), 50%, 50%);opacity:0.75;transition:color 0.5s;}
+      h1 { font-size: 1em;}
+      h2 { font-size: var(--unit);line-height:1; letter-spacing:-0.025em; letter-spacing: 0.125ch;}
+      h3 { font-size: calc(var(--unit) / var(--phi)); line-height: 1.125; margin: 4em 0;}
+      p, h4, article dt, article dd {font-size:calc(var(--unit) / 3); }
+      body hr { margin: 4em 0;border-top: 1px solid hsla(var(--hue), 50%, 50%, 0.5);}
+      article dd { border-left: 1px solid hsl(var(--hue), 50%, 50%); padding-left: 1em;}
+      p { line-height: calc(var(--phi) / calc(var(--unit) / 3)) }
+      video { width: 100% }
+      em, i     { font-family: 'Serifa W01_46 Light Italic', 'Avenir Next'; font-style:italic; }
+      strong, b, dt { font-family: 'Serifa W01_65 Bold', 'Avenir Next';font-weight:600; }
+      article header p:first-of-type {
+        font-size: calc(var(--unit) / 2);
+        line-height:1;
+      }
+      .caps {text-transform:uppercase;line-height:1;}
+      abbr[title] { font-variant:small-caps; text-decoration:none; }
+      mark {
+        background-color:hsla(var(--hue), 70%, 50%, 0.5);
+        padding:0.25em;
+        mix-blend-mode:multiply;
+        -webkit-box-decoration-break: clone;
+        -o-box-decoration-break: clone;
+        box-decoration-break: clone;
+        box-shadow: 0 0.125em 0.125em rgba(0,0,0,0.1);
+      }
+      body > header {
+        position: fixed;
+        top: 0;
+        margin: 0;
+        font-size:75%;
+        background-color: hsla(var(--hue), 50%, 97.5%, 0.95);
+        z-index: 5;
+        box-shadow: 0 0.125em 0.125em hsla(var(--hue), 10%, 70%, 0.25);
+      }
+      main { overflow: auto; margin: 0; padding:0 1em; }
+      main > article {padding: var(--unit) 0 0;}
+      article *, dt { margin: calc(0.35em * var(--phi)) 0 0; }
+      figure { padding:1em;margin:2.5em 0.5em; box-shadow: 0 0 0.5em rgba(0,0,0,0.1);background-color:rgba(255,255,255,0.5);}
+      body > header, body > footer {
+        margin:0;
+        padding: 0.5em;
+        width: 100%;
+      }
+      header h4 {
+        display:inline-block;
+        margin-right: 0.5em;
+        padding-right:0.25em;
+      }
+      
+      
+      @media (min-width: 60em) {
+        :root {
+          --unit: 7em;
+        }
+        body { font-size: 62.5%;}
+        main { 
+          margin:0 0 0 calc(100% - (100% / var(--phi)));
+          padding:0 5% 0 0;
+        }
+        body > footer { bottom: 0 }
+        body > header { top:0 }
+        body > header, body > footer {
+          box-shadow: none;
+          margin:0;
+          background-color: transparent;
+          width:  calc(100% - (100% / var(--phi)));
+          position:fixed;
+          padding:calc(var(--phi) * 2em);
+        }
+        figure {padding:0 2em 2em;}
+        figcaption p { font-size:1rem;line-height:1.35;}
+        video { margin: 0 -2em 1em; width: calc(100% + 4em);}
+      }
+      /* ]]> */
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="caps"><a href="#from-scratch" class="active">Starting from scratch.</a> <a href="#sound-opinions">Technology shouldn't handicap.</a> <a href="#knight-foundation">Honest narrative beats anything.</a> <a href="#third-coast">Design to understand.</a> <a href="#teaching">Regarding Education.</a></p>
+    </header>
+    <main>
+      <article id="from-scratch">
+        <header>
+          <h2>Philosophy</h2>
+          <p>Look at the entirety of a project, line by line. How much of it is understood clearly?</p>
+        </header>
+        <p>Interactive designers and developers seem obsessively motivated to supply a bundle or framework for every situation imaginable. Akin to creating heaps and heaps one-note instruments (or the instrument to end all instruments) instead of new music. In all seriousness, I don't think any creative besides a software developer believes they can so easily solve problems with a single master-stroke and a very general solution.</p>
+        <p>I will try to counter this ranting with a little jazz of my own; the following projects are less 300kb total and started from scratch. When talking kb, I mean all files that compose a project from the backend systems to the frontend templates, scripts, stylesheets, etc.. I'm not saying projects should be small, rather, <mark>I propose that we develop more projects on purpose.</mark> I am focusing on the 'backend' work I've pursued over the last few years, as those decisions define are most often invisible, and thus taken for granted.</p>
+      </article>
+      <article id="sound-opinions">
+        <header>
+          <h2>Sound Opinions</h2>
+          <h4><time>2013</time></h4>
+          <h4><a href="http://soundopinions.org">soundopinions.org</a></h4>
+          <p>Sound opinions is a nationally syndicated radio program and podcast.</p>
+        </header>
+        <section>
+          <h3><strong>Respect the Syntax</strong></h3>
+          <p>It is perhaps no big surprise that the producers of <cite>Sound Opinions</cite> adhere to <abbr>NPR</abbr> affiliate cliché of having a firm appreciation for egg-headedness. When approaching an organization as a collection capable humans, one should take the opportunity to design <em>for that organization</em>. In my case, I pursue designs that rely as heavily as they can on the human end of the bargain, though this can only be accomplished by placing firm expectations on that same end. And a wee note, whenever I say the word 'design' in the context of anything I do, I care little for the arrangment of items and layouts—I'm referring to the action one takes to perform a task and realize a goal.</p>
+          <p>The inherited content from the old site had been crafted; artists, albums, places, etc. had been noted meticulously. The site they were preparing to leave behind was 100% old-school <abbr title="hypertext markup language">html</abbr>—a format I truly and deeply value. The riddle was thus: how do you keep the uniqueness of custom authored markup but enhance it with a management system that makes creating new content, adding metadata, and searching and sorting content easy (for syntax enthusiasts, of course). Given that the goal is to end with markup, why not just start with markup? Of course, that means putting all your trust in the human...</p>
+        </section>
+        <section> 
+          <h3><strong>Outcome</strong></h3>
+          <p>I prototyped <mark>a single-text-box <abbr title="content management system">cms</abbr></mark> to show the possibility of using only syntax to create episodes—an idea that, quite naturally, was met with suspicion. That quick prototype turned out convincing enough, and interestingly, that work never changed all that much in the final production version.</p>
+          <p>A user simply creates an outline like they would in a word processing program. For complicated endeavors, like media-management, syntax was provided to work with every <abbr title="application programming interface">api</abbr> imaginable: soundcloud, youtube, flickr and iTunes. Copy a linkt from YouTube and you have a player, or to Flickr and you have a gallery.</p>
+          <p>For a site to provide context and navigability an admin provides metadata,—usually in a series of menus, checkboxes and other inputs. In observing people fill out forms for a decade, I've never gotten the impression that it is an enjoyable activity. But metadata can be enjoyable if it saves you time, especially if you already did the hard parts of authoring some content. In a nutshell, the Sound Opinions <abbr>CMS</abbr> tracks metadata by asking that an admin to look over the copy and highlight significant elements (like an album or artist name). They can link the bits of highlighted text to one another by literally drawing a line between them. Some patterns have meaning—connecting an album and and artist triggers a query to find and embed album art. I daresay, it's almost fun.</p>
+          <figure>
+            <video src="http://static.brendanmetzger.com.s3.amazonaws.com/videos/drawing-metadata.m4v" controls="controls" preload="metadata" loop="loop">
+              <p>HTML5 Video</p>
+            </video>
+            <figcaption>
+              <p>Using the text box on the left a user uses a modified version of markdown to create sections and add tags. On the right tags can be connected to do additional tasks like gather album art or cataloging reviews. A modified markdown parser composes sections and templates in an algorithmic fashion, so that episodes can take any shape and size as necessary from the content provided.</p>
+              <p>A highlight: This was the first project I decided to forgo any and all JavaScript frameworks. I haven't used one since.</p>
+            </figcaption>
+          </figure>
+      </article>
+      <article id="knight-foundation">
+        <header>
+          <h2>Metadata Graphing</h2>
+          <h4><time>12/31/15</time></h4>
+          <h4><a href="https://vimeo.com/143490541">Video Presentation</a></h4>
+          <p>The <cite>Knight Prototype Fund</cite> is a grant to encourage and share new ideas and expose the results to a wider audience.</p>
+        </header>
+        <section>
+          <h3><strong>Understanding Machines</strong></h3>
+          <p>The implementation techniques used in Sound Opinions led to an abnormally large (50k) set of precisely graphed tags. We started using those tags to scheme interesting ways to curate and suggest media—an activity that has never really produced more interesting results than a human. We applied for (and received) a grant from the Knight Foundation to continue those efforts.</p>
+          <p>The initial work done was able to make simple recommendations, but it was lackluster in a few ways. First, it was slow, and I am of the opinion that caching a dynamic system with what should be dynamic input is somewhat unimpressive. Second, the actual correlation results were obvious (perhaps boring), which was entirely <em>not the goal</em>.</p>
+        </section>
+        <section>
+          <h3><strong>Make Interesting Numbers</strong></h3>
+          <p>A new angle was focused on the recommendation itself, and what input can produce better output. One of the securities of starting from scratch is that you can create information that might be more valuable. A simple experiment was done to feed peculiar input with the explicit intention of fitting an efficient correlation algorithm. This input was for a user was displayed as a colorful gradient and the individual bands colored particular moods or critiques. This strategy solved both problems—it executed faster and produced more interesting results.</p>
+          <p>This technique is also better than a tagging because it does not conflict with human disposition. I have observed that many people avoid typing certain tags or keywords out of sheer decency. Tagging stories about abuse or cancer on one hand seems disrespectful, and on the other, a set of curated [insert tragedy] pieces is strange thing to expect a user to want. We often use synonyms or keywords as substitutes making the exercise ever more oblique.</p>
+          <p>An abstract approach works better to compose a meaningful, automated, collection. The fact that human storyteller knows how to negotiate contrasting themes is proof enough that dissimilar plots can fit together in ways that machines cannot identify.</p>
+          <figure>
+            <video src="http://static.brendanmetzger.com.s3.amazonaws.com/videos/emotions.m4v" loop="loop" controls="controls" preload="metadata">
+              <p>HTML5 Video</p>
+            </video>
+            <figcaption>
+              <p>The above video demonstrates selecting the gradient on the left and resulting real-time correlation on the right—note the little gradients above each result and you can see they basically match.  I've blurred out the criteria and results for privacy as this is a working example that was eventually employed on the <a href="#third-coast">Third Coast Project</a>.</p>
+              <p>For the record, its not the sliders that are an impressive feat, or making things change color. It's that a backend process can generate an interesting correlation against the entire library in 100ms, and that is intriguing.</p>
+            </figcaption>
+          </figure>
+        </section>
+      </article>
+      <article id="third-coast">
+        <header>
+          <h2>Third Coast</h2>
+          <h4><time>2016</time></h4>
+          <h4><a href="http://thirdcoastfestival.org">thirdcoastfestival.org</a></h4>
+          <p>The Third Coast International Audio Festival is an organization beloved by audio-storytelling enthusiasts long before podcasts were a thing.</p>
+        </header>
+        <section>
+          <h3><strong>Design to Size of Client</strong></h3>
+          <p>Third Coast had an archive of audio bundled into a substantial Rails application. They have (still do) a labyrinthian  array of audio based content that lives under different contexts and categories. To <em>limit</em> duplication, the relational database had 40+ tables sized over a 1<abbr title="gigabyte">gb</abbr> and the necessary application code spanned hundreds of application files.</p>
+          <p>Concerning a gigabyte, perspective helps: the <a href="http://www.greennet.org.uk/support/understanding-file-sizes">1911 edition of <cite>Encyclopaedia Britannica</cite> is 25<abbr title="megabytes">mb</abbr></a>. Based on that, a liberal estimate may argue that a 40-table database contains no more than one encyclopedia’s worth of substantive content. This means <mark>the Rails database was ~98% metadata.</mark> Needless to say, a large conceptual knot to loosen.</p>
+        </section>
+        <section>
+          <h3><strong>Honor the Knot</strong></h3>
+          <p>All developers start a project with some kind of agenda. Unfortunately, that agenda often dictates the tool or program that will regulate the construction of content which unravels as the framework is tailored to fit the shape of the organization. In this project there was a dizzying array of joins between tables and the very same information modeled and remodeled and re-remodeled. This can be avoided with a graph, and I designed and implemented an application that stored relationships in an <abbr title="extensible markup language">xml</abbr> document. While <abbr title="extensible markup language">xml</abbr> may seem antiquarian, it makes defining object-oriented relationships pretty easy.</p>
+            <p>This scheme required that all content is structurally identical, meaning the <em>exact same</em> form can be used to describe a person or a story. Each small item is assigned to a model, the application ascribes rules for joining models into relationships, which then model bigger, more complicated ideas. It is perfectly possible to plan an efficient relational database, but the advantage here is one can get started before the entire agenda is ironed out. Projects inevitably evolve and change direction; if extra development resources are available, those resources can be used to evolve and maintain schema. If resources are a bit more precious (which is generally the case in my experience), a graphed dataset is purposefully abstract; changing ideas only requires changing the application code, not how data is stored or accumulates.</p>
+            <p>Pontificating aside, this <abbr title="extensible markup language">xml</abbr> data document is 2<abbr title="megabyte">mb</abbr>. That is <mark>½ of 1% of the original size,</mark> or for comparison, the largest ship ever and a tuna fish. More importantly, a robust network was established to organize and navigate content that feels more like a corn maze than a corn field.</p>
+          <figure>
+            <figcaption>
+              <video src="http://static.brendanmetzger.com.s3.amazonaws.com/videos/third-coast.m4v" loop="loop" controls="controls" preload="metadata">
+                <p>html5 video</p>
+              </video>
+              <p>This is a bit dizzying, so consider reading this before watching. There were some key aspects that needed to happen: first, the audio never stops (<a href="#sound-opinions">I cut my teeth on this with Sound Opinions</a>). Second, I wanted it to never stop, not even while editing. Third, I'm tired of 'backend' systems—it's just twice as much work to maintain.</p>
+              <p>With no backend, to edit anything, you find it on the site (or search it directly) and then find an edit button to click. Recall, each node is small and well-connected; to edit a person, I don't have to be on that persons page, I can be viewing anything they are connected to and edit them there. For example, in the video I can remove a person as a producer of a story by editing that person. Then I can add the same person as a producer to a story from the story page itself. Sound like the same thing in reverse? It actually is, which is why this application has less lines of code than a notable JavaScript framework that has the sole function of embedding other JavaScript frameworks.</p>
+            </figcaption>
+          </figure>
+        </section>
+      </article>
+      <article id="teaching">
+        <header>
+          <h2>Pedagogy</h2>
+          <h4><time>2015</time></h4>
+          <p>In the age of peak advertising, tracking, trolling and deception, where ought one pontificate re. the internet?</p>
+        </header>
+        <section>
+          <h3><strong>The Digital Information Era</strong></h3>
+          <p>Teaching college, I thought, was going to be an opportunity to take a completely proactive position on interactive design and development. There need not be any protracted discussions of analytics, intersticial ads or Internet Explorer. I was going to muse about <em>the potential</em> of this profound idea (the internet) and students, not yet indoctrinated by a career in corporate tomfoolery, were going to produce work that reminded me that this is a pretty great medium.</p>
+          <p>This is actually what happens: I introduce myself to a room of distracted and somewhat impatient students and over the next fifteen weeks I do very little musing. I evaluate a lot of work that can best be described as a collage of google queries and questionably outdated techniques (sidebar: I think a class called <em><q>How to Google</q></em> would be extremely valuable). The realities of learning and teaching in a world of <mark>near-constant distraction,</mark> aided by fast and easy access to information, has presented unexpected challenges.</p>
+          <p>Paradoxically, I understand that my career has involved working on teams designing with an unquestioned <em>goal</em> (not consequence) of producing a statistic like <q>more time on site.</q> I am seeing first-hand the industry's success by observing  young people who have been exposed to this effort for most of their lives. Much of my curriculum stresses (enforces) time management because one of the most familiar grievances I hear goes something like <q>I just do not have time left in my schedule for study.</q> I actually believe such remarks to be said in earnest, though in fact, they are patently false. More and more research (and informal class polling) shows that we spend upwards of 5–10 hours a day on our devices <em>entertaining ourselves</em>.</p>
+        </section>
+        <section>
+          <h3><Strong>Queue Blooper Sound Effect</Strong></h3>
+          <p>It becomes difficult to talk about creating <em>new</em> things when a good chunk of each class is devoted to what we playfully call <a href="https://en.wikipedia.org/wiki/RTFM"><abbr title="read the fucking manual">RTFM</abbr></a> material. This can be a bit boring, for sure, but a bigger issue is that little philosophy about the medium or innovative ideas are exchanged, which means everybody loses. An instructor is not an efficient resource for research and problem solving—there is too much to know and too little time. And from the other end, as an instructor, rehashing <q>chapter one</q> week after week is a recipe for burn out.</p>
+          <p>I should point out this is not a student vs. instructor issue—I believe it is fulfillment vs. [insert distraction]. I think that people want to gain experience, but do not yet realize that the work it takes to get there can be arduous and unappealing. To help bridge that gap, my teaching experiments have led to a merging of some sort of grade-free-alternative school (idealism) with the evaluation methods of a hard-nosed technical academy (rigor).  I have written more software to assist those outcomes than I thought I would need to as an instructor. I'll mention, <mark>software does not really solve any problems</mark> concerned with learning or teaching outcomes, but it does help me understand a student’s process.</p>
+          <hr/>
+          <dl>
+            <dt><span class="caps">Principle One</span> (idealism): under the guidance offered, a student will research, engage and regularly practice material that interests them.</dt>
+            <dd>Guided by lengthy outlines, recorded lectures, abstract examples, and single-source research citations</dd>
+            <dd>A personalized template is generated for each student, outlining skeleton projects that can simply be filled in with skills gained throughout the semester</dd>
+            <dd>The overarching mantra is to provide proof that you are engaged with the material. Prove you don't understand it at all, if you must (a devious trick, I know).</dd>
+            <dt><span class="caps">Principle Two</span> (rigor): principle one is mandatory</dt>
+            <dd>A web crawler scans student work every night, looking for changes, errors, code quality—essentially any metric that can shine a light on technique.</dd>
+            <dd>A dashboard shows the version control metrics, revisions, and critique of that work with a real-time score for the course.</dd>
+          </dl>
+          <p>The machine tabulates effort and research. It can't be cajoled into forgiveness or sympathy for lapses in judgment as easily a human (me) can.  It is based on cold hard statistics accumulating week after week—sabermetrics for study time. This instrument does not indicate work that is good or bad, but it tells you a nearly bulletproof story about if someone is doing the work it takes to be a successful student.</p>
+          <figure>
+            <video src="http://static.brendanmetzger.com.s3.amazonaws.com/videos/course-editor.m4v" loop="loop" controls="controls" preload="metadata">
+              <p>html5 video</p>
+            </video>
+            <figcaption>
+              <p>For years I've been working on pure markup-based template system. The video glosses over a lot but the philosophy I'd like to highlight is the technical seriousness of a markup-first system.  Templates can and must be validated as having correct syntax in order to be treated like data, and that means they can be iterated, picked apart and mutated programatically. Since my backend is still my text editor, and the templates can be compiled any which way, I can design the content uniquely by adding one-off style declarations and interactive moments without compromising <q>the framework.</q></p>
+              <p>I used the progenitor of this idea on <a href="#third-coast">Third Coast</a>, which allows any content to be requested asynchronously and sliced and diced using the document object model, requiring ~15 lines of JavaScript. You can only do this because of the assurance that your markup is valid, which is why people mistakenly think <abbr title="javascript object notation">JSON</abbr> is the only way to do business. In case this isn't obvious, I'm generally confounded by the proliferation JavaScript MVC/MVP/MVVM ideas—but I would also be confounded by coaching a runner with a lot of potential to sprint on crutches.</p>
+            </figcaption>
+          </figure>
+        </section>
+      </article>
+    </main>
+    <footer>
+      <h4>Colophon</h4>
+      <dl>
+        <dt>Typography</dt>
+        <dd>Serifa®</dd>
+        <dd>Adrian Frutiger</dd>
+        <dt>Designed &amp; Authored</dt>
+        <dd><h1><a href="https://github.com/brendanmetzger">Brendan August Metzger</a></h1></dd>
+        <dd>Chicago IL</dd>
+        <dd>
+          <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="width:25%;" viewBox="0 0 700 500">
+            <path d="M150,180l11,41l41,-11l-30,30l30,30l-41,-11l-11,41l-11,-41l-41,11l30,-30l-30,-30l41,11zM290,180l11,41l41,-11l-30,30l30,30l-41,-11l-11,41l-11,-41l-41,11l30,-30l-30,-30l41,11zM430,180l11,41l41,-11l-30,30l30,30l-41,-11l-11,41l-11,-41l-41,11l30,-30l-30,-30l41,11zM570,180l11,41l41,-11l-30,30l30,30l-41,-11l-11,41l-11,-41l-41,11l30,-30l-30,-30l41,11z" fill="#f00"/>
+            <path d="M0,80h720v80H0v160h720v80H0z" fill="#b3ddf2"/>
+          </svg>
+        </dd>
+      </dl>
+    </footer>
+    <script type="text/javascript">
+      // <![CDATA[
+        (function () {
+          'use strict';
+          var $  = query => document.querySelector(query);
+          var $$ = query => Array.from(document.querySelectorAll(query));
+          
+          var articles = $$('main > article');
+          var links    = $$('header a[href^="#"]');
+          
+          var legend = {
+            height: 0,
+            scroll: 0,
+            index: 0,
+            table: [],
+          };
+          
+          function buildLegend(list, factor = 100, stops = []) {
+            this.height = window.innerHeight;
+            this.scroll = document.documentElement.scrollHeight;
+            this.table  = list.reduce((accum, item, idx) => {
+              var size = Math.min(Math.floor((this.scroll - (item.offsetTop - (this.height / 5))) / this.scroll * 100), 100);
+              stops.push(100 - size);
+              accum.splice(100 - size, size, ...Array(size).fill(idx));
+              return accum;
+            }, []);
+            generateGradient(stops);
+          }
+          
+          function generateGradient(stops) {
+            stops = stops.map((value, idx) => `hsla(${idx * 50}, 75%, 75%, 0.75) ${value}%`).join(',');
+            document.body.style.borderImage = `linear-gradient(180deg, ${stops}) 30 30 stretch`;
+          }
+          
+          function maintainIndex(evt) {
+            var pos = Math.floor((scrollY / legend.scroll) * 100);
+            var key = Math.max(0,pos);
+            var idx = legend.table[key];
+            if (idx != legend.index) {
+              document.documentElement.style.setProperty('--hue', idx * 50);
+              links[idx].classList.add('active');
+              links[legend.index].classList.remove('active');
+              legend.index = idx;
+            }
+          }
+          
+          function scrollToElement(evt) {
+            // evt.preventDefault();
+            function tween(now) {
+              var complete = (now - start) / duration;
+              var ratio = Math.min(1, 1 - Math.pow(1 - complete, 5));
+              window.scroll(0, (ratio * offset) + position );
+              if (ratio < 1) requestAnimationFrame(tween);
+            }
+            var duration = 1000;
+            var start    = performance.now();
+            var position = window.pageYOffset;
+            var offset   = this.getBoundingClientRect().top;
+            tween(start);
+          }
+          
+          $$('a:not([href^="http"])[href*="#"]').filter(function (elem) {
+            return Boolean($(elem.hash));
+          }).forEach(function (elem) {
+            elem.addEventListener('click', scrollToElement.bind($(elem.hash)), false);
+          });
+          
+          
+                              
+          addEventListener('resize', buildLegend.bind(legend, articles));
+          addEventListener('scroll', maintainIndex, { passive: true });
+          buildLegend.call(legend, articles);
+        }());
+        
+      // ]]>
+    </script>
+  </body>
+</html>

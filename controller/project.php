@@ -10,6 +10,6 @@ class Project extends \App\Controller {
   }
 
   public function GETnougatory() {
-    return new \App\View('jesus.html');
+    return new \App\View('nougatory/jesus.html');
   }
 }

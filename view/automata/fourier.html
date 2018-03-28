@@ -1,0 +1,101 @@
+<article>
+  <style type="text/css">
+    svg circle{
+      stroke-width:0;
+      fill:#000;
+    }
+    section {
+      border: 1px solid #EEE;
+      margin:1em 0;
+      padding:1em;
+    }
+  </style>
+  <script type="text/javascript">
+    // <![CDATA[
+    bootstrap.embed('/js/raphael.js');
+    var scale = 180 / Math.PI;
+    var point_wave, sawtooth_wave;
+    
+    var x_axis = (6 * Math.PI) * scale,
+        y_axis = 300,
+        pad_left = 10;
+
+    Number.prototype.inverse = function () {
+      return this * (-1);
+    };
+
+    function drawAxes (canvas) {
+      for (var i = 0; i <= x_axis / scale; i += Math.PI/2 ) {
+        var x_dist = Math.round(i  * scale);
+        canvas.text(x_dist + pad_left, ((y_axis/2) + 10), x_dist + '°');//.attr('text-anchor', 'start');
+      }
+
+      var y_max = Math.sin(Math.PI/2);
+      var y_min = Math.sin(3*Math.PI/2);
+      canvas.text(3, y_axis/2 - y_max*scale, y_max);
+      canvas.text(3, y_axis/2 - y_min*scale, y_min);
+
+      var x = canvas.path('M0,'+(y_axis/2)+'l'+(x_axis)+',0').attr({'stroke-width': 1, 'stroke-dasharray': '. ', 'arrow-end': 'block-wide-long'});
+      var y = canvas.path('M'+pad_left+',0l0,'+y_axis).attr({'stroke-width': 1, 'stroke-dasharray': '. ', 'arrow-start': 'block-wide-long', 'arrow-end': 'block-wide-long'});
+      return [x,y];
+    }
+
+    function drawPointWave (limit) {
+      point_wave.clear();
+      drawAxes(point_wave);
+
+      for(var x = 0; x <= 8*Math.PI; x += (Math.PI/limit) ) {
+        var y_val = 0;
+        for (var j = 0, odd=1; j < limit; j++,odd += 2) {
+          y_val += Math.sin(x*odd) / odd;
+        }
+
+        var x_val = (x*scale) + pad_left;
+        y_val = (y_axis / 2) + (y_val * scale).inverse();
+        point_wave.circle(x_val,y_val,2.5);
+      }
+    }
+
+    function drawSawtoothWave (limit) {
+      sawtooth_wave.clear();
+      drawAxes(sawtooth_wave);
+      var path = '';
+      for(var x = 0; x <= 8*Math.PI; x += (Math.PI/limit) ) {
+        var y_val = 0;
+        for (var j = 0, odd=1; j < limit; j++,odd += 2) {
+          y_val += Math.sin(x*odd) / odd;
+        }
+
+      
+        var x_val = (x*scale) + pad_left;
+        y_val = (y_axis / 2) + (y_val * scale).inverse();
+        path  += ' L'+x_val+','+y_val;
+      }
+      sawtooth_wave.path("M"+pad_left+","+(y_axis / 2)+path);
+    }
+
+    
+    bootstrap.queue(function () {
+      point_wave = Raphael("point", x_axis, y_axis);
+      drawAxes(point_wave);
+
+      sawtooth_wave = Raphael("sawtooth", x_axis, y_axis);
+      drawAxes(sawtooth_wave);
+
+      drawPointWave(2);
+      drawSawtoothWave(2);
+    });
+  // ]]>
+  </script>
+  <section>
+    <h1>Fourier Using Points</h1>
+    <input type="range" min="2" max="50" style="width:50%" value="2" onchange="drawPointWave(this.value)"/>
+    <div id="point"></div>
+  </section>
+  <section>
+    <h1>Fourier Using Lines</h1>
+    <p>As you can see, this wave is pretty square around 200 or so... meaning that 200 sine waves added repetitivel can produce this square wave. A fourier series can reproduce any shape of wave.</p>
+    <input  type="range" min="2" max="250" style="width:50%" value="2" onchange="drawSawtoothWave(this.value)"/>
+    <div id="sawtooth"></div>
+  </section>
+</article>
