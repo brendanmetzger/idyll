@@ -1,0 +1,35 @@
+<!ELEMENT model (event, inventory, person, project, report, task)>
+
+<!ELEMENT person (item*)>
+<!ELEMENT inventory (item*)>
+<!ELEMENT task (item*)>
+<!ELEMENT project (item*)>
+<!ELEMENT event (item*)>
+<!ELEMENT report (item*)>
+
+<!ELEMENT item (log*, agenda*)>
+<!ATTLIST item
+  id       ID    #IMPLIED
+  title    CDATA #REQUIRED
+  access   CDATA #IMPLIED
+  created  CDATA #REQUIRED
+  updated  CDATA #REQUIRED
+  schedule CDATA #IMPLIED
+  duration CDATA #IMPLIED
+  status   (complete|underway|pending) #IMPLIED
+  type     CDATA #IMPLIED
+  exec     IDREFS #IMPLIED
+>
+
+<!ELEMENT log (#PCDATA)>
+<!ATTLIST log
+  created CDATA #REQUIRED
+  updated CDATA #REQUIRED
+  file    CDATA #IMPLIED
+>
+
+<!ELEMENT agenda EMPTY>
+<!ATTLIST agenda
+  when (before|after) #REQUIRED
+  ref  IDREFS #REQUIRED
+>

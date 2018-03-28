@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE model SYSTEM "model.dtd">
+<!-- AFTER (MAINTAINENCE): 'end' is terminal, in future, or bears repeating. Likely composed of other tasks/projects/ -->
+<!-- BEFORE (PLANNING): notes where to find supplies, what needs purchasing/procurement, knowledge/pre-req -->
+<!--
+  General notes: a task is not status until termina 'after' items are finished.
+  After Items that are not terminal cannot be scheduled until the item is status
+
+  When the system determines some daily tasks, the immediate response can be to push into the future.. for instance, say the task is a harvest. The actual date might not be easy to pin down, so an individual can receive the task, check the status, and move the card into the future some specified time.
+
+
+    <item id="" title="" status="Y/N" created="YMDHMS" updated="YMDHMS" schedule="YMDHMS" duration="P2D" type="LIST-ABLE" location="" exec="REFS">
+      <log ref="" created="">This is where notes are kept</log>
+      <log ref=""  created="" file="/path/to/file.pdf"/>
+      <log ref=""  created="" file="/path/to/file.pdf">with note</log>
+      <before>
+        <item ref="REFID" />
+      </before>
+      <after>
+        <item ref="REFID" />
+      </after>
+    </item>
+ -->
+
+<!--
+
+Report
+  Optimal times for weeding
+  Vinegar for weeds
+  Raised beds
+
+
+TASKS
+  Land Survey
+  Garlic Crop
+
+
+PROJECTS:
+  Business/Mission Plan
+  Certified Kitchen
+  Bees (https://www.thecne.org/engage/grants/honeybee-conservancy-sponsor-hive-partnership/)
+  Hop Crop
+  Leek crop
+  shallot crop
+  wheat crop
+  brick oven
+  Bath House
+  Soybean Crop
+  South Apartment
+  North Apartment
+  Kitchen
+  hoop-house/nursery
+
+
+
+EVENTS
+  2017 Planting
+  2017 Harvest
+
+ -->
+<model>
+  <event/>
+  <inventory>
+    <item id="i0" title="Husquvarna Chainsaw"  created="YMDHMS" updated="YMDHMS" type="machine" access="available" exec="brendan">
+      <log created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00">Model Number is 234234-2343234-234</log>
+    </item>
+    <item id="georgian-fire" type="produce" title="Georgian Fire" created="" updated="">
+      <log created="" updated="">Hot, assertive garlic. Best Storage life of our hard-neck varieties.</log>
+    </item>
+  </inventory>
+  <person>
+    <item id="brendan" title="Brendan Metzger" access="brendan@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+    <item id="susie" title="Susie Kirkwood" access="susie@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+    <item id="joan" title="Joan Rawce-Metzger" access="joan@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+    <item id="dan" title="Dan Metzger" access="dan@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+    <item id="dieter" title="Dieter Kirkwood" access="dieter@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+    <item id="ashley" title="Ashley Wendela" access="ashley@willowgrowers.org" created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00"  />
+  </person>
+  <project>
+    <item id="t1" title="Hop Crop" status="pending" created="YMDHMS" updated="YMDHMS" schedule="YMDHMS" duration="P2D" exec="brendan">
+      <log created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00" file="/path/to/file.jpg"/>
+    </item>
+  </project>
+  <report/>
+  <task>
+    <item id="t0" title="Certified Kitchen" status="pending" created="YMDHMS" updated="YMDHMS" schedule="YMDHMS" duration="P2D" exec="brendan">
+      <log created="2017-09-28 00:00:00" updated="2017-09-28 00:00:00" file="/path/to/file.jpg" />
+      <agenda when="before" ref="t2" />
+    </item>
+    <item id="t2" title="Dig Trench" created="" updated="" />
+  </task>
+</model>

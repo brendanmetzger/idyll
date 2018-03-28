@@ -16,10 +16,10 @@ $response = new Response( new Request(Factory::App($_SERVER['REQUEST_METHOD'] ??
 
 $response->handle('http', function ($request) {
 
-  $controller = $request->delegate($this, 'help', 'index');
+  $controller = $request->delegate($this, 'project', 'index');
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {
-    $this->setTemplate(new View('help/layout.html'));
+    $this->setTemplate(new View('layout.html'));
     // add before/after filter to move html around     
   }
   return $controller;

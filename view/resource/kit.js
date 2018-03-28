@@ -8,18 +8,17 @@ Event.prototype.theta = function () {
     var x = (this.offsetX || this.layerX) - (rect.width / 2);
     var y = (rect.height / 2) - (this.offsetY || this.layerY);
   }
-  var theta = Math.atan2(x, y) * (180 / Math.PI);
-  return theta < 0 ? 360 + theta : theta;
+  var theta = Math.atan2(x, y);
+  return theta < 0 ? Math.PI + theta : theta;
 };
 
 var SVG = function (node, width, height) {
-  const NS = {
+  this.NS = Object.freeze({
     svg:   'http://www.w3.org/2000/svg',
     xlink: 'http://www.w3.org/1999/xlink'
-  };
-  
+  });
   this.element = this.createElement('svg', {
-    'xmlns:xlink': NS.xlink, 'xmlns': NS.svg, 'version': 1.1, 'viewBox': `0 0 ${width} ${height}`
+    'xmlns:xlink': this.NS.xlink, 'xmlns': this.NS.svg, 'version': 1.1, 'viewBox': `0 0 ${width} ${height}`
   }, node);
   
   this.point = this.element.createSVGPoint();
@@ -27,10 +26,11 @@ var SVG = function (node, width, height) {
 
 
 SVG.prototype.createElement = function (name, opt, parent) {
-  var node = document.createElementNS(NS.svg, name);
+
+  var node = document.createElementNS(this.NS.svg, name);
   for (var key in opt) {
     if (key == "xlink:href") {
-      node.setAttributeNS(NS.xlink, 'href', opt[key]);
+      node.setAttributeNS(this.NS.xlink, 'href', opt[key]);
     } else {
       node.setAttribute(key, opt[key]);
     }
