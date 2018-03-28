@@ -1,0 +1,48 @@
+<article>
+  <style type="text/css" media="screen">
+    /* <![CDATA[ */
+    body {
+      background-size: 100vw auto;
+    }
+
+    figure {
+      box-sizing: border-box;
+      background-size: 100vw auto;
+      mix-blend-mode: soft-light;
+      border-radius: 5%;
+    }
+    /* ]]> */
+  </style>
+  <script type="text/javascript">
+    // <![CDATA[
+      app.prepare(function (evt) {
+        var aspect = 4 / 5;
+        var width    = 2;
+        var height   = width * aspect;
+        var img_path = 'https://brendan.s3.amazonaws.com/image/face.jpg';
+        var elem     = document.createElement('figure');
+        var body     = document.querySelector('body');
+        
+        elem.style.backgroundImage = 'url('+img_path + ')';
+        elem.style.width  = width + 'vw';
+        elem.style.height = height + 'vw';
+        elem.style.position = 'absolute';
+        var cols = 100 / width;
+
+        var rows = 100 / height * aspect;
+        var total = (rows) * cols;
+        for (let i = 0; i < total; i += 1) {  
+
+          var cloned_elem = body.appendChild(elem.cloneNode());
+          var x = ((i % cols) * width);
+          var y = Math.floor(i / cols) * (height); 
+          cloned_elem.style.backgroundPosition = '-' + (x) + 'vw -' + (y) + 'vw';
+          cloned_elem.style.left = x + 'vw';
+          cloned_elem.style.top = y + 'vw';
+          cloned_elem.style.transform = 'scale('+(0.25 + Math.random() * 3) +') translate(-50%, -50%)';
+        }
+      });
+    
+    // ]]>
+  </script>
+</article>
