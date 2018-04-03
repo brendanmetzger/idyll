@@ -6,7 +6,7 @@ class Project extends \App\Controller {
   
   public function GETindex() {
     // make two sections, business and pleasure
-    return new \App\View('line-ball.html');
+    return new \App\View('nougatory/jesus.html');
   }
 
   public function GETnougatory() {
