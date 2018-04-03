@@ -9,7 +9,7 @@ class Project extends \App\Controller {
     return new \App\View('line-ball.html');
   }
 
-  public function GETnougatory() {
-    return new \App\View('nougatory/jesus.html');
+  public function GETnougatory($file = 'jesus') {
+    return new \App\View('nougatory/'.$file.'.html');
   }
 }

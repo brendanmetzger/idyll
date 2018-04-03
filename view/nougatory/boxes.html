@@ -1,0 +1,131 @@
+<article class="board">
+  <h1>This will not work until the style elements are moved into the head</h1>
+  <style type="text/css" media="screen">
+    /* <![CDATA[ */
+    body { font-family:inconsolata;padding:0;margin:0;overflow:hidden;}
+    .board div {
+      transition:background-color 0.25s;
+      float:left;
+    }
+    button {padding:1em;border-radius:0.25em;border:1px solid #ddd;background-color:#fff;box-shadow:0 0 1em rgba(0,0,0,0.5);cursor:pointer;}
+    button:focus {outline:none;}
+    /* ]]> */
+  </style>
+  <script type="text/javascript">
+    // <![CDATA[
+      var optimizeRowWidth = function (size, n) {
+        return size % n === 0 ? n : optimizeRowWidth(size, n-1);
+      };
+
+      var board = [[]];
+      // not necessary - just setting the board to be rectanuglar to squeeze a bigger size in
+      var div_style = document.styleSheets[1].cssRules[1].style;
+
+      var length = Math.sqrt((innerWidth * innerHeight) / 10000);
+
+      var row_limit = optimizeRowWidth(10000, Math.ceil(innerWidth / length));
+      var col_limit = 10000 / row_limit;
+  
+  
+      // all divs have the same dimension, so set a CSS rule universally
+      div_style.width = innerWidth / row_limit;
+      div_style.height  = innerHeight / col_limit;
+      
+      console.log(innerWidth / row_limit);
+      var row = 0;
+      var col = 0;
+      var divs;
+  
+      
+  
+  
+      // this is the whole rig - influence is the routine that given input will:
+      // 1. use that input to determine what element is the object of interest
+      // 2. Gather the neighbors, and flip their colors to match.
+      var influence = function (evt) {
+        if (evt.srcElement.nodeName === 'DIV') {
+          var hood = evt.srcElement.neighborhood;
+          var neighbors = [
+            [hood.prev.row, hood.curr.col],
+            [hood.prev.row, hood.next.col],
+            [hood.curr.row, hood.next.col],
+            [hood.next.row, hood.next.col],
+            [hood.next.row, hood.curr.col],
+            [hood.next.row, hood.prev.col],
+            [hood.curr.row, hood.prev.col],
+            [hood.prev.row, hood.prev.col]
+          ];
+          if (Math.random() > 0.5) {
+            neighbors.reverse();
+          }
+          neighbors.forEach(function (neighbor,i) {
+            var idx = board[neighbor[0]][neighbor[1]];
+            setTimeout(function () {
+              divs[idx].style.backgroundColor = evt.srcElement.style.backgroundColor;
+            }, i * 50);
+          });
+        }
+      };
+
+  
+      // Interval is toggled by the button on the page
+      var toggleInterval = (function () {
+        var running = 0;
+        return function(button) {
+          if (running) {
+            button.textContent = 'Fire it up.';
+            clearInterval(running);
+          } else {
+            button.textContent = 'Terminiate, terminate!';
+            running = setInterval(function () {
+              var index = Math.floor(Math.random() * 10000);
+              influence({srcElement: divs[index]});
+            }, 5);
+          }
+        };
+      }());
+      
+      app.prepare(function (evt) {
+      
+        var container = document.querySelector('article.board');
+        // draw board, set 'neighborhood' - all straightforard enought
+        for (var i = 1; i < 10000; i++) {
+
+          var d = container.appendChild(document.createElement('div'));
+              d.style.backgroundColor = 'rgba(0,0,0,'+Math.random()+')';
+              d.neighborhood = {
+                curr: {
+                  row: row,
+                  col: col
+                },
+                prev: {
+                  row: (row == 0) ? col_limit-1: row - 1,
+                  col: (col == 0) ? row_limit-1: col - 1
+                },
+                next: {
+                  row: (row == col_limit-1) ? 0 : row + 1,
+                  col: (col == row_limit-1) ? 0 : col + 1
+                }
+              };
+        
+          board[row][col] = i-1;
+    
+          col += 1;
+    
+          if (i % row_limit === 0) {
+            d.style.clear = 'left';
+            board.push([]);
+            row += 1;
+            col = 0;
+          }
+        }
+  
+        // store all teh divs in a selector for reference
+        divs = container.querySelectorAll('div');
+  
+        document.body.addEventListener('click', influence);
+      });
+    // ]]>
+  </script>
+  <button onclick="toggleInterval(this);return false;" style="position:absolute;top:1em;left:1em;opacity:0.9">Fire it up</button>
+</article>
