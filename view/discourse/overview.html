@@ -1,22 +1,94 @@
 <article>
   <p>Here I write.</p>
   <style type="text/css" media="screen">
-    
+    :root {
+      --size: 5vw;
+    }
+    div {
+      margin: 0 0 0 5%;
+      padding: 0;
+      background-color: rgba(255,255,255,0.1);
+      width: var(--size);
+      height: var(--size);
+    }
+    button {
+      padding: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(255, 0, 0, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+    }
     svg {
-      width: 50%;
+      width: 100%;
+    }
+    line {
+      stroke: #000;
     }
     path {
-      fill: #000;
-      stroke-width: 0.25;
-      stroke:none;
+      fill: rgba(255,0,0,0.5);
+      stroke: #000;
+      stroke-width: 0;
+    }
+    circle {
+      fill: red;
     }
   </style>
   <script type="text/javascript">
+    // <![CDATA[
+
     app.prepare(function (evt) {
-      var drawing = new SVG(document.querySelector('.draw'), 45, 45);
-      drawing.createElement('path', {d: 'M10,10 c0 13, 10 5, 10,25 c0 0, 10 0, 10,0 c0 -13, -10 -5, -10 -25 z   m10,0  c0 20, -10 13, -10,25  c0 0, 10, 0, 10 0 c 0 -20, 10 -13, 10,-25 z'});
+      var wheel   = document.querySelector('#wheel');
+      var drawing = new SVG(wheel.querySelector('button'), 100, 100);
+      var states  = {
+        pause:  'm 48 20 l  0 60 l-25  0 l  0-60 z m  4 0 l  0 60 l 25  0 l 0 -60 z',
+        play:   'm 90 50 l-60 35 l  0-35 l  0-35 z m  0 0 l-60 35 l  0-35 l 0 -35 z',
+        record: 'm 50 10 l  0 80 l-35-20 l  0-40 z m  0 0 l  0 80 l 35-20 l 0 -40 z',
+        stop:   'm 50 20 l  0 60 l-30  0 l  0-60 z m  0 0 l  0 60 l 30  0 l 0 -60 z',
+        wait:   'm 25 10 l 50 80 l-25  0 l  0-80 z m 50 0 l-50 80 l 25  0 l 0 -80 z',
+        select: 'm 15 40 l 70 0  l  0 20 l -70 0 z m 25 -25 l 20 0 l 0 70 l -20 0 z', // this is a +
+        remove: 'm 5 15 l 10 -10 l 80 80 l -10, 10 z m 10 80 l -10 -10 l 80 -80 l 10 10 z ', // this is an x
+        error:  'm 40 70 l -5-60 l 30  0 l -5 60 z m  0 5 l  0 15 l 20  0 l 0 -15 z'
+      };
+        
+      var animate = drawing.createElement('animate', {
+        attributeName: 'd',
+        attributeType: 'XML',
+        dur: '0.25s',
+        begin: 'indefinite',
+        fill: 'freeze'
+      }, drawing.createElement('path', {'d': states.remove}));
+        
+      // drawing.createElement('line', {x1: 0, y1: 0, x2: 100, y2: 100});
+      // drawing.createElement('line', {x1: 100, y1: 0, x2: 0, y2: 100});
+      
+      var state   = Object.keys(states);
+      var counter = 0;
+      var changeState = function() {
+        var path = states[state[counter++ % state.length]];
+        
+        animate.setAttribute('from', animate.getAttribute('to'));
+        animate.setAttribute('to',   path);
+        animate.beginElement();
+        
+        
+      };
+      // var timer = setInterval(changeState, 1000);
+      
+      // wheel.addEventListener('mousemove', function(evt) {
+        // console.log(evt.rando);
+        // console.log(Math.round((evt.theta * 180 / Math.PI) / 360 * 100), '%');
+      // });
+      
+      
+
     });
+    // ]]>
   </script>
-    C x1 y1, x2 y2, x y (or c dx1 dy1, dx2 dy2, dx dy)
-  <div class="draw"> </div>
+
+  <div id="wheel">
+    <button title="play|pause|stop|wait|record|"/>
+  </div>
+  
 </article>

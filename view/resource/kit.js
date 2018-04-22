@@ -1,16 +1,47 @@
-Event.prototype.theta = function () {
-  var rect  = this.target.getBoundingClientRect();
-
-  if (this.type.substring(0, 5) == 'touch') {
-    var x = (this.touches[0].clientX - rect.left) - (rect.width / 2);
-    var y = (rect.height / 2) - (this.touches[0].clientY - rect.top);
-  } else {
-    var x = (this.offsetX || this.layerX) - (rect.width / 2);
-    var y = (rect.height / 2) - (this.offsetY || this.layerY);
+Object.defineProperty(Event.prototype, 'theta', {
+  get: function() {
+    var rect  = this.target.getBoundingClientRect();
+    if (this.type.substring(0, 5) == 'touch') {
+      var x = (this.touches[0].clientX - rect.left);
+      var y = (this.touches[0].clientY - rect.top);
+    } else {
+      var x = (this.offsetX || this.layerX);
+      var y = (this.offsetY || this.layerY);
+    }
+    var [a, o] = getOffset.call(this);
+    console.log(a, o);
+    var abscissa = x - (rect.width / 2)
+    var ordinate =  (rect.height / 2) - y;
+    return Math.PI + Math.atan2(abscissa, ordinate);
   }
-  var theta = Math.atan2(x, y);
-  return theta < 0 ? Math.PI + theta : theta;
-};
+});
+
+Object.defineProperty(Event.prototype, 'rando', {
+  get: (function(threshold) {
+    console.log(this);
+    if (threshold < 0.5) {
+      return function() {
+        return this;
+      };
+    } else {
+      return function() {
+        return this.type;
+      }
+    }
+  })(Math.random())
+});
+
+var getOffset = (function(no_hover) {
+  if (no_hover) {
+    return function() {
+      return [(this.touches[0].clientX - rect.left), (this.touches[0].clientY - rect.top)];
+    }
+  }
+  return function() {
+    return [(this.offsetX || this.layerX), (this.offsetY || this.layerY)];
+  }
+})(false)
+
 
 var SVG = function (node, width, height) {
   this.NS = Object.freeze({
