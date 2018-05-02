@@ -151,7 +151,7 @@ class View {
         preg_match_all('/\$+[\@a-z_:|0-9]+\b/i', $slug( substr($slug, 1,-1) ), $match, PREG_OFFSET_CAPTURE);
       
         foreach (array_reverse($match[0]) as [$k, $i]) {
-          $N = $slug->firstChild->splitText($i)->splitText(strlen($k))->previousSibling;
+          $N = $slug->firstChild->splitText(mb_strlen(substr($slug, 0, $i), 'UTF-8'))->splitText(strlen($k))->previousSibling;
           if (substr( $N( substr($N,1) ),0,1 ) != '$') $out[] = [$N, explode(':', str_replace('|', '/', $N))];
         }
       }
@@ -159,7 +159,7 @@ class View {
 
     })($this->slugs);
   }
-  
+    
   private function import(Document $import, \DOMNode $ref, $swap = 'replaceChild'): \DOMNode {
     return $ref->parentNode->{$swap}( $this->document->importNode($import->documentElement, true), $ref );    
   }
