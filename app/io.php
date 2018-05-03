@@ -61,9 +61,9 @@ class CLI extends Method {
 class GET extends Method {
   public $direct = false;
   public function __construct() {    
-    $this->route  = array_filter($_GET['_r_']);
-    $this->params = array_filter(explode('/', $_GET['_p_']));
-    $this->format = $_GET['_e_'] ?: 'html';
+
+    $this->params = array_filter(explode('/', $_GET['route']));
+    $this->format = $_GET['ext'] ?: 'html';
     $this->host   = sprintf('%s://%s', getenv('REQUEST_SCHEME'), getenv('SERVER_NAME'));
     $this->direct = stripos(getenv('HTTP_REFERER'), $this->host) === 0;
     $this->path   = getenv('REQUEST_URI');
@@ -128,8 +128,7 @@ class Request {
   }
     
   public function delegate(Response $response, ...$defaults): Controller {
-    $this->method->route = array_replace($defaults, $this->method->route);
-    [$class, $action] = $this->method->route;
+    [$class, $action] = array_replace($defaults, array_slice($this->method->params, 0, 2));
     
     $instance = Factory::Controller($class)->newInstance($this, $response);
     $method   = new \ReflectionMethod($instance, $this->method . $action);
@@ -138,7 +137,7 @@ class Request {
       $method = new \ReflectionMethod($instance, $this->method . 'login');
     }
 
-    return $instance->output($method->invokeArgs($instance, $this->method->params));
+    return $instance->output($method->invokeArgs($instance, array_slice($this->method->params,2)));
   }
 }
 
