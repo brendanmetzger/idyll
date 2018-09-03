@@ -15,7 +15,6 @@ spl_autoload_register(function ($classname) {
 $response = new Response( new Request(Factory::App($_SERVER['REQUEST_METHOD'] ?? 'CLI')->newInstance()) );
 
 $response->handle('http', function ($request) {
-
   $controller = $request->delegate($this, 'help', 'index');
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {

@@ -35,7 +35,19 @@ class Token {
 
 /*************        ******************************************************************* METHOD */
 abstract class Method {
-  public $route, $scheme = 'http', $format = 'txt', $params, $data;
+  public $route, $format, $params, $data, $scheme = 'http';
+  
+  public static $ctypes = [
+    'html' => 'Content-Type: application/xhtml+xml; charset=utf-8',
+    'json' => 'Content-Type: application/javascript; charset=utf-8',
+    'xml'  => 'Content-Type: text/xml; charset=utf-8',
+    'svg'  => 'Content-Type: image/svg+xml; charset=utf-8',
+    'jpg'  => 'Content-Type: image/jpeg',
+    'png'  => 'Content-Type: image/png',
+    'js'   => 'Content-Type: application/javascript; charset=utf-8',
+    'css'  => 'Content-Type: text/css; charset=utf-8',
+    'txt'  => 'Content-Type: text/plain; charset=utf-8',
+  ];
     
   public function __toString(): string {
     return substr(static::class, 4);
@@ -44,12 +56,18 @@ abstract class Method {
   abstract public function session(Token $token, array $set = null);
 }
 
-/****     ********************************************************************************** CLI */
-class CLI extends Method {
-  public $scheme = 'console';
+class OPTIONS {
   public function __construct() {
-    $this->route  = array_filter(explode(':', $_SERVER['argv'][1] ?? ''));
-    $this->params = array_slice($_SERVER['argv'], 2);
+    exit();
+  }
+}
+
+/****     ****************************************************************************************/
+class CLI extends Method {
+  public $scheme = 'console', $format = 'txt';
+  public function __construct() {
+    $this->params = array_slice($_SERVER['argv'], 1);
+    $this->route  = array_shift($this->params);
   }
   
   public function session(Token $token, array $set = null) {
@@ -57,53 +75,45 @@ class CLI extends Method {
   }
 }
 
-/****     ********************************************************************************** GET */
+/****     ****************************************************************************************/
 class GET extends Method {
   public $direct = false;
-  public function __construct() {    
-    $this->route  = array_filter($_GET['_r_']);
-    $this->params = array_filter(explode('/', $_GET['_p_']));
-    $this->format = $_GET['_e_'] ?: 'html';
-    $this->host   = sprintf('%s://%s', getenv('REQUEST_SCHEME'), getenv('SERVER_NAME'));
+  public function __construct() {
+    $this->format = isset(Method::$ctypes[$_GET['ext'] ?? '']) ? $_GET['ext']: 'html';
+    $this->params  = array_filter(explode('/', $_GET['route'] ?? ''));
+    $this->route   = array_splice($this->params, 0, 2);
+    $this->host   = sprintf('https://%s', getenv('SERVER_NAME'));
     $this->direct = stripos(getenv('HTTP_REFERER'), $this->host) === 0;
     $this->path   = getenv('REQUEST_URI');
   }
   
   public function session(Token $Tok, array $set = null) {
     if ($set) {
-      return setcookie($Tok->version, $Tok->encode(...$set), $Tok->expire, '/', '', $Tok->secure, true);
+      setcookie($Tok->version, $Tok->encode(...$set), $Tok->expire, '/', '', $Tok->secure, true);
     }
     return $_COOKIE[$Tok->version];
   }
 }
 
-/****      ******************************************************************************** POST */
+/****      ***************************************************************************************/
 class POST extends GET {
   
   public function __construct() {
     parent::__construct();
+    $_POST['_BODY'] = file_get_contents('php://input');
     array_unshift($this->params, new Data($_POST));
   }
 }
 
 /****         ************************************************************************** REQUEST */
 class Request {
-
-  static public $mime = [
-    'html' => 'application/xhtml+xml',
-    'json' => 'application/javascript',
-    'js'   => 'application/javascript',
-    'svg'  => 'image/svg+xml',
-    'jpg'  => 'image/jpeg',
-    'xml'  => 'text/xml',
-    'css'  => 'text/css'
-  ];
   
   public $token;
 
   public function __construct(Method $method) {
     $this->method = $method;
     $this->token  = new Token(ID);
+    $this->content_type = Method::$ctypes[$method->format];
   }
     
   // TODO simplify!
@@ -142,6 +152,12 @@ class Request {
   }
 }
 
+/* TODO
+[ ] Consider implementing a way users and guests can see same page, with users having rendered session vars
+[ ] response should be in control of filtering/reordering DOM presentation
+[ ] response should be in charge of caching
+[ ] response should be able to return a partial if request is ajax.
+*/
 /****          ************************************************************************ RESPONSE */
 class Response {
   
@@ -182,8 +198,7 @@ class Response {
     return $this->output = ($this->template ? $this->template->set('content', $this->content)->render($data) : $this->content);
   }
   
-  public function __toString()
-  {
+  public function __toString() {
     foreach ($this->header as $header) header(...$header);
     return (string) $this->output;
   }
