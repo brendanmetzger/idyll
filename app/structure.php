@@ -40,8 +40,8 @@ class Data extends \ArrayIterator {
     return $data;
   }
   
-  static public function Use(string $source, ?string $path = null) {
-    $document = self::$store[$source] ?? self::$store[$source] = new Document($source, ['validateOnParse' => true]);
+  static public function Use(string $src, ?string $path = null) {
+    $document = self::$store[$src] ?? self::$store[$src] = new Document($src, ['validateOnParse' => true]);
     return $path ? new self($document->query($path)) : $document;
   }
   

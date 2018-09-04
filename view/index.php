@@ -12,13 +12,14 @@ spl_autoload_register(function ($classname) {
 
 /***************************************************************************************** SETUP */
 
-$response = new Response( new Request(Factory::App($_SERVER['REQUEST_METHOD'] ?? 'CLI')->newInstance()) );
+$response = new Response(new Request(Factory::App($_SERVER['REQUEST_METHOD'] ?? 'CLI')->newInstance()));
 
 $response->handle('http', function ($request) {
-  $controller = $request->delegate($this, 'help', 'index');
+  $request->method->setDefaultRoute('help', 'index');
+  $controller = $request->delegate($this);
   $ajax = false; // Full layout unnecessary w/ ajax
   if (!$ajax) {
-    $this->setTemplate(new View('help/layout.html'));
+    $this->setView(new View('help/layout.html'));
     // add before/after filter to move html around     
   }
   return $controller;
@@ -52,7 +53,7 @@ try {
   ];
   
   $response->setContent(View::error('framework')->render($data));
-  $response->setTemplate(View::help('layout'));
+  $response->setView(View::help('layout'));
   $response->compose();
 
 } finally {

@@ -48,6 +48,10 @@ abstract class Method {
     'css'  => 'Content-Type: text/css; charset=utf-8',
     'txt'  => 'Content-Type: text/plain; charset=utf-8',
   ];
+  
+  public function setDefaultRoute(...$route) {
+    $this->route = array_replace($route, $this->route);
+  }
     
   public function __toString(): string {
     return substr(static::class, 4);
@@ -137,8 +141,7 @@ class Request {
     return false;
   }
     
-  public function delegate(Response $response, ...$defaults): Controller {
-    $this->method->route = array_replace($defaults, $this->method->route);
+  public function delegate(Response $response): Controller {
     [$class, $action] = $this->method->route;
     
     $instance = Factory::Controller($class)->newInstance($this, $response);
@@ -161,7 +164,7 @@ class Request {
 /****          ************************************************************************ RESPONSE */
 class Response {
   
-  private $request, $template, $content, $output, $handler = [], $header = [];
+  private $request, $view, $content, $output, $handler = [], $header = [];
   
   public function __construct(Request $request) {
     $this->request = $request;
@@ -186,16 +189,17 @@ class Response {
     $this->header[] = [$header, $replace, $code];
   }
   
-  public function setTemplate(View $view): void {
-    $this->template = $view;
+  public function setView(View $view): void {
+    $this->view = $view;
   }
   
   public function setContent($object): void {
     $this->content = $object;
   }
   
+  # TODO should not hardcode the 'content' keywor
   public function compose($data = []) {
-    return $this->output = ($this->template ? $this->template->set('content', $this->content)->render($data) : $this->content);
+    return $this->output = ($this->view ? $this->view->set('content', $this->content)->render($data) : $this->content);
   }
   
   public function __toString() {
